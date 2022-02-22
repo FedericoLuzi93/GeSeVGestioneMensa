@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -39,6 +40,10 @@ public class Ente
 	@OneToMany(mappedBy = "enteRiferimento", cascade={CascadeType.PERSIST, CascadeType.DETACH,
 		 	CascadeType.MERGE, CascadeType.REFRESH})
 	private List<Ente> listaEnti;
+	
+	@OneToMany(mappedBy = "ente", cascade={CascadeType.PERSIST, CascadeType.DETACH,
+		 	CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
+	List<Dipendente> listaDipendenti;
 	
 	public Ente()
 	{
