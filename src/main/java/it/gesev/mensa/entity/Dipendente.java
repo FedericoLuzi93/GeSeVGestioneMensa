@@ -1,13 +1,17 @@
 package it.gesev.mensa.entity;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -23,6 +27,7 @@ public class Dipendente
 {
 	@Id
 	@Column(name = "CODICE_DIPENDENTE")
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer codiceDipendente;
 	
 	@Column(name = "FOTO", columnDefinition = "BLOB")
@@ -68,4 +73,7 @@ public class Dipendente
 	
 	@Column(name = "RUOLO_FUNZIONALE")
 	private String ruoloFunzionale;
+	
+	@OneToMany(mappedBy = "dipendente")
+	private List<AssDipendenteRuolo> listaDipendenteRuolo;
 }
