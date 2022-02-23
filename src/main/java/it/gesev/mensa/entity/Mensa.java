@@ -70,5 +70,5 @@ public class Mensa
 	private String citta;
 	
 	@OneToMany(mappedBy= "mensa")
-	private List<AssDipendenteRuolo> listaAssDipendenteRuolo;
+	private List<AssMensaTipoLocale> listaAssDipendenteRuolo;
 }

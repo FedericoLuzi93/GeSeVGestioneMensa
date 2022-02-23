@@ -32,6 +32,6 @@ public class TipoLocale
 	private String descrizioneTipoLocale;
 	
 	@OneToMany(mappedBy= "tipoLocale")
-	private List<AssDipendenteRuolo> listaAssDipendenteRuolo;
+	private List<AssMensaTipoLocale> listaAssDipendenteRuolo;
 
 }
