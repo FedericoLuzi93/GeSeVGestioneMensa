@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -24,11 +26,11 @@ import lombok.Setter;
 public class Report 
 {
 	@Id
-	@Column(name = "CODICE_REPORT")
+	@Column(name = "CODICE_REPORT ")
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Integer codiceReport;
+	private String codiceReport;
 	
-	@Column(name = "DESCRIZIONE_REPORT")
+	@Column(name = "DESCRIZIONE_REPORT ")
 	private String descrizioneRecord;
 
 	@OneToMany(mappedBy = "report")
@@ -36,4 +38,8 @@ public class Report
 	
 	@OneToMany(mappedBy = "report")
 	private List<ReportInviato> listaReportInviato;
+	
+	@ManyToOne
+	@JoinColumn(name = "TIPO_REPORT_FK ")
+	private TipoReport tipoReport; 
 }
