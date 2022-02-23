@@ -76,4 +76,9 @@ public class Dipendente
 	
 	@OneToMany(mappedBy = "dipendente")
 	private List<AssDipendenteRuolo> listaDipendenteRuolo;
+	
+	@OneToMany(mappedBy = "dipendente")
+	private List<AssRepInviatiDipStatoRep> listaAssRepInviatiDipStatoRep;
+	
+	
 }

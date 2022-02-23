@@ -1,0 +1,39 @@
+package it.gesev.mensa.entity;
+
+import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Entity
+@Table(name = "REPORT")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class Report 
+{
+	@Id
+	@Column(name = "CODICE_REPORT")
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	private Integer codiceReport;
+	
+	@Column(name = "DESCRIZIONE_REPORT")
+	private String descrizioneRecord;
+
+	@OneToMany(mappedBy = "report")
+	private List<AssReportRuoloMensa> listaAssReportRuoloMensa;
+	
+	@OneToMany(mappedBy = "report")
+	private List<ReportInviato> listaReportInviato;
+}

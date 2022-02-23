@@ -30,4 +30,8 @@ public class RuoloMensa
 	
 	@OneToMany(mappedBy = "ruolo")
 	private List<AssDipendenteRuolo> listaDipendenteRuolo;
+	
+	@OneToMany(mappedBy = "ruoloMensa")
+	private List<AssReportRuoloMensa> listaAssReportRuoloMensa;
+	
 }

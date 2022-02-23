@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>it.gesev.mensa</groupId>
-	<artifactId>GeSeV-GestioneMensa</artifactId>
+	<artifactId>GeSeVGestioneMensa</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>GeSeV-GestioneMensa</name>
+	<name>GeSeVGestioneMensa</name>
 	<description>GeSeV GestioneMensa</description>
 	<properties>
 		<java.version>1.8</java.version>
