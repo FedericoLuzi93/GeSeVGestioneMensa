@@ -42,8 +42,6 @@ public class MensaDAOImpl implements MensaDAO
 		//Controllo Stringhe e Numeri 
 		if(StringUtils.isBlank(mensa.getDescrizioneMensa()) || StringUtils.isBlank(mensa.getServizioFestivo()) || 
 				StringUtils.isBlank(mensa.getNumeroAutorizzazioneSanitaria()) || StringUtils.isBlank(mensa.getAutSanitariaRilasciataDa()) ||
-				StringUtils.isBlank(mensa.getVia()) || StringUtils.isBlank(mensa.getCap()) ||
-				StringUtils.isBlank(mensa.getCitta()) || mensa.getNumeroCivico() <= 0  || 
 				mensa.getOrarioDal() == null || mensa.getOrarioAl() == null || mensa.getDataAutorizzazioneSanitaria() == null || mensa.getOraFinePrenotazione() == null)
 		{
 			logger.info("Impossibile creare una mensa. Campi inseriti non validi");
@@ -57,6 +55,7 @@ public class MensaDAOImpl implements MensaDAO
 		
 		logger.info("Inserimento nuova mensa in corso...");
 		mensaRepository.save(mensa);
+		logger.info("Inserimento avvenuto con successo");
 		return mensa.getCodiceMensa();
 	}
 
@@ -74,10 +73,19 @@ public class MensaDAOImpl implements MensaDAO
 			throw new GesevException("Impossibile modificare la mensa, idMensa non presente", HttpStatus.BAD_REQUEST);
 		}
 		
-		//Controllo unicità
-		
-		
-		return 0;
+		//Controllo campi mensa
+		if(StringUtils.isBlank(mensa.getDescrizioneMensa()) || StringUtils.isBlank(mensa.getServizioFestivo()) || 
+				StringUtils.isBlank(mensa.getNumeroAutorizzazioneSanitaria()) || StringUtils.isBlank(mensa.getAutSanitariaRilasciataDa()) ||
+				mensa.getOrarioDal() == null || mensa.getOrarioAl() == null || mensa.getDataAutorizzazioneSanitaria() == null || mensa.getOraFinePrenotazione() == null)
+		{
+			logger.info("Impossibile modificare una mensa. Campi inseriti non validi");
+			throw new GesevException("Impossibile modificare una mensa. Campi inseriti non validi", HttpStatus.BAD_REQUEST);
+		}
+
+		logger.info("Aggiornamento in corso...");
+		mensaRepository.save(mensa);	
+		logger.info("Aggiornamento avvenuto con successo");
+		return mensa.getCodiceMensa();
 	}
 
 }
