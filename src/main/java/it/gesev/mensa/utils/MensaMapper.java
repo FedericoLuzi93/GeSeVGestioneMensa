@@ -1,6 +1,7 @@
 package it.gesev.mensa.utils;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
 
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -20,8 +21,16 @@ public class MensaMapper
 		ModelMapper mapper = new ModelMapper();
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
 		MensaDTO mensaDTO= mapper.map(mensa, MensaDTO.class);
+		
+		//Date to String
 		if(mensa.getDataAutorizzazioneSanitaria() != null)
 			mensaDTO.setDataAutorizzazioneSanitaria(simpleDateFormat.format(mensa.getDataAutorizzazioneSanitaria()));
+		
+		//LocalTime a String
+		mensaDTO.setOrarioAl(mensa.getOrarioAl().toString());
+		mensaDTO.setOrarioDal(mensa.getOrarioDal().toString());
+		mensaDTO.setOraFinePrenotazione(mensa.getOraFinePrenotazione().toString());
+		
 		return mensaDTO;
 	}
 	
@@ -31,6 +40,14 @@ public class MensaMapper
 		logger.info("Accesso a mapToEntity, classe MensaMapper");
 		ModelMapper mapper = new ModelMapper();
 		Mensa mensa= mapper.map(mensaDTO, Mensa.class);
+		
+		
+			
+		//String to LocalTime
+		mensa.setOrarioAl(ControlloData.controlloTempo(mensaDTO.getOrarioAl()));
+		mensa.setOrarioDal(ControlloData.controlloTempo(mensaDTO.getOrarioDal()));
+		mensa.setOraFinePrenotazione(ControlloData.controlloTempo(mensaDTO.getOraFinePrenotazione()));
+		
 		return mensa;
 	}
 }

@@ -8,4 +8,5 @@ public interface MensaService
 {
 	public List<MensaDTO> getAllMense();
 	public int createMensa(MensaDTO mensaDTO);
+	public int updateMensa(MensaDTO mensaDTO, int idMensa);
 }

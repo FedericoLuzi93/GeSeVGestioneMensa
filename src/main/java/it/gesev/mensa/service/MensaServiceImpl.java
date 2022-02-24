@@ -49,7 +49,7 @@ public class MensaServiceImpl implements MensaService
 		try
 		{
 			logger.info("Accesso a createMensa, classe MensaServiceImpl");
-			mensa = MensaMapper.mapToEntity(mensaDTO);			
+ 			mensa = MensaMapper.mapToEntity(mensaDTO);			
 		}
 		catch(GesevException exc)
 		{
@@ -58,6 +58,25 @@ public class MensaServiceImpl implements MensaService
 		}
 		logger.info("Crezione mensa in corso...");
 		return mensaDAO.createMensa(mensa);
+	}
+
+	/* Aggiorna una Mensa */
+	public int updateMensa(MensaDTO mensaDTO, int idMensa) 
+	{
+		Mensa mensa = null;
+		try
+		{
+			logger.info("Accesso a updateMensa, classe MensaServiceImpl");
+			mensa = MensaMapper.mapToEntity(mensaDTO);			
+		}
+		catch(GesevException exc)
+		{
+			logger.info("Eccezione nel servizio updateMensa" + exc);
+			throw new GesevException("Non è stato possibile aggiornare la mensa" + exc, HttpStatus.BAD_REQUEST);
+		}
+		logger.info("Aggiornamento in corso...");
+		mensaDAO.updateMensa(mensa, idMensa);
+		return mensa.getCodiceMensa();
 	}
 
 }
