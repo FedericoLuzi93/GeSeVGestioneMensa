@@ -19,7 +19,7 @@ public class RuoloMensa
 	@Id
 	@Column(name = "CODICE_RUOLO_MENSA")
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Integer codicRuoloMensa;
+	private Integer codiceRuoloMensa;
 	
 	@Column(name = "DESCRIZIONE_RUOLO_MENSA")
 	private String descrizioneRuoloMensa;
