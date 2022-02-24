@@ -38,6 +38,9 @@ public class AssDipendenteRuolo
 	@Column(name = "DATA_INIZIO_RUOLO")
 	private Date dataInizioRuolo;
 	
+	@Column(name = "DATA_FINE_RUOLO")
+	private Date dataFineRuolo;
+	
 	
 	
 }

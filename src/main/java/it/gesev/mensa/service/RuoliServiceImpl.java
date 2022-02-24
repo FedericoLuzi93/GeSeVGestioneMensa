@@ -1,5 +1,6 @@
 package it.gesev.mensa.service;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,6 +60,7 @@ public class RuoliServiceImpl implements RuoliService
 				ruoloDTO.setDipendente(mapper.map(ruolo.getDipendente(), DipendenteDTO.class));
 				ruoloDTO.setRuolo(mapper.map(ruolo.getRuolo(), RuoloDTO.class));
 				ruoloDTO.setAssDipendenteRuoloId(ruolo.getAssDipendenteRuoloId());
+				ruoloDTO.setOrganoDirettivo(ruolo.getRuolo().getOrganoDirettivo().getDescrizioneOrganoDirettivo());
 				
 				listaRuoliDTO.add(ruoloDTO);
 			}
@@ -104,6 +106,15 @@ public class RuoliServiceImpl implements RuoliService
 		}
 		
 		return listaRuoliDTO;
+	}
+
+	@Override
+	public void aggiungiRuoloDipendente(AssDipendenteRuoloDTO associazione) throws ParseException 
+	{
+		logger.info("Servizio per l'associazione del ruolo...");
+		
+		ruoliDAO.aggiungiRuoloDipendente(associazione.getDipendente().getCodiceDipendente(), associazione.getRuolo().getCodiceRuoloMensa());
+		
 	}
 
 }

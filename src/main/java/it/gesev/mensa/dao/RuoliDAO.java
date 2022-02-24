@@ -1,5 +1,6 @@
 package it.gesev.mensa.dao;
 
+import java.text.ParseException;
 import java.util.List;
 
 import it.gesev.mensa.entity.AssDipendenteRuolo;
@@ -13,4 +14,5 @@ public interface RuoliDAO
 	public List<AssDipendenteRuolo> getListaDipendenteRuolo();
 	public List<OrganoDirettivo> getListaOrganiDirettivi();
 	public List<RuoloMensa> getRuoliByIdOrdineDirettivo(Integer idOrganoDirettivo);
+	public void aggiungiRuoloDipendente(Integer idDipendente, Integer idRuolo) throws ParseException;
 }
