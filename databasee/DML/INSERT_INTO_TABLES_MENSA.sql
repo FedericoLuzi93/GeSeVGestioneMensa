@@ -83,4 +83,8 @@ INSERT INTO dipendente (foto, nome, cognome, codice_fiscale, cmd, matricola, ema
 INSERT INTO dipendente (foto, nome, cognome, codice_fiscale, cmd, matricola, email, tipo_personale, grado, ente_appartenenza, data_assunzione_forza, data_perdita_forza, ruolo_giuridico, ruolo_funzionale) VALUES(NULL, 'Giacomo', 'Leopardi', 'LPDGCM09R15H501Y', '1111111111ASDFGHJKLZ', '1111111111', 'g.leopardi@storia.it', 'C', 'Soldato semplice', '2', '2019-01-01', '9999-12-31', NULL, NULL);
 INSERT INTO dipendente (foto, nome, cognome, codice_fiscale, cmd, matricola, email, tipo_personale, grado, ente_appartenenza, data_assunzione_forza, data_perdita_forza, ruolo_giuridico, ruolo_funzionale) VALUES(NULL, 'Alessandro', 'Manzoni', 'MNZLSS09R15H501Y', '2222222222ASDFGHJKLZ', '2222222222', 'a.manzoni@storia.it', 'T', 'Caporal maggiore', '3', '2020-01-01', '9999-12-31', NULL, NULL);
 
-
+INSERT INTO tipo_forma_vettovagliamento (descrizione) VALUES('Gestione diretta');
+INSERT INTO tipo_forma_vettovagliamento (descrizione) VALUES('Gestione mista');
+INSERT INTO tipo_forma_vettovagliamento (descrizione) VALUES('Gestione indiretta');
+INSERT INTO tipo_forma_vettovagliamento (descrizione) VALUES('Fornitura di buono pasto');
+INSERT INTO tipo_forma_vettovagliamento (descrizione) VALUES('Fornitura di razione viveri da combattimento');

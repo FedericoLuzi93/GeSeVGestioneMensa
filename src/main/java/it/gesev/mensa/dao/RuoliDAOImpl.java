@@ -9,8 +9,10 @@ import org.springframework.stereotype.Component;
 
 import it.gesev.mensa.entity.AssDipendenteRuolo;
 import it.gesev.mensa.entity.Dipendente;
+import it.gesev.mensa.entity.OrganoDirettivo;
 import it.gesev.mensa.repository.AssRuoloDipendenteRepository;
 import it.gesev.mensa.repository.DipendenteRepository;
+import it.gesev.mensa.repository.OrganoDirettivoRepository;
 
 @Component
 public class RuoliDAOImpl implements RuoliDAO 
@@ -23,6 +25,9 @@ public class RuoliDAOImpl implements RuoliDAO
 	
 	@Autowired
 	private AssRuoloDipendenteRepository assRuoloDipendenteRepository;
+	
+	@Autowired
+	private OrganoDirettivoRepository organoDirettivoRepository;
 	
 	@Override
 	public List<Dipendente> getListaDipendenti() 
@@ -43,6 +48,16 @@ public class RuoliDAOImpl implements RuoliDAO
 		
 		return listaDipendentiRuolo;
 		
+	}
+
+	@Override
+	public List<OrganoDirettivo> getListaOrganiDirettivi() 
+	{
+		logger.info("Ricerca degli organi direttivi...");
+		List<OrganoDirettivo> listaOrganiDirettivi = organoDirettivoRepository.findAll();
+		logger.info("Trovati " + listaOrganiDirettivi.size() + " elementi.");
+		
+		return listaOrganiDirettivi;
 	}
 
 }

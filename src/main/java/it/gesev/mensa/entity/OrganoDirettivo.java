@@ -1,11 +1,13 @@
 package it.gesev.mensa.entity;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -27,8 +29,8 @@ public class OrganoDirettivo
 	@Column(name = "DESCRIZIONE_ORGANO_DIRETTIVO")
 	private String descrizioneOrganoDirettivo;
 	
-	@OneToOne(mappedBy = "organoDirettivo")
-	private RuoloMensa ruoloMensa;
+	@OneToMany(mappedBy = "organoDirettivo")
+	private List<RuoloMensa> ruoloMensa;
 	
 	
 }

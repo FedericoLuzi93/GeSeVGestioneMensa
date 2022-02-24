@@ -13,9 +13,12 @@ import it.gesev.mensa.dao.RuoliDAO;
 import it.gesev.mensa.dto.AssDipendenteRuoloDTO;
 import it.gesev.mensa.dto.DettaglioRuoloDTO;
 import it.gesev.mensa.dto.DipendenteDTO;
+import it.gesev.mensa.dto.OrganoDirettivoDTO;
 import it.gesev.mensa.dto.RuoloDTO;
 import it.gesev.mensa.entity.AssDipendenteRuolo;
 import it.gesev.mensa.entity.Dipendente;
+import it.gesev.mensa.entity.OrganoDirettivo;
+import it.gesev.mensa.repository.OrganoDirettivoRepository;
 
 @Service
 public class RuoliServiceImpl implements RuoliService 
@@ -64,6 +67,26 @@ public class RuoliServiceImpl implements RuoliService
 		}
 		
 		return dettaglio;
+		
+	}
+
+	@Override
+	public List<OrganoDirettivoDTO> getListaOrganiDirettivi() 
+	{
+		logger.info("Servizio per la ricerca degli organi direttivi...");
+		
+		List<OrganoDirettivoDTO> listaOrganiDTO = new ArrayList<>();
+		List<OrganoDirettivo> listaOrgani = ruoliDAO.getListaOrganiDirettivi();
+		
+		if(listaOrgani.size() >  0)
+		{
+			ModelMapper mapper = new ModelMapper();
+			
+			for(OrganoDirettivo organo : listaOrgani)
+				listaOrganiDTO.add(mapper.map(organo, OrganoDirettivoDTO.class));
+		}
+		
+		return listaOrganiDTO;
 		
 	}
 
