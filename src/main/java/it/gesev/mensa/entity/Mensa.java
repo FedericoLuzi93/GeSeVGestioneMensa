@@ -9,6 +9,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -68,6 +70,22 @@ public class Mensa
 	
 	@Column(name="CITTA")
 	private String citta;
+	
+	@Column(name="PROVINCIA")
+	private String provincia;
+	
+	@Column(name="TELEFONO")
+	private String telefono;
+	
+	@Column(name="FAX")
+	private String fax;
+	
+	@Column(name="EMAIL")
+	private String email;
+	
+	@ManyToOne
+	@JoinColumn(name="TIPO_FORMA_VETTOVAGLIAMENTO_FK")
+	private TipoFormaVettovagliamento tipoFormaVettovagliamento;
 	
 	@OneToMany(mappedBy= "mensa")
 	private List<AssMensaTipoLocale> listaAssDipendenteRuolo;
