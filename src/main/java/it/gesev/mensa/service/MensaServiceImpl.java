@@ -1,5 +1,6 @@
 package it.gesev.mensa.service;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,10 +12,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import it.gesev.mensa.dao.MensaDAO;
+import it.gesev.mensa.dto.CreaMensaDTO;
+import it.gesev.mensa.dto.EnteDTO;
 import it.gesev.mensa.dto.MensaDTO;
+import it.gesev.mensa.dto.TipoLocaleDTO;
+import it.gesev.mensa.entity.AssMensaTipoLocale;
+import it.gesev.mensa.entity.Ente;
 import it.gesev.mensa.entity.Mensa;
+import it.gesev.mensa.entity.TipoLocale;
 import it.gesev.mensa.exc.GesevException;
+import it.gesev.mensa.repository.TipoLocaliRepository;
+import it.gesev.mensa.utils.AssMensaTipoLocaleMapper;
+import it.gesev.mensa.utils.EnteMapper;
 import it.gesev.mensa.utils.MensaMapper;
+import it.gesev.mensa.utils.TipoLocaleMapper;
 
 @Service
 public class MensaServiceImpl implements MensaService 
@@ -24,6 +35,10 @@ public class MensaServiceImpl implements MensaService
 	
 	@Value("${gesev.data.format}")
 	private String dateFormat;
+	
+	@Autowired
+	private TipoLocaliRepository tipoLocaliRepository;
+	
 	
 	private static final Logger logger = LoggerFactory.getLogger(MensaServiceImpl.class);
 
@@ -43,13 +58,18 @@ public class MensaServiceImpl implements MensaService
 	}
 
 	/* Crea una Mensa */
-	public int createMensa(MensaDTO mensaDTO) 
+	public int createMensa(CreaMensaDTO creaMensaDTO) throws ParseException 
 	{
 		Mensa mensa = null;
+		List<AssMensaTipoLocale> assMensaTipoLocale = null;
+		TipoLocale tipoLocale = null;
 		try
 		{
 			logger.info("Accesso a createMensa, classe MensaServiceImpl");
- 			mensa = MensaMapper.mapToEntity(mensaDTO);			
+ 			mensa = MensaMapper.mapToEntity(creaMensaDTO, dateFormat);	
+ 			assMensaTipoLocale = AssMensaTipoLocaleMapper.mapToEntity(creaMensaDTO, dateFormat);
+ 			
+ 			List<AssMensaTipoLocale> listaAssMensaTipoLocale = new ArrayList<>();
 		}
 		catch(GesevException exc)
 		{
@@ -57,7 +77,7 @@ public class MensaServiceImpl implements MensaService
 			throw new GesevException("Non è stato possibile creare la Mensa " + exc, HttpStatus.BAD_REQUEST);
 		}
 		logger.info("Crezione mensa in corso...");
-		return mensaDAO.createMensa(mensa);
+		return mensaDAO.createMensa(mensa, assMensaTipoLocale, tipoLocale);
 	}
 
 	/* Aggiorna una Mensa */
@@ -67,7 +87,7 @@ public class MensaServiceImpl implements MensaService
 		try
 		{
 			logger.info("Accesso a updateMensa, classe MensaServiceImpl");
-			mensa = MensaMapper.mapToEntity(mensaDTO);			
+			//mensa = MensaMapper.mapToEntity(mensaDTO);			
 		}
 		catch(GesevException exc)
 		{
@@ -77,6 +97,36 @@ public class MensaServiceImpl implements MensaService
 		logger.info("Aggiornamento in corso...");
 		mensaDAO.updateMensa(mensa, idMensa);
 		return mensa.getCodiceMensa();
+	}
+
+	/* Lista Locali */
+	public List<TipoLocaleDTO> getAllLocali() 
+	{
+		logger.info("Accesso a getAllLocali, classe MensaServiceImpl");
+		List<TipoLocale> listaTipoLocali = mensaDAO.getAllLocali();
+		List<TipoLocaleDTO> listaTipoLocaliDTO = new ArrayList<>();
+		for(TipoLocale tp : listaTipoLocali)
+		{
+			logger.info("Ciclo For in getAllLocali, classe MensaServiceImpl");
+			listaTipoLocaliDTO.add(TipoLocaleMapper.mapToDTO(tp));
+		}
+		logger.info("Fine getAllLocali, classe MensaServiceImpl");
+		return listaTipoLocaliDTO;
+	}
+
+	@Override
+	public List<EnteDTO> getAllEnti() 
+	{
+		logger.info("Accesso a getAllEnti, classe MensaServiceImpl");
+		List<Ente> enteLista = mensaDAO.getAllEnti();
+		List<EnteDTO> listaEnteDTO = new ArrayList<>();
+		for(Ente e : enteLista)
+		{
+			logger.info("Ciclo For in getAllEnti, classe MensaServiceImpl");
+			listaEnteDTO.add(EnteMapper.mapToDTO(e));
+		}
+		logger.info("Fine getAllEnti, classe MensaServiceImpl");
+		return listaEnteDTO;
 	}
 
 }

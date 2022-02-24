@@ -17,6 +17,9 @@ public class MensaDTO
 	private String dataAutorizzazioneSanitaria;
 	private String autSanitariaRilasciataDa;
 	private String oraFinePrenotazione;
+	private String dataInizioServizio;
+	private String dataFineServizio;
+	
 	private String via;
 	private Integer numeroCivico;
 	private String cap;

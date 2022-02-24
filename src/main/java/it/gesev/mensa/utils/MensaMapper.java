@@ -1,12 +1,15 @@
 package it.gesev.mensa.utils;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalTime;
+import java.util.Date;
 
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 
+import it.gesev.mensa.dto.CreaMensaDTO;
 import it.gesev.mensa.dto.MensaDTO;
 import it.gesev.mensa.entity.Mensa;
 
@@ -35,18 +38,22 @@ public class MensaMapper
 	}
 	
 	//DTO to Entity
-	public static Mensa mapToEntity(MensaDTO mensaDTO)
+	public static Mensa mapToEntity(CreaMensaDTO creaMensaDTO, String dateFormat) throws ParseException
 	{
 		logger.info("Accesso a mapToEntity, classe MensaMapper");
 		ModelMapper mapper = new ModelMapper();
-		Mensa mensa= mapper.map(mensaDTO, Mensa.class);
 		
 		
+		String dataString = creaMensaDTO.getDataAutorizzazioneSanitaria();
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
+		Date date = simpleDateFormat.parse(dataString);
+		Mensa mensa= mapper.map(creaMensaDTO, Mensa.class);
+		mensa.setDataAutorizzazioneSanitaria(date);
 			
 		//String to LocalTime
-		mensa.setOrarioAl(ControlloData.controlloTempo(mensaDTO.getOrarioAl()));
-		mensa.setOrarioDal(ControlloData.controlloTempo(mensaDTO.getOrarioDal()));
-		mensa.setOraFinePrenotazione(ControlloData.controlloTempo(mensaDTO.getOraFinePrenotazione()));
+		mensa.setOrarioAl(ControlloData.controlloTempo(creaMensaDTO.getOrarioAl()));
+		mensa.setOrarioDal(ControlloData.controlloTempo(creaMensaDTO.getOrarioDal()));
+		mensa.setOraFinePrenotazione(ControlloData.controlloTempo(creaMensaDTO.getOraFinePrenotazione()));
 		
 		return mensa;
 	}

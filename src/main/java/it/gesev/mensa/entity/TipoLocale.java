@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -31,7 +32,7 @@ public class TipoLocale
 	@Column(name="DESCRIZIONE_TIPO_LOCALE")
 	private String descrizioneTipoLocale;
 	
-	@OneToMany(mappedBy= "tipoLocale")
+	@OneToMany(mappedBy= "tipoLocale", fetch = FetchType.LAZY)
 	private List<AssMensaTipoLocale> listaAssDipendenteRuolo;
 
 }

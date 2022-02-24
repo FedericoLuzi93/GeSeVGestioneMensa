@@ -20,6 +20,9 @@ public class CreaMensaDTO
 	private String dataAutorizzazioneSanitaria;
 	private String autSanitariaRilasciataDa;
 	private String oraFinePrenotazione;
+	private String dataInizioServizio;
+	private String dataFineServizio;
+	
 	
 	//Contatti
 	private String via;
@@ -31,9 +34,10 @@ public class CreaMensaDTO
 	private String fax;
 	private String email;
 	
-	//Liste Enti e Locali
-	private List<TipoLocaleDTO> listaTipoLocaliDTO;
+	//Liste Enti, AssMensaTipoLocale e CodiceTipoFormaVettovagliamento
+	private Integer codiceTipoFormaVettovagliamento;
 	private List<EnteDTO> listaEntiDTO;
+	private List<AssMensaTipoLocaleDTO> assMensaTipoLocaleDTO;
 	
 
 }
