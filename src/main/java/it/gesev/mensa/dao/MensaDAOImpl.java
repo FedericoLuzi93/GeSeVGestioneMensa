@@ -11,9 +11,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
+import it.gesev.mensa.entity.AssMensaTipoLocale;
+import it.gesev.mensa.entity.Ente;
 import it.gesev.mensa.entity.Mensa;
+import it.gesev.mensa.entity.TipoLocale;
 import it.gesev.mensa.exc.GesevException;
+import it.gesev.mensa.repository.AssMensaTipoLocaleRepository;
+import it.gesev.mensa.repository.EnteRepository;
 import it.gesev.mensa.repository.MensaRepository;
+import it.gesev.mensa.repository.TipoLocaliRepository;
 
 @Repository
 @Component
@@ -21,6 +27,15 @@ public class MensaDAOImpl implements MensaDAO
 {
 	@Autowired
 	private MensaRepository mensaRepository;
+	
+	@Autowired
+	private TipoLocaliRepository tipoLocaliRepository;
+	
+	@Autowired
+	private EnteRepository enteRepository;
+	
+	@Autowired
+	private AssMensaTipoLocaleRepository assMensaTipoLocaleRepository;
 	
 	private static final Logger logger = LoggerFactory.getLogger(MensaDAOImpl.class);
 	
@@ -34,7 +49,7 @@ public class MensaDAOImpl implements MensaDAO
 
 	/* Crea una Mensa */
 	@Override
-	public int createMensa(Mensa mensa) 
+	public int createMensa(Mensa mensa, List<AssMensaTipoLocale> assMensaTipoLocale, TipoLocale tipoLocale) 
 	{
 		logger.info("Accesso a createMensa, classe MensaDAOImpl");	
 		
@@ -42,20 +57,27 @@ public class MensaDAOImpl implements MensaDAO
 		//Controllo Stringhe e Numeri 
 		if(StringUtils.isBlank(mensa.getDescrizioneMensa()) || StringUtils.isBlank(mensa.getServizioFestivo()) || 
 				StringUtils.isBlank(mensa.getNumeroAutorizzazioneSanitaria()) || StringUtils.isBlank(mensa.getAutSanitariaRilasciataDa()) ||
-				mensa.getOrarioDal() == null || mensa.getOrarioAl() == null || mensa.getDataAutorizzazioneSanitaria() == null || mensa.getOraFinePrenotazione() == null)
+				mensa.getOrarioDal() == null || mensa.getOrarioAl() == null || mensa.getOraFinePrenotazione() == null)
 		{
 			logger.info("Impossibile creare una mensa. Campi inseriti non validi");
 			throw new GesevException("Impossibile creare una mensa. Campi inseriti non validi", HttpStatus.BAD_REQUEST);
 		}
-
-		//Controllo unicità
-		Integer numMense = mensaRepository.cercaPerIndirizzo(mensa.getVia(), mensa.getCap(), mensa.getCitta(),  mensa.getNumeroCivico());
-		if(numMense > 0)
-			throw new GesevException("E' gia presente una mensa a questo indirizzo", HttpStatus.BAD_REQUEST);
+	
 		
+		//Controllo
 		logger.info("Inserimento nuova mensa in corso...");
-		mensaRepository.save(mensa);
+		Mensa mensaSalvata = mensaRepository.save(mensa);
+		
+		
+		/* Controllo Esistenza TipoLocale */
+		//ciclo for assegno la mensa a tutti pero cambio il tipoLocale
+		for(AssMensaTipoLocale assocazione : assMensaTipoLocale)
+		{
+			assocazione.setMensa(mensaSalvata);
+			assMensaTipoLocaleRepository.save(assocazione);
+		}
 		logger.info("Inserimento avvenuto con successo");
+		
 		return mensa.getCodiceMensa();
 	}
 
@@ -76,7 +98,7 @@ public class MensaDAOImpl implements MensaDAO
 		//Controllo campi mensa
 		if(StringUtils.isBlank(mensa.getDescrizioneMensa()) || StringUtils.isBlank(mensa.getServizioFestivo()) || 
 				StringUtils.isBlank(mensa.getNumeroAutorizzazioneSanitaria()) || StringUtils.isBlank(mensa.getAutSanitariaRilasciataDa()) ||
-				mensa.getOrarioDal() == null || mensa.getOrarioAl() == null || mensa.getDataAutorizzazioneSanitaria() == null || mensa.getOraFinePrenotazione() == null)
+				mensa.getOrarioDal() == null || mensa.getOrarioAl() == null || mensa.getOraFinePrenotazione() == null)
 		{
 			logger.info("Impossibile modificare una mensa. Campi inseriti non validi");
 			throw new GesevException("Impossibile modificare una mensa. Campi inseriti non validi", HttpStatus.BAD_REQUEST);
@@ -86,6 +108,25 @@ public class MensaDAOImpl implements MensaDAO
 		mensaRepository.save(mensa);	
 		logger.info("Aggiornamento avvenuto con successo");
 		return mensa.getCodiceMensa();
+	}
+	
+	
+	/* --------------------------------------------------------------------------------- */
+	
+	/* Lista Locali */
+	@Override
+	public List<TipoLocale> getAllLocali() 
+	{
+		logger.info("Accesso a getAllLocali, classe MensaDAOImpl");
+		return tipoLocaliRepository.findAll();
+	}
+
+	/* Lista Enti */
+	@Override
+	public List<Ente> getAllEnti() 
+	{
+		logger.info("Accesso a getAllEnti, classe MensaDAOImpl");
+		return enteRepository.findAll();
 	}
 
 }

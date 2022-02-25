@@ -1,9 +1,5 @@
 package it.gesev.mensa.dto;
 
-import java.util.Date;
-
-import it.gesev.mensa.entity.Mensa;
-import it.gesev.mensa.entity.TipoLocale;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,12 +8,12 @@ import lombok.Setter;
 public class AssMensaTipoLocaleDTO 
 {
 	private Integer assMensaTipoLocaleId;
-	private Date dataInizio;
-	private Date dataFine;
+	private String dataInizio;
+	private String dataFine;
 	private Integer superficie;
 	private Integer numeroLocali;
 	private String note;
-	private Mensa mensa;
-	private TipoLocale tipoLocale;
+	private MensaDTO mensaDTO;
+	private TipoLocaleDTO tipoLocaleDTO;
 	
 }

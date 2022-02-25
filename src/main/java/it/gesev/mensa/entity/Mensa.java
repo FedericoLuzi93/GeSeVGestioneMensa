@@ -83,6 +83,12 @@ public class Mensa
 	@Column(name="EMAIL")
 	private String email;
 	
+	@Column(name="DATA_INIZIO_SERVIZIO")
+	private Date dataInizioServizio;
+	
+	@Column(name="DATA_FINE_SERVIZIO")
+	private Date dataFineServizio;
+	
 	@ManyToOne
 	@JoinColumn(name="TIPO_FORMA_VETTOVAGLIAMENTO_FK")
 	private TipoFormaVettovagliamento tipoFormaVettovagliamento;
