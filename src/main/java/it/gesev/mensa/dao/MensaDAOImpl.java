@@ -4,6 +4,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,22 +52,23 @@ public class MensaDAOImpl implements MensaDAO
 
 	/* Crea una Mensa */
 	@Override
+	@Transactional
 	public int createMensa(Mensa mensa, List<AssMensaTipoLocale> assMensaTipoLocale) 
 	{
 		logger.info("Accesso a createMensa, classe MensaDAOImpl");	
 
 		logger.info("Inizio controlli in corso...");		
 		//Controllo Campi mensa
-		if(mensa.getDescrizioneMensa().isBlank() || mensa.getOrarioDal() == null || mensa.getOrarioAl() == null || 
-				mensa.getServizioFestivo().isBlank() || mensa.getOraFinePrenotazione() == null)
+		if(StringUtils.isBlank(mensa.getDescrizioneMensa()) || mensa.getOrarioDal() == null || mensa.getOrarioAl() == null || 
+				StringUtils.isBlank(mensa.getServizioFestivo()) || mensa.getOraFinePrenotazione() == null)
 		{
 			logger.info("Impossibile modificare la mensa, campi mensa non validi");
 			throw new GesevException("Impossibile modificare la mensa, campi mensa non validi", HttpStatus.BAD_REQUEST);
 		}
 
 		//Controllo Campi Contatto
-		if(mensa.getVia().isBlank() || mensa.getNumeroCivico() == null || mensa.getCap().isBlank() || 
-				mensa.getCitta().isBlank() || mensa.getProvincia().isBlank() || mensa.getTelefono().isBlank())
+		if(StringUtils.isBlank(mensa.getVia()) || mensa.getNumeroCivico() == null || StringUtils.isBlank(mensa.getCap()) || 
+				StringUtils.isBlank(mensa.getCitta()) || StringUtils.isBlank(mensa.getProvincia()) || StringUtils.isBlank(mensa.getTelefono()))
 		{
 			logger.info("Impossibile modificare la mensa, campi contatto non validi");
 			throw new GesevException("Impossibile modificare la mensa, campi contatto non validi", HttpStatus.BAD_REQUEST);
@@ -95,6 +99,7 @@ public class MensaDAOImpl implements MensaDAO
 
 	/* Aggiorna una Mensa */
 	@Override
+	@Transactional
 	public int updateMensa(Mensa mensa, List<AssMensaTipoLocale> assMensaTipoLocale, int idMensa) 
 	{
 		logger.info("Accesso a updateMensa, classe MensaDAOImpl");	
@@ -112,16 +117,16 @@ public class MensaDAOImpl implements MensaDAO
 			throw new GesevException("Impossibile modificare la mensa, Mensa non presente", HttpStatus.BAD_REQUEST);
 
 		//Controllo Campi mensa
-		if(mensa.getDescrizioneMensa().isBlank() || mensa.getOrarioDal() == null || mensa.getOrarioAl() == null || 
-				mensa.getServizioFestivo().isBlank() || mensa.getOraFinePrenotazione() == null)
+		if(StringUtils.isBlank(mensa.getDescrizioneMensa()) || mensa.getOrarioDal() == null || mensa.getOrarioAl() == null || 
+				StringUtils.isBlank(mensa.getServizioFestivo()) || mensa.getOraFinePrenotazione() == null)
 		{
 			logger.info("Impossibile modificare la mensa, campi mensa non validi");
 			throw new GesevException("Impossibile modificare la mensa, campi mensa non validi", HttpStatus.BAD_REQUEST);
 		}
 
 		//Controllo Campi Contatto
-		if(mensa.getVia().isBlank() || mensa.getNumeroCivico() == null || mensa.getCap().isBlank() || 
-				mensa.getCitta().isBlank() || mensa.getProvincia().isBlank() || mensa.getTelefono().isBlank())
+		if(StringUtils.isBlank(mensa.getVia()) || mensa.getNumeroCivico() == null || StringUtils.isBlank(mensa.getCap()) || 
+				StringUtils.isBlank(mensa.getCitta()) || StringUtils.isBlank(mensa.getProvincia()) || StringUtils.isBlank(mensa.getTelefono()))
 		{
 			logger.info("Impossibile modificare la mensa, campi contatto non validi");
 			throw new GesevException("Impossibile modificare la mensa, campi contatto non validi", HttpStatus.BAD_REQUEST);
@@ -175,6 +180,22 @@ public class MensaDAOImpl implements MensaDAO
 		Date dateNow = new Date();
 		if(mensa.getDataFineServizio().before(mensa.getDataInizioServizio()) || mensa.getDataFineServizio().before(dateNow) || mensa.getDataFineServizio() == null)
 			throw new GesevException("Impossibile disabilitare la mensa, Data Fine Servizio non valida", HttpStatus.BAD_REQUEST);
+		
+		//Controllo Campi mensa
+		if(StringUtils.isBlank(mensa.getDescrizioneMensa()) || mensa.getOrarioDal() == null || mensa.getOrarioAl() == null || 
+				StringUtils.isBlank(mensa.getServizioFestivo()) || mensa.getOraFinePrenotazione() == null)
+		{
+			logger.info("Impossibile modificare la mensa, campi mensa non validi");
+			throw new GesevException("Impossibile modificare la mensa, campi mensa non validi", HttpStatus.BAD_REQUEST);
+		}
+
+		//Controllo Campi Contatto
+		if(StringUtils.isBlank(mensa.getVia()) || mensa.getNumeroCivico() == null || StringUtils.isBlank(mensa.getCap()) || 
+				StringUtils.isBlank(mensa.getCitta()) || StringUtils.isBlank(mensa.getProvincia()) || StringUtils.isBlank(mensa.getTelefono()))
+		{
+			logger.info("Impossibile modificare la mensa, campi contatto non validi");
+			throw new GesevException("Impossibile modificare la mensa, campi contatto non validi", HttpStatus.BAD_REQUEST);
+		}
 
 		// Aggiornamento 
 		logger.info("Aggiornamento in corso...");

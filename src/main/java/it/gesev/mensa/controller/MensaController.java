@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -34,10 +35,10 @@ public class MensaController
 {
 	@Autowired
 	private MensaService mensaService;
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(MensaController.class);
 	private final String MESSAGGIO_ERRORE_INTERNO = "Si e' verificato un errore interno";
-	
+
 	/* Leggi tutte le Mense */
 	@GetMapping("/leggiTutteLeMense")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
@@ -69,7 +70,7 @@ public class MensaController
 		esito.setStatus(status.value());
 		return ResponseEntity.status(status).headers(new HttpHeaders()).body(esito);
 	}
-	
+
 	/* Crea una Mensa */
 	@PostMapping("/creaMensa")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
@@ -100,7 +101,7 @@ public class MensaController
 		}
 		return ResponseEntity.status(esito.getStatus()).body(esito);
 	}
-	
+
 	/* Aggiorna una Mensa */
 	@PutMapping("/aggiornaMensa/{idMensa}")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
@@ -131,7 +132,7 @@ public class MensaController
 		}
 		return ResponseEntity.status(esito.getStatus()).body(esito);
 	}
-	
+
 	/* Disattiva una Mensa */
 	@PutMapping("/DisattivaMensa/{idMensa}")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
@@ -162,9 +163,29 @@ public class MensaController
 		}
 		return ResponseEntity.status(esito.getStatus()).body(esito);
 	}
-	
+
+//	@PostMapping(value = "/downloadAutorizzazioneSanitaria")
+//	@ApiResponses(value = {
+//			@ApiResponse(code = 200, message = "Richiesta download file controdeduzioni andata a buon fine"),
+//			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
+//			@ApiResponse(code = 500, message = "Errore interno") })
+//	public ResponseEntity<Resource> downloadFileControdeduzioni(@RequestBody MultipartFile multipartFile) 
+//	{
+//		logger.info("Invocato servizio /downloadFileControdeduzioni");
+//		HttpHeaders headers = new HttpHeaders();
+//		try {
+//			/* invio file */
+//			headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + multipartFile
+//			return ResponseEntity.ok().headers(headers).contentLength(fileFornitori.getBlobCnt().length)
+//		}
+//		catch (Exception ex) 
+//		{
+//			logger.info("Si e' verificata un'eccezione", ex);
+//		}
+//	}
+
 	/* --------------------------------------------------------------------------------- */
-	
+
 	/* LEGGI LISTA */
 	@GetMapping("/leggiLista")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
@@ -196,7 +217,7 @@ public class MensaController
 		esito.setStatus(status.value());
 		return ResponseEntity.status(status).headers(new HttpHeaders()).body(esito);
 	}
-	
+
 	/* LEGGI ENTI */
 	@GetMapping("/leggiEnti")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
@@ -228,5 +249,5 @@ public class MensaController
 		esito.setStatus(status.value());
 		return ResponseEntity.status(status).headers(new HttpHeaders()).body(esito);
 	}
-	
+
 }
