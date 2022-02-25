@@ -1,5 +1,7 @@
 package it.gesev.mensa.dao;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,18 +29,18 @@ public class MensaDAOImpl implements MensaDAO
 {
 	@Autowired
 	private MensaRepository mensaRepository;
-	
+
 	@Autowired
 	private TipoLocaliRepository tipoLocaliRepository;
-	
+
 	@Autowired
 	private EnteRepository enteRepository;
-	
+
 	@Autowired
 	private AssMensaTipoLocaleRepository assMensaTipoLocaleRepository;
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(MensaDAOImpl.class);
-	
+
 	/* Leggi Tutte le Mense */
 	@Override
 	public List<Mensa> getAllMense() 
@@ -49,70 +51,153 @@ public class MensaDAOImpl implements MensaDAO
 
 	/* Crea una Mensa */
 	@Override
-	public int createMensa(Mensa mensa, List<AssMensaTipoLocale> assMensaTipoLocale, TipoLocale tipoLocale) 
+	public int createMensa(Mensa mensa, List<AssMensaTipoLocale> assMensaTipoLocale) 
 	{
 		logger.info("Accesso a createMensa, classe MensaDAOImpl");	
-		
+
 		logger.info("Inizio controlli in corso...");		
-		//Controllo Stringhe e Numeri 
-		if(StringUtils.isBlank(mensa.getDescrizioneMensa()) || StringUtils.isBlank(mensa.getServizioFestivo()) || 
-				StringUtils.isBlank(mensa.getNumeroAutorizzazioneSanitaria()) || StringUtils.isBlank(mensa.getAutSanitariaRilasciataDa()) ||
-				mensa.getOrarioDal() == null || mensa.getOrarioAl() == null || mensa.getOraFinePrenotazione() == null)
+		//Controllo Campi mensa
+		if(mensa.getDescrizioneMensa().isBlank() || mensa.getOrarioDal() == null || mensa.getOrarioAl() == null || 
+				mensa.getServizioFestivo().isBlank() || mensa.getNumeroAutorizzazioneSanitaria().isBlank() || 
+				mensa.getNumeroAutorizzazioneSanitaria().isBlank() || mensa.getDataAutorizzazioneSanitaria() == null ||
+				mensa.getAutSanitariaRilasciataDa().isBlank() || mensa.getOraFinePrenotazione() == null)
 		{
-			logger.info("Impossibile creare una mensa. Campi inseriti non validi");
-			throw new GesevException("Impossibile creare una mensa. Campi inseriti non validi", HttpStatus.BAD_REQUEST);
+			logger.info("Impossibile modificare la mensa, campi mensa non validi");
+			throw new GesevException("Impossibile modificare la mensa, campi mensa non validi", HttpStatus.BAD_REQUEST);
 		}
-	
-		
-		//Controllo
+
+		//Controllo Campi Contatto
+		if(mensa.getVia().isBlank() || mensa.getNumeroCivico() == null || mensa.getCap().isBlank() || 
+				mensa.getCitta().isBlank() || mensa.getProvincia().isBlank() || mensa.getTelefono().isBlank() ||
+				mensa.getFax().isBlank() || mensa.getEmail().isBlank())
+		{
+			logger.info("Impossibile modificare la mensa, campi contatto non validi");
+			throw new GesevException("Impossibile modificare la mensa, campi contatto non validi", HttpStatus.BAD_REQUEST);
+		}
+
+		//Salvataggio Mensa
 		logger.info("Inserimento nuova mensa in corso...");
 		Mensa mensaSalvata = mensaRepository.save(mensa);
-		
-		
-		/* Controllo Esistenza TipoLocale */
-		//ciclo for assegno la mensa a tutti pero cambio il tipoLocale
+
+		//Salvataggio AssMensaTipoLocale
 		for(AssMensaTipoLocale assocazione : assMensaTipoLocale)
 		{
+			//Controllo AssMensaTipoLocale
+			if(assocazione.getDataInizio() == null || assocazione.getDataFine() == null || assocazione.getSuperficie() <= 0 ||
+					assocazione.getNumeroLocali() <0 || assocazione.getTipoLocale().getCodiceTipoLocale() <= 0)
+			{
+				logger.info("Impossibile modificare la mensa, campi associativi non validi");
+				throw new GesevException("Impossibile modificare la mensa, campi associativi non validi", HttpStatus.BAD_REQUEST);
+			}
 			assocazione.setMensa(mensaSalvata);
 			assMensaTipoLocaleRepository.save(assocazione);
 		}
 		logger.info("Inserimento avvenuto con successo");
-		
+
 		return mensa.getCodiceMensa();
 	}
 
 	/* Aggiorna una Mensa */
 	@Override
-	public int updateMensa(Mensa mensa, int idMensa) 
+	public int updateMensa(Mensa mensa, List<AssMensaTipoLocale> assMensaTipoLocale, int idMensa) 
 	{
 		logger.info("Accesso a updateMensa, classe MensaDAOImpl");	
-		
+		Mensa mensaMom = null;
+
 		//Controllo esistenza idMensa
 		Integer maxCodice = mensaRepository.getMaxMensaId();
 		if(idMensa > maxCodice || idMensa < 0)
 		{
-			logger.info("Impossibile modificare la mensa, idMensa non presente");
-			throw new GesevException("Impossibile modificare la mensa, idMensa non presente", HttpStatus.BAD_REQUEST);
+			logger.info("Impossibile modificare la mensa, Mensa non presente");
+			throw new GesevException("Impossibile modificare la mensa, Mensa non presente", HttpStatus.BAD_REQUEST);
 		}
-		
-		//Controllo campi mensa
-		if(StringUtils.isBlank(mensa.getDescrizioneMensa()) || StringUtils.isBlank(mensa.getServizioFestivo()) || 
-				StringUtils.isBlank(mensa.getNumeroAutorizzazioneSanitaria()) || StringUtils.isBlank(mensa.getAutSanitariaRilasciataDa()) ||
-				mensa.getOrarioDal() == null || mensa.getOrarioAl() == null || mensa.getOraFinePrenotazione() == null)
+		Optional<Mensa> optionalMensa = mensaRepository.findByCodiceMensa(idMensa);
+		if(!optionalMensa.isPresent())
+			throw new GesevException("Impossibile modificare la mensa, Mensa non presente", HttpStatus.BAD_REQUEST);
+
+		//Controllo Campi mensa
+		if(mensa.getDescrizioneMensa().isBlank() || mensa.getOrarioDal() == null || mensa.getOrarioAl() == null || 
+				mensa.getServizioFestivo().isBlank() || mensa.getNumeroAutorizzazioneSanitaria().isBlank() || 
+				mensa.getNumeroAutorizzazioneSanitaria().isBlank() || mensa.getDataAutorizzazioneSanitaria() == null ||
+				mensa.getAutSanitariaRilasciataDa().isBlank() || mensa.getOraFinePrenotazione() == null)
 		{
-			logger.info("Impossibile modificare una mensa. Campi inseriti non validi");
-			throw new GesevException("Impossibile modificare una mensa. Campi inseriti non validi", HttpStatus.BAD_REQUEST);
+			logger.info("Impossibile modificare la mensa, campi mensa non validi");
+			throw new GesevException("Impossibile modificare la mensa, campi mensa non validi", HttpStatus.BAD_REQUEST);
 		}
 
+		//Controllo Campi Contatto
+		if(mensa.getVia().isBlank() || mensa.getNumeroCivico() == null || mensa.getCap().isBlank() || 
+				mensa.getCitta().isBlank() || mensa.getProvincia().isBlank() || mensa.getTelefono().isBlank() ||
+				mensa.getFax().isBlank() || mensa.getEmail().isBlank())
+		{
+			logger.info("Impossibile modificare la mensa, campi contatto non validi");
+			throw new GesevException("Impossibile modificare la mensa, campi contatto non validi", HttpStatus.BAD_REQUEST);
+		}
+
+		// Aggiornamento 
 		logger.info("Aggiornamento in corso...");
-		mensaRepository.save(mensa);	
-		logger.info("Aggiornamento avvenuto con successo");
-		return mensa.getCodiceMensa();
+		if(optionalMensa.isPresent())
+		{
+			mensaMom = mensa;
+			mensaMom.setCodiceMensa(idMensa);
+			mensaRepository.save(mensaMom);
+
+			for(AssMensaTipoLocale assocazione : assMensaTipoLocale)		
+			{
+				//Controllo AssMensaTipoLocale
+				if(assocazione.getDataInizio() == null || assocazione.getDataFine() == null || assocazione.getSuperficie() <= 0 ||
+						assocazione.getNumeroLocali() <0 || assocazione.getTipoLocale().getCodiceTipoLocale() <= 0)
+				{
+					logger.info("Impossibile modificare la mensa, campi associativi non validi");
+					throw new GesevException("Impossibile modificare la mensa, campi associativi non validi", HttpStatus.BAD_REQUEST);
+				}
+				assocazione.setMensa(mensaMom);
+				assMensaTipoLocaleRepository.save(assocazione);
+			}
+			logger.info("Aggiornamento avvenuto con successo");	
+		}
+		return mensaMom.getCodiceMensa();
 	}
-	
-	
+
+	/* Disabilita Mensa */
+	@Override
+	public int disableMensa(Mensa mensa, int idMensa) 
+	{
+		logger.info("Accesso a disableMensa, classe MensaDAOImpl");	
+		Mensa mensaMom = null;
+
+		//Controllo esistenza idMensa
+		Integer maxCodice = mensaRepository.getMaxMensaId();
+		if(idMensa > maxCodice || idMensa < 0)
+		{
+			logger.info("Impossibile disabilitare la mensa, Mensa non presente");
+			throw new GesevException("Impossibile disabilitare la mensa, Mensa non presente", HttpStatus.BAD_REQUEST);
+		}
+
+		Optional<Mensa> optionalMensa = mensaRepository.findByCodiceMensa(idMensa);
+		if(!optionalMensa.isPresent())
+			throw new GesevException("Impossibile disabilitare la mensa, Mensa non presente", HttpStatus.BAD_REQUEST);
+
+		//Controllo Data
+		Date dateNow = new Date();
+		if(mensa.getDataFineServizio().before(mensa.getDataInizioServizio()) || mensa.getDataFineServizio().before(dateNow) || mensa.getDataFineServizio() == null)
+			throw new GesevException("Impossibile disabilitare la mensa, Data Fine Servizio non valida", HttpStatus.BAD_REQUEST);
+
+		// Aggiornamento 
+		logger.info("Aggiornamento in corso...");
+		if(optionalMensa.isPresent())
+		{
+			mensaMom = mensa;
+			mensaMom.setCodiceMensa(idMensa);
+			mensaRepository.save(mensaMom);
+
+		}
+
+		return mensaMom.getCodiceMensa();
+	}
+
 	/* --------------------------------------------------------------------------------- */
-	
+
 	/* Lista Locali */
 	@Override
 	public List<TipoLocale> getAllLocali() 

@@ -57,4 +57,26 @@ public class MensaMapper
 		
 		return mensa;
 	}
+	
+	//DTO to Entity
+	public static Mensa mapToEntityBase(MensaDTO mensaDTO, String dateFormat) throws ParseException
+	{
+		logger.info("Accesso a mapToEntity, classe MensaMapper");
+		ModelMapper mapper = new ModelMapper();
+			
+		
+		String dataString = mensaDTO.getDataAutorizzazioneSanitaria();
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
+		Date date = simpleDateFormat.parse(dataString);
+		Mensa mensa= mapper.map(mensaDTO, Mensa.class);
+		mensa.setDataAutorizzazioneSanitaria(date);
+			
+		//String to LocalTime
+		mensa.setOrarioAl(ControlloData.controlloTempo(mensaDTO.getOrarioAl()));
+		mensa.setOrarioDal(ControlloData.controlloTempo(mensaDTO.getOrarioDal()));
+		mensa.setOraFinePrenotazione(ControlloData.controlloTempo(mensaDTO.getOraFinePrenotazione()));
+			
+		return mensa;
+		
+		}
 }

@@ -12,7 +12,8 @@ public interface MensaService
 {
 	public List<MensaDTO> getAllMense();
 	public int createMensa(CreaMensaDTO creaMensaDTO) throws ParseException;
-	public int updateMensa(MensaDTO mensaDTO, int idMensa);
+	public int updateMensa(CreaMensaDTO creaMensaDTO, int idMensa) throws ParseException;
+	public int disableMensa(MensaDTO mensaDTO, int idMensa) throws ParseException;
 	
 	public List<TipoLocaleDTO> getAllLocali();
 	

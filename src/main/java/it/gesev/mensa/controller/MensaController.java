@@ -106,15 +106,46 @@ public class MensaController
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
 			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
 			@ApiResponse(code = 500, message = "Errore interno") })
-	public ResponseEntity<EsitoDTO> updateMensa(@RequestBody MensaDTO mensaDTO, @PathVariable int idMensa)
+	public ResponseEntity<EsitoDTO> updateMensa(@RequestBody CreaMensaDTO creaMensaDTO, @PathVariable int idMensa)
 	{
 		logger.info("Accesso al servizio updateMensa");
 		EsitoDTO esito = new EsitoDTO();
 		try
 		{
-			mensaService.updateMensa(mensaDTO, idMensa);
+			mensaService.updateMensa(creaMensaDTO, idMensa);
 			esito.setStatus(HttpStatus.OK.value());
 			esito.setMessaggio("AGGIORNAMENTO AVVENUTO CON SUCCESSO");
+			esito.setBody(mensaService.getAllMense());
+		}
+		catch(GesevException gex)   
+		{
+			logger.info("Si e' verificata un'eccezione", gex);
+			esito.setStatus(gex.getStatus().value());
+			esito.setMessaggio(gex.getMessage());
+		}
+		catch(Exception ex)
+		{
+			logger.info("Si e' verificata un'eccezione interna", ex);
+			esito.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			esito.setMessaggio(MESSAGGIO_ERRORE_INTERNO);
+		}
+		return ResponseEntity.status(esito.getStatus()).body(esito);
+	}
+	
+	/* Disattiva una Mensa */
+	@PutMapping("/DisattivaMensa/{idMensa}")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
+			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
+			@ApiResponse(code = 500, message = "Errore interno") })
+	public ResponseEntity<EsitoDTO> disableMensa(@RequestBody MensaDTO mensaDTO, @PathVariable int idMensa)
+	{
+		logger.info("Accesso al servizio updateMensa");
+		EsitoDTO esito = new EsitoDTO();
+		try
+		{
+			mensaService.disableMensa(mensaDTO, idMensa);
+			esito.setStatus(HttpStatus.OK.value());
+			esito.setMessaggio("DISABILITAZIONE AVVENUTA CON SUCCESSO");
 			esito.setBody(mensaService.getAllMense());
 		}
 		catch(GesevException gex)   

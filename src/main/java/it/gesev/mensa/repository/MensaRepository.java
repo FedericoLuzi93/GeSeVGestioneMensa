@@ -1,5 +1,7 @@
 package it.gesev.mensa.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -12,4 +14,6 @@ public interface MensaRepository  extends JpaRepository<Mensa, Integer>
 	
 	@Query("select max(codiceMensa) from Mensa")
 	public Integer getMaxMensaId();
+	
+	public Optional<Mensa> findByCodiceMensa(int idMensa);
 }

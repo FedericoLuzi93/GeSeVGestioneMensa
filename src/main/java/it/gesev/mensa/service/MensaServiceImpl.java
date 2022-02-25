@@ -35,11 +35,7 @@ public class MensaServiceImpl implements MensaService
 	
 	@Value("${gesev.data.format}")
 	private String dateFormat;
-	
-	@Autowired
-	private TipoLocaliRepository tipoLocaliRepository;
-	
-	
+		
 	private static final Logger logger = LoggerFactory.getLogger(MensaServiceImpl.class);
 
 	/* Leggi tutte le Mense */
@@ -62,14 +58,13 @@ public class MensaServiceImpl implements MensaService
 	{
 		Mensa mensa = null;
 		List<AssMensaTipoLocale> assMensaTipoLocale = null;
-		TipoLocale tipoLocale = null;
 		try
 		{
 			logger.info("Accesso a createMensa, classe MensaServiceImpl");
  			mensa = MensaMapper.mapToEntity(creaMensaDTO, dateFormat);	
  			assMensaTipoLocale = AssMensaTipoLocaleMapper.mapToEntity(creaMensaDTO, dateFormat);
  			
- 			List<AssMensaTipoLocale> listaAssMensaTipoLocale = new ArrayList<>();
+ 			
 		}
 		catch(GesevException exc)
 		{
@@ -77,27 +72,49 @@ public class MensaServiceImpl implements MensaService
 			throw new GesevException("Non è stato possibile creare la Mensa " + exc, HttpStatus.BAD_REQUEST);
 		}
 		logger.info("Crezione mensa in corso...");
-		return mensaDAO.createMensa(mensa, assMensaTipoLocale, tipoLocale);
+		return mensaDAO.createMensa(mensa, assMensaTipoLocale);
 	}
 
 	/* Aggiorna una Mensa */
-	public int updateMensa(MensaDTO mensaDTO, int idMensa) 
+	public int updateMensa(CreaMensaDTO creaMensaDTO, int idMensa) throws ParseException 
 	{
 		Mensa mensa = null;
+		List<AssMensaTipoLocale> assMensaTipoLocale = null;
 		try
 		{
 			logger.info("Accesso a updateMensa, classe MensaServiceImpl");
-			//mensa = MensaMapper.mapToEntity(mensaDTO);			
+ 			mensa = MensaMapper.mapToEntity(creaMensaDTO, dateFormat);	
+ 			assMensaTipoLocale = AssMensaTipoLocaleMapper.mapToEntity(creaMensaDTO, dateFormat);
+ 			
 		}
 		catch(GesevException exc)
 		{
 			logger.info("Eccezione nel servizio updateMensa" + exc);
-			throw new GesevException("Non è stato possibile aggiornare la mensa" + exc, HttpStatus.BAD_REQUEST);
+			throw new GesevException("Non è stato possibile modificare la Mensa " + exc, HttpStatus.BAD_REQUEST);
 		}
-		logger.info("Aggiornamento in corso...");
-		mensaDAO.updateMensa(mensa, idMensa);
-		return mensa.getCodiceMensa();
+		logger.info("Modifica mensa in corso...");
+		return mensaDAO.updateMensa(mensa, assMensaTipoLocale, idMensa);
 	}
+	
+	@Override
+	public int disableMensa(MensaDTO mensaDTO, int idMensa) throws ParseException 
+	{
+		Mensa mensa = null;
+		try
+		{
+			logger.info("Accesso a disableMensa, classe MensaServiceImpl");
+ 			mensa = MensaMapper.mapToEntityBase(mensaDTO, dateFormat);	 			
+		}
+		catch(GesevException exc)
+		{
+			logger.info("Eccezione nel servizio disableMensa" + exc);
+			throw new GesevException("Non è stato possibile disabilitare la Mensa " + exc, HttpStatus.BAD_REQUEST);
+		}
+		logger.info("disabilitazione mensa in corso...");
+		return mensaDAO.disableMensa(mensa, idMensa);
+	}
+
+	/* --------------------------------------------------------------------------------- */
 
 	/* Lista Locali */
 	public List<TipoLocaleDTO> getAllLocali() 
@@ -114,6 +131,7 @@ public class MensaServiceImpl implements MensaService
 		return listaTipoLocaliDTO;
 	}
 
+	/* Lista Enti */
 	@Override
 	public List<EnteDTO> getAllEnti() 
 	{
@@ -128,5 +146,6 @@ public class MensaServiceImpl implements MensaService
 		logger.info("Fine getAllEnti, classe MensaServiceImpl");
 		return listaEnteDTO;
 	}
+
 
 }

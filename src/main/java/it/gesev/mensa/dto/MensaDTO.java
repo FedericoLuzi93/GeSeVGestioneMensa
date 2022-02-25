@@ -7,6 +7,7 @@ import lombok.Setter;
 @Setter
 public class MensaDTO 
 {
+	//Mensa
 	private Integer codiceMensa;
 	private String descrizioneMensa;
 	private String orarioDal;
@@ -20,6 +21,7 @@ public class MensaDTO
 	private String dataInizioServizio;
 	private String dataFineServizio;
 	
+	//Contatti
 	private String via;
 	private Integer numeroCivico;
 	private String cap;

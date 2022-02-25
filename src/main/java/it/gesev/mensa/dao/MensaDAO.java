@@ -11,8 +11,9 @@ import it.gesev.mensa.entity.TipoLocale;
 public interface MensaDAO 
 {
 	public List<Mensa> getAllMense();
-	public int createMensa(Mensa mensa, List<AssMensaTipoLocale> assMensaTipoLocale, TipoLocale tipoLocale);
-	public int updateMensa(Mensa mensa, int idMensa);
+	public int createMensa(Mensa mensa, List<AssMensaTipoLocale> assMensaTipoLocale);
+	public int updateMensa(Mensa mensa, List<AssMensaTipoLocale> assMensaTipoLocale, int idMensa);
+	public int disableMensa(Mensa mensa, int idMensa);
 	
 	public List<TipoLocale> getAllLocali();
 	
