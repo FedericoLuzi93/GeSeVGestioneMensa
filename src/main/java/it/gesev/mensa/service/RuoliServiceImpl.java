@@ -93,10 +93,10 @@ public class RuoliServiceImpl implements RuoliService
 	}
 
 	@Override
-	public List<RuoloDTO> getRuoliByIdOrdineDirettivo(Integer idOrganoDirettivo) {
+	public List<RuoloDTO> getRuoliByIdOrdineDirettivo() {
 		logger.info("Servizio per la ricerca degli ruoli dall'ID dell'organo direttivo...");
 		List<RuoloDTO> listaRuoliDTO = new ArrayList<>();
-		List<RuoloMensa> listaRuoli = ruoliDAO.getRuoliByIdOrdineDirettivo(idOrganoDirettivo);
+		List<RuoloMensa> listaRuoli = ruoliDAO.getRuoliByIdOrdineDirettivo();
 		
 		if(listaRuoli.size() > 0)
 		{

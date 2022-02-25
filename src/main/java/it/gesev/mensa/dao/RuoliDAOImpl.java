@@ -76,10 +76,11 @@ public class RuoliDAOImpl implements RuoliDAO
 	}
 
 	@Override
-	public List<RuoloMensa> getRuoliByIdOrdineDirettivo(Integer idOrganoDirettivo) 
+	public List<RuoloMensa> getRuoliByIdOrdineDirettivo() 
 	{
-		logger.info("Ricerca dei ruoli associati all'organo direttivo con ID " + idOrganoDirettivo + " ...");
-		List<RuoloMensa> listaRuoli = ruoloMensaRepository.getRuoliByIdOrdineDirettivo(idOrganoDirettivo);
+		logger.info("Ricerca dei ruoli...");
+//		List<RuoloMensa> listaRuoli = ruoloMensaRepository.getRuoliByIdOrdineDirettivo(idOrganoDirettivo);
+		List<RuoloMensa> listaRuoli = ruoloMensaRepository.findAll();
 		logger.info("Trovati " + listaRuoli.size() + " elementi.");
 		
 		return listaRuoli;
