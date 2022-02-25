@@ -1,11 +1,9 @@
 package it.gesev.mensa.dao;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,9 +56,7 @@ public class MensaDAOImpl implements MensaDAO
 		logger.info("Inizio controlli in corso...");		
 		//Controllo Campi mensa
 		if(mensa.getDescrizioneMensa().isBlank() || mensa.getOrarioDal() == null || mensa.getOrarioAl() == null || 
-				mensa.getServizioFestivo().isBlank() || mensa.getNumeroAutorizzazioneSanitaria().isBlank() || 
-				mensa.getNumeroAutorizzazioneSanitaria().isBlank() || mensa.getDataAutorizzazioneSanitaria() == null ||
-				mensa.getAutSanitariaRilasciataDa().isBlank() || mensa.getOraFinePrenotazione() == null)
+				mensa.getServizioFestivo().isBlank() || mensa.getOraFinePrenotazione() == null)
 		{
 			logger.info("Impossibile modificare la mensa, campi mensa non validi");
 			throw new GesevException("Impossibile modificare la mensa, campi mensa non validi", HttpStatus.BAD_REQUEST);
@@ -68,8 +64,7 @@ public class MensaDAOImpl implements MensaDAO
 
 		//Controllo Campi Contatto
 		if(mensa.getVia().isBlank() || mensa.getNumeroCivico() == null || mensa.getCap().isBlank() || 
-				mensa.getCitta().isBlank() || mensa.getProvincia().isBlank() || mensa.getTelefono().isBlank() ||
-				mensa.getFax().isBlank() || mensa.getEmail().isBlank())
+				mensa.getCitta().isBlank() || mensa.getProvincia().isBlank() || mensa.getTelefono().isBlank())
 		{
 			logger.info("Impossibile modificare la mensa, campi contatto non validi");
 			throw new GesevException("Impossibile modificare la mensa, campi contatto non validi", HttpStatus.BAD_REQUEST);
@@ -83,12 +78,13 @@ public class MensaDAOImpl implements MensaDAO
 		for(AssMensaTipoLocale assocazione : assMensaTipoLocale)
 		{
 			//Controllo AssMensaTipoLocale
-			if(assocazione.getDataInizio() == null || assocazione.getDataFine() == null || assocazione.getSuperficie() <= 0 ||
-					assocazione.getNumeroLocali() <0 || assocazione.getTipoLocale().getCodiceTipoLocale() <= 0)
+			if(assocazione.getSuperficie() <= 0 || assocazione.getNumeroLocali() <0 || assocazione.getTipoLocale().getCodiceTipoLocale() <= 0)
 			{
 				logger.info("Impossibile modificare la mensa, campi associativi non validi");
 				throw new GesevException("Impossibile modificare la mensa, campi associativi non validi", HttpStatus.BAD_REQUEST);
 			}
+			assocazione.setDataInizio(mensa.getDataInizioServizio());
+			assocazione.setDataFine(mensa.getDataFineServizio());
 			assocazione.setMensa(mensaSalvata);
 			assMensaTipoLocaleRepository.save(assocazione);
 		}
@@ -117,9 +113,7 @@ public class MensaDAOImpl implements MensaDAO
 
 		//Controllo Campi mensa
 		if(mensa.getDescrizioneMensa().isBlank() || mensa.getOrarioDal() == null || mensa.getOrarioAl() == null || 
-				mensa.getServizioFestivo().isBlank() || mensa.getNumeroAutorizzazioneSanitaria().isBlank() || 
-				mensa.getNumeroAutorizzazioneSanitaria().isBlank() || mensa.getDataAutorizzazioneSanitaria() == null ||
-				mensa.getAutSanitariaRilasciataDa().isBlank() || mensa.getOraFinePrenotazione() == null)
+				mensa.getServizioFestivo().isBlank() || mensa.getOraFinePrenotazione() == null)
 		{
 			logger.info("Impossibile modificare la mensa, campi mensa non validi");
 			throw new GesevException("Impossibile modificare la mensa, campi mensa non validi", HttpStatus.BAD_REQUEST);
@@ -127,8 +121,7 @@ public class MensaDAOImpl implements MensaDAO
 
 		//Controllo Campi Contatto
 		if(mensa.getVia().isBlank() || mensa.getNumeroCivico() == null || mensa.getCap().isBlank() || 
-				mensa.getCitta().isBlank() || mensa.getProvincia().isBlank() || mensa.getTelefono().isBlank() ||
-				mensa.getFax().isBlank() || mensa.getEmail().isBlank())
+				mensa.getCitta().isBlank() || mensa.getProvincia().isBlank() || mensa.getTelefono().isBlank())
 		{
 			logger.info("Impossibile modificare la mensa, campi contatto non validi");
 			throw new GesevException("Impossibile modificare la mensa, campi contatto non validi", HttpStatus.BAD_REQUEST);

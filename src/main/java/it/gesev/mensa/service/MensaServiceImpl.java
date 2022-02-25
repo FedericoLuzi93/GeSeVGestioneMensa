@@ -21,7 +21,6 @@ import it.gesev.mensa.entity.Ente;
 import it.gesev.mensa.entity.Mensa;
 import it.gesev.mensa.entity.TipoLocale;
 import it.gesev.mensa.exc.GesevException;
-import it.gesev.mensa.repository.TipoLocaliRepository;
 import it.gesev.mensa.utils.AssMensaTipoLocaleMapper;
 import it.gesev.mensa.utils.EnteMapper;
 import it.gesev.mensa.utils.MensaMapper;
