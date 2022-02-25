@@ -35,6 +35,10 @@ public class AssDipendenteRuolo
 	@JoinColumn(name = "RUOLO_FK")
 	private RuoloMensa ruolo;
 	
+	@ManyToOne
+	@JoinColumn(name = "ORGANO_DIRETTIVO_FK")
+	private OrganoDirettivo organoDirettivo;
+	
 	@Column(name = "DATA_INIZIO_RUOLO")
 	private Date dataInizioRuolo;
 	

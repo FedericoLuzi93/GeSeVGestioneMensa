@@ -86,7 +86,7 @@ public class RuoliDAOImpl implements RuoliDAO
 	}
 
 	@Override
-	public void aggiungiRuoloDipendente(Integer idDipendente, Integer idRuolo) throws ParseException 
+	public void aggiungiRuoloDipendente(Integer idDipendente, Integer idRuolo, Integer idOrganoDirettivo) throws ParseException 
 	{
 		logger.info("Aggiunta nuovo ruolo...");
 		
@@ -96,6 +96,15 @@ public class RuoliDAOImpl implements RuoliDAO
 		logger.info("Controllo dati in ingresso...");
 		Optional<Dipendente> optionalDipendente = dipendenteRepository.findById(idDipendente);
 		Optional<RuoloMensa> optionalRuolo = ruoloMensaRepository.findById(idRuolo);
+		Optional<OrganoDirettivo> optionalOrganoDirettivo = null;
+		
+		if(idOrganoDirettivo != null)
+		{
+			logger.info("Controllo dell'organo direttivo fornito...");
+			optionalOrganoDirettivo = organoDirettivoRepository.findById(idOrganoDirettivo);
+			if(!optionalOrganoDirettivo.isPresent())
+				throw new GesevException("L'identificativo dell'organo direttivo non e' valido", HttpStatus.BAD_REQUEST);
+		}
 		
 		if(!optionalDipendente.isPresent() || !optionalRuolo.isPresent())
 			throw new GesevException("Dipendente o ruolo indicati non sono presenti sulla base dati", HttpStatus.BAD_REQUEST);
@@ -110,6 +119,7 @@ public class RuoliDAOImpl implements RuoliDAO
 		SimpleDateFormat formatter = new SimpleDateFormat(this.dateFormat);
 		associazione.setDipendente(optionalDipendente.get());
 		associazione.setRuolo(optionalRuolo.get());
+		associazione.setOrganoDirettivo(optionalOrganoDirettivo != null && optionalOrganoDirettivo.isPresent() ? optionalOrganoDirettivo.get() : null);
 		associazione.setDataInizioRuolo(new Date());
 		associazione.setDataFineRuolo(formatter.parse("9999-12-31"));
 		

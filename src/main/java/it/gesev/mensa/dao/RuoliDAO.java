@@ -14,5 +14,5 @@ public interface RuoliDAO
 	public List<AssDipendenteRuolo> getListaDipendenteRuolo();
 	public List<OrganoDirettivo> getListaOrganiDirettivi();
 	public List<RuoloMensa> getRuoliByIdOrdineDirettivo(Integer idOrganoDirettivo);
-	public void aggiungiRuoloDipendente(Integer idDipendente, Integer idRuolo) throws ParseException;
+	public void aggiungiRuoloDipendente(Integer idDipendente, Integer idRuolo, Integer idOrganoDirettivo) throws ParseException;
 }

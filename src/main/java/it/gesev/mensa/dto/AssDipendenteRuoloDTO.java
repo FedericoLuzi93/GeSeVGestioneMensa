@@ -16,5 +16,6 @@ public class AssDipendenteRuoloDTO implements Serializable
 	private DipendenteDTO dipendente;
 	private RuoloDTO ruolo;
 	private Integer assDipendenteRuoloId;
-	private String organoDirettivo;
+	private OrganoDirettivoDTO organoDirettivo;
+	
 }

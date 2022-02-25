@@ -32,5 +32,8 @@ public class OrganoDirettivo
 	@OneToMany(mappedBy = "organoDirettivo")
 	private List<RuoloMensa> ruoloMensa;
 	
+	@OneToMany(mappedBy = "organoDirettivo")
+	private List<AssDipendenteRuolo> associazioniDipendenteeRuolo;
+	
 	
 }

@@ -60,7 +60,7 @@ public class RuoliServiceImpl implements RuoliService
 				ruoloDTO.setDipendente(mapper.map(ruolo.getDipendente(), DipendenteDTO.class));
 				ruoloDTO.setRuolo(mapper.map(ruolo.getRuolo(), RuoloDTO.class));
 				ruoloDTO.setAssDipendenteRuoloId(ruolo.getAssDipendenteRuoloId());
-				ruoloDTO.setOrganoDirettivo(ruolo.getRuolo().getOrganoDirettivo().getDescrizioneOrganoDirettivo());
+				ruoloDTO.setOrganoDirettivo(ruolo.getOrganoDirettivo() != null ? mapper.map(ruolo.getOrganoDirettivo(), OrganoDirettivoDTO.class) : null);
 				
 				listaRuoliDTO.add(ruoloDTO);
 			}
@@ -113,7 +113,7 @@ public class RuoliServiceImpl implements RuoliService
 	{
 		logger.info("Servizio per l'associazione del ruolo...");
 		
-		ruoliDAO.aggiungiRuoloDipendente(associazione.getDipendente().getCodiceDipendente(), associazione.getRuolo().getCodiceRuoloMensa());
+		ruoliDAO.aggiungiRuoloDipendente(associazione.getDipendente().getCodiceDipendente(), associazione.getRuolo().getCodiceRuoloMensa(), associazione.getOrganoDirettivo().getCodiceOrganoDirettivo());
 		
 	}
 
