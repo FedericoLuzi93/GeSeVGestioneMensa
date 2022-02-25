@@ -5,7 +5,17 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +23,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
+import it.gesev.mensa.dto.RicercaColonnaDTO;
 import it.gesev.mensa.entity.AssDipendenteRuolo;
 import it.gesev.mensa.entity.Dipendente;
 import it.gesev.mensa.entity.OrganoDirettivo;
 import it.gesev.mensa.entity.RuoloMensa;
+import it.gesev.mensa.enums.ColonneDipendenteEnum;
 import it.gesev.mensa.exc.GesevException;
 import it.gesev.mensa.repository.AssRuoloDipendenteRepository;
 import it.gesev.mensa.repository.DipendenteRepository;
@@ -43,6 +55,9 @@ public class RuoliDAOImpl implements RuoliDAO
 	
 	@Value("${gesev.data.format}")
 	private String dateFormat;
+	
+	@PersistenceContext
+	EntityManager entityManager;
 	
 	@Override
 	public List<Dipendente> getListaDipendenti() 
@@ -128,6 +143,47 @@ public class RuoliDAOImpl implements RuoliDAO
 		
 		logger.info("Fine creazione associazione");
 		
+	}
+
+	@Override
+	public List<Dipendente> ricercaDipendenti(List<RicercaColonnaDTO> listaColonne) 
+	{
+		logger.info("Ricerca dei dipendenti sulla base dei seguenti dati : " + listaColonne.stream().map(col -> col.getValue()).collect(Collectors.toList()));
+		
+		/* definizione della query di ricerca */
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<Dipendente> criteriaQuery = criteriaBuilder.createQuery(Dipendente.class);
+		Root<Dipendente> fornitoreRoot = criteriaQuery.from(Dipendente.class);
+		
+		/* predicato finale per la ricerca */
+		Predicate finalPredicate = null;
+		
+		for(RicercaColonnaDTO ricerca : listaColonne)
+		{
+			ColonneDipendenteEnum colonnaEnum = null;
+			
+			/* controllo colonna */
+			try
+			{
+				colonnaEnum = ColonneDipendenteEnum.valueOf(ricerca.getColonna().toUpperCase());
+			}
+			
+			catch(Exception ex)
+			{
+				throw new GesevException("I valori forniti per la ricerca non sono validi", HttpStatus.BAD_REQUEST);
+			}
+			
+			/* controllo valore */
+			if(StringUtils.isBlank(ricerca.getValue()))
+				throw new GesevException("I valori forniti per la ricerca non sono validi", HttpStatus.BAD_REQUEST);
+			
+			Expression<String> espressioneCf = criteriaBuilder.upper(fornitoreRoot.get(colonnaEnum.getColonna()));
+			Predicate nuovoPredicato = criteriaBuilder.like(espressioneCf, ricerca.getValue().toUpperCase() + "%");
+			
+			finalPredicate = finalPredicate == null ? nuovoPredicato : criteriaBuilder.and(finalPredicate, nuovoPredicato);
+		}
+		
+		return entityManager.createQuery(criteriaQuery.where(finalPredicate)).getResultList();
 	}
 
 }

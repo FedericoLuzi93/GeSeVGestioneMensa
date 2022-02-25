@@ -15,6 +15,7 @@ import it.gesev.mensa.dto.AssDipendenteRuoloDTO;
 import it.gesev.mensa.dto.DettaglioRuoloDTO;
 import it.gesev.mensa.dto.DipendenteDTO;
 import it.gesev.mensa.dto.OrganoDirettivoDTO;
+import it.gesev.mensa.dto.RicercaColonnaDTO;
 import it.gesev.mensa.dto.RuoloDTO;
 import it.gesev.mensa.entity.AssDipendenteRuolo;
 import it.gesev.mensa.entity.Dipendente;
@@ -115,6 +116,49 @@ public class RuoliServiceImpl implements RuoliService
 		
 		ruoliDAO.aggiungiRuoloDipendente(associazione.getDipendente().getCodiceDipendente(), associazione.getRuolo().getCodiceRuoloMensa(), associazione.getOrganoDirettivo().getCodiceOrganoDirettivo());
 		
+	}
+
+	@Override
+	public DettaglioRuoloDTO ricercaDipendenti(List<RicercaColonnaDTO> listaColonne) {
+		logger.info("Servizio per la ricerca dei dipendenti...");
+		
+		DettaglioRuoloDTO dettaglio = new DettaglioRuoloDTO();
+		ModelMapper mapper = new ModelMapper();
+		
+		if(listaColonne != null && listaColonne.size() > 0)
+		{
+			List<Dipendente> listaDipendenti = ruoliDAO.ricercaDipendenti(listaColonne);
+			logger.info("Trovati " + listaDipendenti.size() + " elementi.");
+			
+			List<DipendenteDTO> listaDTO = new ArrayList<>();
+			for(Dipendente dipendente : listaDipendenti)
+				listaDTO.add(mapper.map(dipendente, DipendenteDTO.class));
+			
+			dettaglio.setListaDipendenti(listaDTO);
+			
+			
+		}
+		
+		/* lista ruoli */
+		List<AssDipendenteRuolo> listaDipendentiRuoli = ruoliDAO.getListaDipendenteRuolo();
+		if(listaDipendentiRuoli.size() > 0)
+		{
+			List<AssDipendenteRuoloDTO> listaRuoliDTO = new ArrayList<AssDipendenteRuoloDTO>();
+			for(AssDipendenteRuolo ruolo : listaDipendentiRuoli)
+			{
+				AssDipendenteRuoloDTO ruoloDTO = new AssDipendenteRuoloDTO();
+				ruoloDTO.setDipendente(mapper.map(ruolo.getDipendente(), DipendenteDTO.class));
+				ruoloDTO.setRuolo(mapper.map(ruolo.getRuolo(), RuoloDTO.class));
+				ruoloDTO.setAssDipendenteRuoloId(ruolo.getAssDipendenteRuoloId());
+				ruoloDTO.setOrganoDirettivo(ruolo.getOrganoDirettivo() != null ? mapper.map(ruolo.getOrganoDirettivo(), OrganoDirettivoDTO.class) : null);
+				
+				listaRuoliDTO.add(ruoloDTO);
+			}
+			
+			dettaglio.setAssociazioniRuolo(listaRuoliDTO);
+		}
+		
+		return dettaglio;
 	}
 
 }
