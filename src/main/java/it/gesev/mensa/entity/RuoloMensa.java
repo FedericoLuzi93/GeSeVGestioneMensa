@@ -7,8 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -26,10 +24,6 @@ public class RuoloMensa
 	
 	@Column(name = "DESCRIZIONE_RUOLO_MENSA")
 	private String descrizioneRuoloMensa;
-	
-	@ManyToOne
-	@JoinColumn(name = "ORGANO_DIRETTIVO_FK")
-	OrganoDirettivo organoDirettivo;
 	
 	@OneToMany(mappedBy = "ruolo")
 	private List<AssDipendenteRuolo> listaDipendenteRuolo;
