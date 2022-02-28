@@ -28,6 +28,10 @@ public class MensaMapper
 		//Date to String
 		if(mensa.getDataAutorizzazioneSanitaria() != null)
 			mensaDTO.setDataAutorizzazioneSanitaria(simpleDateFormat.format(mensa.getDataAutorizzazioneSanitaria()));
+		if(mensa.getDataFineServizio() != null)
+			mensaDTO.setDataFineServizio(simpleDateFormat.format(mensa.getDataFineServizio()));
+		if(mensa.getDataInizioServizio() != null)
+			mensaDTO.setDataInizioServizio(simpleDateFormat.format(mensa.getDataInizioServizio()));
 		
 		//LocalTime a String
 		mensaDTO.setOrarioAl(mensa.getOrarioAl().toString());
