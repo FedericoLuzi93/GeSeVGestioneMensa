@@ -8,6 +8,7 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import it.gesev.mensa.dao.RuoliDAO;
@@ -21,6 +22,7 @@ import it.gesev.mensa.entity.AssDipendenteRuolo;
 import it.gesev.mensa.entity.Dipendente;
 import it.gesev.mensa.entity.OrganoDirettivo;
 import it.gesev.mensa.entity.RuoloMensa;
+import it.gesev.mensa.exc.GesevException;
 
 @Service
 public class RuoliServiceImpl implements RuoliService 
@@ -159,6 +161,18 @@ public class RuoliServiceImpl implements RuoliService
 		}
 		
 		return dettaglio;
+	}
+
+	@Override
+	public void updateRuoloDipendente(AssDipendenteRuoloDTO associazione) 
+	{
+		logger.info("Servizio per l'aggiornamentoo del ruolo del dipendente...");
+		
+		if(associazione == null || associazione.getAssDipendenteRuoloId() == null || associazione.getRuolo() == null || associazione.getDipendente() == null)
+			throw new GesevException("I dati forniti non sono corretti", HttpStatus.BAD_REQUEST);
+		
+		ruoliDAO.updateRuoloDipendente(associazione.getAssDipendenteRuoloId(), associazione.getRuolo().getCodiceRuoloMensa(), associazione.getDipendente().getCodiceDipendente());
+		
 	}
 
 }

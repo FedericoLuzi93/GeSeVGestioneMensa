@@ -1,5 +1,6 @@
 package it.gesev.mensa.dao;
 
+import java.security.DigestException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -184,6 +185,36 @@ public class RuoliDAOImpl implements RuoliDAO
 		}
 		
 		return entityManager.createQuery(criteriaQuery.where(finalPredicate)).getResultList();
+	}
+
+	@Override
+	public void updateRuoloDipendente(Integer idRuoloDipendente, Integer idRuolo, Integer idDipendente) {
+		logger.info(String.format("Aggiornamento del ruolo dipendente con ID %d con (ID ruolo, ID dipendente) = (%d, %d)", idRuoloDipendente, idRuolo, idDipendente));
+		
+		logger.info("Controllo esistenza assoociazione...");
+		Optional<AssDipendenteRuolo> associazioneOpt = assRuoloDipendenteRepository.findById(idRuoloDipendente);
+		if(!associazioneOpt.isPresent())
+			throw new GesevException("Impossibile trovare un'associazione con l'ID specificato", HttpStatus.BAD_REQUEST);
+		
+		logger.info("Controllo esistenza ruolo...");
+		Optional<RuoloMensa> ruolo = ruoloMensaRepository.findById(idRuolo);
+		if(!ruolo.isPresent())
+			throw new GesevException("Impossibile trovare un ruolo con l'ID specificato", HttpStatus.BAD_REQUEST);
+		
+		logger.info("Controllo esistenza dipendente...");
+		Optional<Dipendente> dipendente = dipendenteRepository.findById(idDipendente);
+		if(!dipendente.isPresent())
+			throw new GesevException("Impossibile trovare un dipendente con l'ID specificato", HttpStatus.BAD_REQUEST);
+		
+		logger.info("Aggiornamento in corso...");
+		AssDipendenteRuolo associazione = associazioneOpt.get();
+		associazione.setRuolo(ruolo.get());
+		associazione.setDipendente(dipendente.get());
+		
+		assRuoloDipendenteRepository.save(associazione);
+		
+		logger.info("Fine aggiornamento");
+		
 	}
 
 }
