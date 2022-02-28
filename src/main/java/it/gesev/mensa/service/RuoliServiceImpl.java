@@ -179,4 +179,14 @@ public class RuoliServiceImpl implements RuoliService
 		
 	}
 
+	@Override
+	public DettaglioRuoloDTO cancellaRuolo(Integer idRuoloDipendente) 
+	{
+		logger.info("Servizio per la cancellazione del ruolo del dipendente...");
+		
+		ruoliDAO.cancellaRuolo(idRuoloDipendente);
+		
+		return getDettaglioRuoli();
+	}
+
 }

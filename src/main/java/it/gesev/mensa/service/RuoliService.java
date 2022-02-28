@@ -17,4 +17,5 @@ public interface RuoliService
 	public void aggiungiRuoloDipendente(AssDipendenteRuoloDTO associazione) throws ParseException;
 	public DettaglioRuoloDTO ricercaDipendenti(List<RicercaColonnaDTO> listaColonne);
 	public DettaglioRuoloDTO updateRuoloDipendente(AssDipendenteRuoloDTO associazione);
+	public DettaglioRuoloDTO cancellaRuolo(Integer idRuoloDipendente);
 }

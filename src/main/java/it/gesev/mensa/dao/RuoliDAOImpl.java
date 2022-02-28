@@ -232,4 +232,24 @@ public class RuoliDAOImpl implements RuoliDAO
 		
 	}
 
+	@Override
+	public void cancellaRuolo(Integer idRuoloDipendente) 
+	{
+		logger.info("Cancellazione ruolo con ID " + idRuoloDipendente);
+		
+		logger.info("Controllo esistenza ruolo...");
+		if(idRuoloDipendente == null)
+			throw new GesevException("Dati forniti non validi", HttpStatus.BAD_REQUEST);
+		
+		Optional<AssDipendenteRuolo> associazione = assRuoloDipendenteRepository.findById(idRuoloDipendente);
+		if(!associazione.isPresent())
+			throw new GesevException("Impossibile trovare un ruolo dipendente con l'ID specificato", HttpStatus.BAD_REQUEST);
+		
+		assRuoloDipendenteRepository.delete(associazione.get());
+		
+		logger.info("Fine cancellazione ruolo");
+			
+		
+	}
+
 }
