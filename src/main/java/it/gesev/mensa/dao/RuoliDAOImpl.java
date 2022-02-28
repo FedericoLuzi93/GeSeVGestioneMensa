@@ -188,7 +188,7 @@ public class RuoliDAOImpl implements RuoliDAO
 	}
 
 	@Override
-	public void updateRuoloDipendente(Integer idRuoloDipendente, Integer idRuolo, Integer idDipendente) {
+	public void updateRuoloDipendente(Integer idRuoloDipendente, Integer idRuolo, Integer idDipendente, Integer idOrganoDirettivo) {
 		logger.info(String.format("Aggiornamento del ruolo dipendente con ID %d con (ID ruolo, ID dipendente) = (%d, %d)", idRuoloDipendente, idRuolo, idDipendente));
 		
 		logger.info("Controllo esistenza assoociazione...");
@@ -206,10 +206,25 @@ public class RuoliDAOImpl implements RuoliDAO
 		if(!dipendente.isPresent())
 			throw new GesevException("Impossibile trovare un dipendente con l'ID specificato", HttpStatus.BAD_REQUEST);
 		
+		Optional<OrganoDirettivo> organoDirettivoOpt = null;
+		if(idOrganoDirettivo != null)
+		{
+			logger.info("Controllo esistenza organo direttivo...");
+			organoDirettivoOpt = organoDirettivoRepository.findById(idOrganoDirettivo);
+			
+			if(!organoDirettivoOpt.isPresent())
+				throw new GesevException("Impossibile trovare un organo direttivo con l'ID specificato", HttpStatus.BAD_REQUEST);
+		}
+		
 		logger.info("Aggiornamento in corso...");
 		AssDipendenteRuolo associazione = associazioneOpt.get();
 		associazione.setRuolo(ruolo.get());
 		associazione.setDipendente(dipendente.get());
+		if(organoDirettivoOpt != null && organoDirettivoOpt.isPresent())
+			associazione.setOrganoDirettivo(organoDirettivoOpt.get());
+		
+		else
+			associazione.setOrganoDirettivo(null);
 		
 		assRuoloDipendenteRepository.save(associazione);
 		

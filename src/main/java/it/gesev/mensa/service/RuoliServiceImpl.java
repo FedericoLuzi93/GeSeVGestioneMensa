@@ -166,12 +166,14 @@ public class RuoliServiceImpl implements RuoliService
 	@Override
 	public void updateRuoloDipendente(AssDipendenteRuoloDTO associazione) 
 	{
-		logger.info("Servizio per l'aggiornamentoo del ruolo del dipendente...");
+		logger.info("Servizio per l'aggiornamento del ruolo del dipendente...");
 		
 		if(associazione == null || associazione.getAssDipendenteRuoloId() == null || associazione.getRuolo() == null || associazione.getDipendente() == null)
 			throw new GesevException("I dati forniti non sono corretti", HttpStatus.BAD_REQUEST);
 		
-		ruoliDAO.updateRuoloDipendente(associazione.getAssDipendenteRuoloId(), associazione.getRuolo().getCodiceRuoloMensa(), associazione.getDipendente().getCodiceDipendente());
+		ruoliDAO.updateRuoloDipendente(associazione.getAssDipendenteRuoloId(), associazione.getRuolo().getCodiceRuoloMensa(), 
+				                       associazione.getDipendente().getCodiceDipendente(), 
+				                       associazione.getOrganoDirettivo() != null ? associazione.getOrganoDirettivo().getCodiceOrganoDirettivo() : null);
 		
 	}
 
