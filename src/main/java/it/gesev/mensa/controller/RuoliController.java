@@ -219,7 +219,7 @@ public class RuoliController
 		
 		try
 		{
-			ruoliService.updateRuoloDipendente(associazione);
+			esito.setBody(ruoliService.updateRuoloDipendente(associazione));
 			status = HttpStatus.OK;
 		}
 		

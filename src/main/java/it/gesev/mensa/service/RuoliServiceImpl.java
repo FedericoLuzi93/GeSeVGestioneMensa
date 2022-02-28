@@ -164,7 +164,7 @@ public class RuoliServiceImpl implements RuoliService
 	}
 
 	@Override
-	public void updateRuoloDipendente(AssDipendenteRuoloDTO associazione) 
+	public DettaglioRuoloDTO updateRuoloDipendente(AssDipendenteRuoloDTO associazione) 
 	{
 		logger.info("Servizio per l'aggiornamento del ruolo del dipendente...");
 		
@@ -174,6 +174,8 @@ public class RuoliServiceImpl implements RuoliService
 		ruoliDAO.updateRuoloDipendente(associazione.getAssDipendenteRuoloId(), associazione.getRuolo().getCodiceRuoloMensa(), 
 				                       associazione.getDipendente().getCodiceDipendente(), 
 				                       associazione.getOrganoDirettivo() != null ? associazione.getOrganoDirettivo().getCodiceOrganoDirettivo() : null);
+		
+		return getDettaglioRuoli();
 		
 	}
 
