@@ -93,6 +93,9 @@ public class Mensa
 	@JoinColumn(name="TIPO_FORMA_VETTOVAGLIAMENTO_FK")
 	private TipoFormaVettovagliamento tipoFormaVettovagliamento;
 	
-	@OneToMany(mappedBy= "mensa")
+	@OneToMany(mappedBy = "mensa")
 	private List<AssMensaTipoLocale> listaAssDipendenteRuolo;
+	
+	@OneToMany(mappedBy = "mensa")
+	private List<AssDipendenteRuolo> listaDipendentiRuoli;
 }

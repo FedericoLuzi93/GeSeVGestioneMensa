@@ -36,6 +36,10 @@ public class AssDipendenteRuolo
 	private RuoloMensa ruolo;
 	
 	@ManyToOne
+	@JoinColumn(name = "MENSA_FK")
+	private Mensa mensa;
+	
+	@ManyToOne
 	@JoinColumn(name = "ORGANO_DIRETTIVO_FK")
 	private OrganoDirettivo organoDirettivo;
 	
