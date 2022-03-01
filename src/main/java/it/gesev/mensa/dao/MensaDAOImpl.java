@@ -162,7 +162,7 @@ public class MensaDAOImpl implements MensaDAO
 	public int disableMensa(Mensa mensa, int idMensa) 
 	{
 		logger.info("Accesso a disableMensa, classe MensaDAOImpl");	
-		Date dateSet = mensa.getDataAutorizzazioneSanitaria();
+		Date dateSet = mensa.getDataFineServizio();
 
 		//Controllo esistenza idMensa
 		Integer maxCodice = mensaRepository.getMaxMensaId();
@@ -179,7 +179,7 @@ public class MensaDAOImpl implements MensaDAO
 		if(optionalMensa.isPresent())
 		{
 			mensa = optionalMensa.get();
-			mensa.setDataAutorizzazioneSanitaria(dateSet);
+			mensa.setDataFineServizio(dateSet);
 			
 			//Controllo Data
 			Date dateNow = new Date();

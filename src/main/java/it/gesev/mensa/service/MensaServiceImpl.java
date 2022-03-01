@@ -1,11 +1,17 @@
 package it.gesev.mensa.service;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.Persistence;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +46,9 @@ public class MensaServiceImpl implements MensaService
 	
 	@Value("${gesev.data.format}")
 	private String dateFormat;
+	
+	@PersistenceContext
+	EntityManager entityManager;
 		
 	private static final Logger logger = LoggerFactory.getLogger(MensaServiceImpl.class);
 
@@ -107,13 +116,13 @@ public class MensaServiceImpl implements MensaService
 	@Override
 	public int disableMensa(MensaDTO mensaDTO, int idMensa) throws ParseException 
 	{
-		Mensa mensa = null;
+		Mensa mensa = new Mensa();
 		try
 		{
-			String dataString = mensaDTO.getDataAutorizzazioneSanitaria();
+			String dataString = mensaDTO.getDataFineServizio();
 			SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
 			Date date = simpleDateFormat.parse(dataString);
-			mensa.setDataAutorizzazioneSanitaria(date);	 			
+			mensa.setDataFineServizio(date);	 			
 		}
 		catch(GesevException exc)
 		{
@@ -135,9 +144,6 @@ public class MensaServiceImpl implements MensaService
 		fileDTO.setAutorizzazioneSanitaria(mensa.getAutorizzazioneSanitaria());
 		return fileDTO;
 	}
-
-	
-
 
 	/* --------------------------------------------------------------------------------- */
 
@@ -162,30 +168,38 @@ public class MensaServiceImpl implements MensaService
 	public List<FELocaliDTO> getLocaliPerMensa(int idMensa) 
 	{
 		logger.info("Accesso a getLocaliPerMensa, classe MensaServiceImpl");
-		List<AssMensaTipoLocale> listaAssMensaTipoLocale = mensaDAO.getAssMensaTipoLocaleByMensa(idMensa);
-		List<TipoLocale> listaTipoLocale = mensaDAO.getAllLocali();
+		//List<AssMensaTipoLocale> listaAssMensaTipoLocale = mensaDAO.getAssMensaTipoLocaleByMensa(idMensa);
+		//List<TipoLocale> listaTipoLocale = mensaDAO.getAllLocali();
 		List<FELocaliDTO> listaFeLocaliDTO = new ArrayList<>();
-		FELocaliDTO feLocaliDTO = new FELocaliDTO();
 		
 		//For each dove ciclo gli array nella lista di obj ottenuta dalla query nativa
 		//Integer chiusi = new Integer(((BigDecimal)row[5]).intValue());
-		for(AssMensaTipoLocale as : listaAssMensaTipoLocale)
-		{
-			for(TipoLocale tl : listaTipoLocale)
-			{
-				if(tl.getCodiceTipoLocale() == as.getTipoLocale().getCodiceTipoLocale())
-				{
-					feLocaliDTO.setNomeLocale(tl.getDescrizioneTipoLocale());
-					feLocaliDTO.setNumero(as.getNumeroLocali());
-					feLocaliDTO.setSuperfice(as.getSuperficie());
-					listaFeLocaliDTO.add(feLocaliDTO);
-				}
-			}
-		}
 		
+		String query = "select	tipo_locale.descrizione_tipo_locale,\r\n"
+				+ "		ass_mensa_tipo_locale.superficie,\r\n"
+				+ "		ass_mensa_tipo_locale.numero_locali\r\n"
+				+ "from	tipo_locale INNER join ass_mensa_tipo_locale\r\n"
+				+ "on	codice_mensa_fk = " + idMensa + " and \r\n"
+				+ "	tipo_locale.codice_tipo_locale = ass_mensa_tipo_locale.codice_tipo_locale_fk;";
+		
+		logger.info("Esecuzione query: " + query); 
+		Query sumQuery = entityManager.createNativeQuery(query);
+		List<Object[]> listOfResults = sumQuery.getResultList();
+		
+		for(Object[] ob : listOfResults)
+		{
+			FELocaliDTO feLocaliDTO = new FELocaliDTO();
+			feLocaliDTO.setNomeLocale((String) ob[0]);
+			//Integer superfice = new Integer(((BigDecimal)ob[1]).intValue());
+			Integer superfice = (Integer) ob[1];
+			feLocaliDTO.setSuperfice(superfice);
+			//Integer numeroLocali = new Integer(((BigDecimal)ob[2]).intValue());
+			Integer numeroLocali = (Integer) ob[2];
+			feLocaliDTO.setNumero(numeroLocali);;
+			listaFeLocaliDTO.add(feLocaliDTO);
+		}
 		return listaFeLocaliDTO;
 	}
-
 
 	/* Lista Enti */
 	@Override
