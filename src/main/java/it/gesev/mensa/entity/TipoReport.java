@@ -29,7 +29,7 @@ public class TipoReport
 	private Integer codiceTipoReport;
 	
 	@Column(name = "DESCRIZIONE_TIPO_REPORT")
-	private String descrizioneTipoRecord;
+	private String descrizioneTipoReport;
 	
 	@OneToMany(mappedBy = "tipoReport")
 	private List<Report> listaReport;

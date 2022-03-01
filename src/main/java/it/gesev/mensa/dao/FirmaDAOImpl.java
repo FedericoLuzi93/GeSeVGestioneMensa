@@ -9,8 +9,10 @@ import org.springframework.stereotype.Component;
 
 import it.gesev.mensa.entity.AssReportRuoloMensa;
 import it.gesev.mensa.entity.Report;
+import it.gesev.mensa.entity.TipoReport;
 import it.gesev.mensa.repository.AssReportRuoloMensaRepository;
 import it.gesev.mensa.repository.ReportRepository;
+import it.gesev.mensa.repository.TipoReportRepository;
 
 @Component
 public class FirmaDAOImpl implements FirmaDAO {
@@ -22,6 +24,9 @@ public class FirmaDAOImpl implements FirmaDAO {
 	
 	@Autowired
 	private AssReportRuoloMensaRepository assReportRuoloMensaRepository;
+	
+	@Autowired
+	private TipoReportRepository tipoReportRepository;
 	
 	@Override
 	public List<Report> getListaReport(Integer tipoRecord) 
@@ -46,6 +51,17 @@ public class FirmaDAOImpl implements FirmaDAO {
 		
 		return listaAssociazioni;
 
+	}
+
+	@Override
+	public List<TipoReport> getTipiReport() {
+		logger.info("Ricerca tipi report...");
+		
+		List<TipoReport> listaTipiReport = tipoReportRepository.findAll();
+		
+		logger.info("Trovati " + listaTipiReport.size() + " elementi.");
+		
+		return listaTipiReport;
 	}
 
 }

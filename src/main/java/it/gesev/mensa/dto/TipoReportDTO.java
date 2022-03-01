@@ -13,5 +13,5 @@ public class TipoReportDTO implements Serializable
 {
 	private static final long serialVersionUID = 866045953525553857L;
 	private Integer codiceTipoReport;
-	private String descrizioneTipoRecord;
+	private String descrizioneTipoReport;
 }
