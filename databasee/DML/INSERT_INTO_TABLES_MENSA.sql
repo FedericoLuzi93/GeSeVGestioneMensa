@@ -42,9 +42,14 @@ INSERT INTO tipo_report (descrizione_tipo_record) VALUES('Mensa');
 INSERT INTO tipo_report (descrizione_tipo_record) VALUES('Magazzino viveri');
 
 INSERT INTO report (codice_report, descrizione_report, tipo_report_fk) VALUES('DC1', 'Report consumati e prenotati', 1);
-INSERT INTO report (codice_report, descrizione_report, tipo_report_fk) VALUES('DC4', 'Report consumati ee prenotati mensile', 1);
 INSERT INTO report (codice_report, descrizione_report, tipo_report_fk) VALUES('DC2', 'Report ingressi mensa meridiano', 1);
-
+INSERT INTO report (codice_report, descrizione_report, tipo_report_fk) VALUES('DC3', 'Prospetto calcolo coefficiente di determinazione  percentuale  riduzione presenze pasto serale', 1);
+INSERT INTO report (codice_report, descrizione_report, tipo_report_fk) VALUES('DC4', 'Report consumati ee prenotati mensile', 1);
+INSERT INTO report (codice_report, descrizione_report, tipo_report_fk) VALUES('DC5', 'Registro Giornale di Magazzino', 2);
+INSERT INTO report (codice_report, descrizione_report, tipo_report_fk) VALUES('DC6', 'Richiesta di movimento CM/123', 2);
+INSERT INTO report (codice_report, descrizione_report, tipo_report_fk) VALUES('DC7', 'Registro di carico e scarico delle derrate', 2);
+INSERT INTO report (codice_report, descrizione_report, tipo_report_fk) VALUES('DC8', 'Buono di prelevamento definitivo della mensa', 2);
+INSERT INTO report (codice_report, descrizione_report, tipo_report_fk) VALUES('DC9', 'Prospetto riepilogativo della gestione mensa: documento di controllo andamento gestionale del servizio', 1);
 
 --select codice_tipo_report from tipo_report where descrizione_tipo_report = 'Mensa'
 INSERT INTO dipendente (foto, nome, cognome, codice_fiscale, cmd, matricola, email, tipo_personale, grado, ente_appartenenza, data_assunzione_forza, data_perdita_forza, ruolo_giuridico, ruolo_funzionale) VALUES(NULL, 'Giuseppe', 'Garibaldi', 'GRBGSP09R15H501Y', '0000000000ASDFGHJKLZ', '0123456789', 'g.garibaldi@storia.it', 'M', 'Generale', '1', '2018-01-01', '9999-12-31', NULL, NULL);
