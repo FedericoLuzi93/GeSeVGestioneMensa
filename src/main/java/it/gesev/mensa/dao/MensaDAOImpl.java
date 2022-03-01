@@ -162,7 +162,7 @@ public class MensaDAOImpl implements MensaDAO
 	public int disableMensa(Mensa mensa, int idMensa) 
 	{
 		logger.info("Accesso a disableMensa, classe MensaDAOImpl");	
-		Mensa mensaMom = null;
+		Date dateSet = mensa.getDataAutorizzazioneSanitaria();
 
 		//Controllo esistenza idMensa
 		Integer maxCodice = mensaRepository.getMaxMensaId();
@@ -176,39 +176,51 @@ public class MensaDAOImpl implements MensaDAO
 		if(!optionalMensa.isPresent())
 			throw new GesevException("Impossibile disabilitare la mensa, Mensa non presente", HttpStatus.BAD_REQUEST);
 
-		//Controllo Data
-		Date dateNow = new Date();
-		if(mensa.getDataFineServizio().before(mensa.getDataInizioServizio()) || mensa.getDataFineServizio().before(dateNow) || mensa.getDataFineServizio() == null)
-			throw new GesevException("Impossibile disabilitare la mensa, Data Fine Servizio non valida", HttpStatus.BAD_REQUEST);
-		
-		//Controllo Campi mensa
-		if(StringUtils.isBlank(mensa.getDescrizioneMensa()) || mensa.getOrarioDal() == null || mensa.getOrarioAl() == null || 
-				StringUtils.isBlank(mensa.getServizioFestivo()) || mensa.getOraFinePrenotazione() == null)
-		{
-			logger.info("Impossibile modificare la mensa, campi mensa non validi");
-			throw new GesevException("Impossibile modificare la mensa, campi mensa non validi", HttpStatus.BAD_REQUEST);
-		}
-
-		//Controllo Campi Contatto
-		if(StringUtils.isBlank(mensa.getVia()) || mensa.getNumeroCivico() == null || StringUtils.isBlank(mensa.getCap()) || 
-				StringUtils.isBlank(mensa.getCitta()) || StringUtils.isBlank(mensa.getProvincia()) || StringUtils.isBlank(mensa.getTelefono()))
-		{
-			logger.info("Impossibile modificare la mensa, campi contatto non validi");
-			throw new GesevException("Impossibile modificare la mensa, campi contatto non validi", HttpStatus.BAD_REQUEST);
-		}
-
-		// Aggiornamento 
-		logger.info("Aggiornamento in corso...");
 		if(optionalMensa.isPresent())
 		{
-			mensaMom = mensa;
-			mensaMom.setCodiceMensa(idMensa);
-			mensaRepository.save(mensaMom);
+			mensa = optionalMensa.get();
+			mensa.setDataAutorizzazioneSanitaria(dateSet);
+			
+			//Controllo Data
+			Date dateNow = new Date();
+			if(mensa.getDataFineServizio().before(mensa.getDataInizioServizio()) || mensa.getDataFineServizio().before(dateNow) || mensa.getDataFineServizio() == null)
+				throw new GesevException("Impossibile disabilitare la mensa, Data Fine Servizio non valida", HttpStatus.BAD_REQUEST);
+		
+			//Controllo Campi mensa
+			if(StringUtils.isBlank(mensa.getDescrizioneMensa()) || mensa.getOrarioDal() == null || mensa.getOrarioAl() == null || 
+					StringUtils.isBlank(mensa.getServizioFestivo()) || mensa.getOraFinePrenotazione() == null)
+			{
+				logger.info("Impossibile modificare la mensa, campi mensa non validi");
+				throw new GesevException("Impossibile modificare la mensa, campi mensa non validi", HttpStatus.BAD_REQUEST);
+			}
+	
+			//Controllo Campi Contatto
+			if(StringUtils.isBlank(mensa.getVia()) || mensa.getNumeroCivico() == null || StringUtils.isBlank(mensa.getCap()) || 
+					StringUtils.isBlank(mensa.getCitta()) || StringUtils.isBlank(mensa.getProvincia()) || StringUtils.isBlank(mensa.getTelefono()))
+			{
+				logger.info("Impossibile modificare la mensa, campi contatto non validi");
+				throw new GesevException("Impossibile modificare la mensa, campi contatto non validi", HttpStatus.BAD_REQUEST);
+			}
 
-		}
+			// Aggiornamento 
+			logger.info("Aggiornamento in corso...");
+			mensaRepository.save(mensa);
+			}
 
-		return mensaMom.getCodiceMensa();
+		return mensa.getCodiceMensa();
 	}
+	
+	/* Invio File */
+	@Override
+	public Mensa getFile(int idMensa) 
+	{
+		Optional<Mensa> optionalMensa = mensaRepository.findByCodiceMensa(idMensa);
+		
+		Mensa mensa = optionalMensa.get();
+		return mensa;
+	}
+
+
 
 	/* --------------------------------------------------------------------------------- */
 
@@ -219,6 +231,15 @@ public class MensaDAOImpl implements MensaDAO
 		logger.info("Accesso a getAllLocali, classe MensaDAOImpl");
 		return tipoLocaliRepository.findAll();
 	}
+	
+	/* Lista Locali per Mensa */
+	@Override
+	public List<AssMensaTipoLocale> getAssMensaTipoLocaleByMensa(int idMensa) 
+	{
+		logger.info("Accesso a getAssMensaTipoLocaleByMensa, classe MensaDAOImpl");
+		return assMensaTipoLocaleRepository.cercaPerMensa(idMensa);
+	}
+
 
 	/* Lista Enti */
 	@Override
@@ -227,5 +248,7 @@ public class MensaDAOImpl implements MensaDAO
 		logger.info("Accesso a getAllEnti, classe MensaDAOImpl");
 		return enteRepository.findAll();
 	}
+
+
 
 }

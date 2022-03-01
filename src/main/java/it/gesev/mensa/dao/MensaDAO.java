@@ -15,7 +15,12 @@ public interface MensaDAO
 	public int updateMensa(Mensa mensa, List<AssMensaTipoLocale> assMensaTipoLocale, int idMensa);
 	public int disableMensa(Mensa mensa, int idMensa);
 	
+	public Mensa getFile(int idMensa);
+	
 	public List<TipoLocale> getAllLocali();
 	
+	public List<AssMensaTipoLocale> getAssMensaTipoLocaleByMensa(int idMensa);
+	
 	public List<Ente> getAllEnti();
+	
 }
