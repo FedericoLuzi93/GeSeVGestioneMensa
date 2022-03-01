@@ -140,7 +140,7 @@ public class MensaServiceImpl implements MensaService
 		Mensa mensa = mensaDAO.getFile(idMensa);
 		FileDTO fileDTO = new FileDTO();
 		SimpleDateFormat date = new SimpleDateFormat(dateFormat);
-		fileDTO.setNomeFile(mensa.getDescrizioneMensa() + "_" + date.format(mensa.getDataAutorizzazioneSanitaria() + ".pdf")); 
+		fileDTO.setNomeFile(mensa.getDescrizioneMensa() + "_" + date.format(mensa.getDataAutorizzazioneSanitaria()) + ".pdf"); 
 		fileDTO.setAutorizzazioneSanitaria(mensa.getAutorizzazioneSanitaria());
 		return fileDTO;
 	}

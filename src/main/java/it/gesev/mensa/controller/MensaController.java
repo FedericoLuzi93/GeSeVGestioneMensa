@@ -178,7 +178,7 @@ public class MensaController
 	}
 	
 	/* Invio del File */
-	@PostMapping(value = "/downloadFileAutorizzazioneMensa")
+	@PostMapping(value = "/downloadFileAutorizzazioneMensa/{idMensa}")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Richiesta download file Autorizzazione Mensa andata a buon fine"),
 	@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
 	@ApiResponse(code = 500, message = "Errore interno") })

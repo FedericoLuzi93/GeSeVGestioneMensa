@@ -13,7 +13,7 @@ public class MensaDTO
 	private String orarioDal;
 	private String orarioAl;
 	private String servizioFestivo;
-	private byte[] autorizzazioneSanitaria;
+	//private byte[] autorizzazioneSanitaria;
 	private String numeroAutorizzazioneSanitaria;
 	private String dataAutorizzazioneSanitaria;
 	private String autSanitariaRilasciataDa;
