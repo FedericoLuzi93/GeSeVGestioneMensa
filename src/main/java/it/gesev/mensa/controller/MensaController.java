@@ -179,7 +179,7 @@ public class MensaController
 		return ResponseEntity.status(esito.getStatus()).body(esito);
 	}
 	
-	/* Leggi singola mensa le Mense */
+	/* Leggi singola mensa */
 	@GetMapping("/getSingolaMensa/{idMensa}")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
 			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
