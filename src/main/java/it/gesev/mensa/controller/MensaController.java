@@ -2,7 +2,6 @@ package it.gesev.mensa.controller;
 
 import java.util.List;
 
-import org.apache.tomcat.util.json.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +23,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.fasterxml.jackson.core.JsonParser;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -94,30 +91,10 @@ public class MensaController
 		EsitoDTO esito = new EsitoDTO();
 		try
 		{
-			logger.info("log string in entrata LCreaMensaDTO" + LCreaMensaDTO);
-			logger.info("log multipart nome in entrata" + multipartFile.getOriginalFilename());
-			logger.info("log multipart grandezza in entrata" +  multipartFile.getSize());
-			
-//			ObjectMapper mapper = new ObjectMapper();
-//			JsonFactory factory = mapper.getFactory(); 
-//			JsonParser parser = factory.createParser(LCreaMensaDTO);
-//		    CreaMensaDTO creaMensaDTO = mapper.readTree(parser);
-//		    logger.info(creaMensaDTO + "");
-			
 			int posizione = LCreaMensaDTO.indexOf("\"creaMensaDTO\":");
-			
 			String JSON = LCreaMensaDTO.substring(posizione + "\"creaMensaDTO\":".length(), LCreaMensaDTO.length() - 1);
-			logger.info(JSON);
-			CreaMensaDTO creaMensaDTO = new Gson().fromJson(JSON, CreaMensaDTO.class);
-			
-			logger.info(creaMensaDTO.toString());
-			
-		
-			logger.info(" multipart dopo name convertito" + multipartFile.getOriginalFilename());
-			logger.info(" multipart dopo size convertito" + multipartFile.getSize());
-			
+			CreaMensaDTO creaMensaDTO = new Gson().fromJson(JSON, CreaMensaDTO.class);			
 		    mensaService.createMensa(creaMensaDTO, multipartFile);
-		    
 			esito.setStatus(HttpStatus.OK.value());
 			esito.setMessaggio("INSERIMENTO AVVENUTO CON SUCCESSO");
 			esito.setBody(mensaService.getAllMense());
@@ -142,12 +119,15 @@ public class MensaController
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
 			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
 			@ApiResponse(code = 500, message = "Errore interno") })
-	public ResponseEntity<EsitoDTO> updateMensa(@RequestPart("creaMensaDTO") CreaMensaDTO creaMensaDTO, @RequestPart("file") MultipartFile multipartFile, @PathVariable int idMensa)
+	public ResponseEntity<EsitoDTO> updateMensa(@RequestParam("file") MultipartFile multipartFile, @RequestParam("creaMensaDTO") String LCreaMensaDTO, @PathVariable int idMensa)
 	{
 		logger.info("Accesso al servizio updateMensa");
 		EsitoDTO esito = new EsitoDTO();
 		try
 		{
+			int posizione = LCreaMensaDTO.indexOf("\"creaMensaDTO\":");
+			String JSON = LCreaMensaDTO.substring(posizione + "\"creaMensaDTO\":".length(), LCreaMensaDTO.length() - 1);
+			CreaMensaDTO creaMensaDTO = new Gson().fromJson(JSON, CreaMensaDTO.class);	
 			mensaService.updateMensa(creaMensaDTO, idMensa, multipartFile);
 			esito.setStatus(HttpStatus.OK.value());
 			esito.setMessaggio("AGGIORNAMENTO AVVENUTO CON SUCCESSO");
@@ -197,6 +177,38 @@ public class MensaController
 			esito.setMessaggio(MESSAGGIO_ERRORE_INTERNO);
 		}
 		return ResponseEntity.status(esito.getStatus()).body(esito);
+	}
+	
+	/* Leggi singola mensa le Mense */
+	@GetMapping("/getSingolaMensa/{idMensa}")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
+			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
+			@ApiResponse(code = 500, message = "Errore interno") })
+	public ResponseEntity<EsitoDTO> getSingolaMensa(@PathVariable int idMensa)
+	{
+		logger.info("Accesso al servizio getSingolaMensa");
+		EsitoDTO esito = new EsitoDTO();
+		HttpStatus status = null;
+		try
+		{
+			MensaDTO mensaDTO = mensaService.getSingolaMensa(idMensa);
+			esito.setBody(mensaDTO);
+			status = HttpStatus.OK;
+		}
+		catch(GesevException gex)
+		{
+			logger.info("Si e' verificata un'eccezione", gex);
+			esito.setMessaggio(gex.getMessage());
+			status = gex.getStatus();
+		}
+		catch(Exception ex)
+		{
+			logger.info("Si e' verificata un'eccezione interna", ex);
+			esito.setMessaggio(MESSAGGIO_ERRORE_INTERNO);
+			status = HttpStatus.INTERNAL_SERVER_ERROR;	
+		}
+		esito.setStatus(status.value());
+		return ResponseEntity.status(status).headers(new HttpHeaders()).body(esito);
 	}
 	
 	/* Invio del File */

@@ -1,7 +1,6 @@
 package it.gesev.mensa.service;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -9,7 +8,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Persistence;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
@@ -134,6 +132,17 @@ public class MensaServiceImpl implements MensaService
 		return mensaDAO.disableMensa(mensa, idMensa);
 	}
 	
+	/* Get Singola Mensa */
+	@Override
+	public MensaDTO getSingolaMensa(int idMensa) 
+	{
+		logger.info("Accesso a getSingolaMensa classe MensaServiceImpl");
+		Mensa mensa = mensaDAO.getSingolaMensa(idMensa);
+		MensaDTO mensaDTO = MensaMapper.mapToDTO(mensa, dateFormat);
+		logger.info("Fine getSingolaMensa classe MensaServiceImpl");
+		return mensaDTO;
+	}
+	
 	/* Invio del File */
 	@Override
 	public FileDTO getFile(int idMensa) 
@@ -169,13 +178,7 @@ public class MensaServiceImpl implements MensaService
 	public List<FELocaliDTO> getLocaliPerMensa(int idMensa) 
 	{
 		logger.info("Accesso a getLocaliPerMensa, classe MensaServiceImpl");
-		//List<AssMensaTipoLocale> listaAssMensaTipoLocale = mensaDAO.getAssMensaTipoLocaleByMensa(idMensa);
-		//List<TipoLocale> listaTipoLocale = mensaDAO.getAllLocali();
-		List<FELocaliDTO> listaFeLocaliDTO = new ArrayList<>();
-		
-		//For each dove ciclo gli array nella lista di obj ottenuta dalla query nativa
-		//Integer chiusi = new Integer(((BigDecimal)row[5]).intValue());
-		
+		List<FELocaliDTO> listaFeLocaliDTO = new ArrayList<>();	
 		String query = "select	tipo_locale.descrizione_tipo_locale,\r\n"
 				+ "		ass_mensa_tipo_locale.superficie,\r\n"
 				+ "		ass_mensa_tipo_locale.numero_locali\r\n"
@@ -217,4 +220,6 @@ public class MensaServiceImpl implements MensaService
 		logger.info("Fine getAllEnti, classe MensaServiceImpl");
 		return listaEnteDTO;
 	}
+
+
 }

@@ -210,6 +210,16 @@ public class MensaDAOImpl implements MensaDAO
 		return mensa.getCodiceMensa();
 	}
 	
+	/* Get Singola Mensa */
+	@Override
+	public Mensa getSingolaMensa(int idMensa) 
+	{
+		logger.info("Accesso a getSingolaMensa classe MensaDAOImpl");
+		Optional<Mensa> optionalMensa =  mensaRepository.findByCodiceMensa(idMensa);
+		Mensa mensa = optionalMensa.get();
+		return mensa;
+	}
+	
 	/* Invio File */
 	@Override
 	public Mensa getFile(int idMensa) 
@@ -219,8 +229,6 @@ public class MensaDAOImpl implements MensaDAO
 		Mensa mensa = optionalMensa.get();
 		return mensa;
 	}
-
-
 
 	/* --------------------------------------------------------------------------------- */
 
@@ -240,7 +248,6 @@ public class MensaDAOImpl implements MensaDAO
 		return assMensaTipoLocaleRepository.cercaPerMensa(idMensa);
 	}
 
-
 	/* Lista Enti */
 	@Override
 	public List<Ente> getAllEnti() 
@@ -248,7 +255,4 @@ public class MensaDAOImpl implements MensaDAO
 		logger.info("Accesso a getAllEnti, classe MensaDAOImpl");
 		return enteRepository.findAll();
 	}
-
-
-
 }
