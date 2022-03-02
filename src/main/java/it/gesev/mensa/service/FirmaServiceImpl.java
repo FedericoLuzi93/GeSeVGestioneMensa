@@ -59,10 +59,9 @@ public class FirmaServiceImpl implements FirmaService
 			{
 				AssReportRuoloMensaDTO dto = new AssReportRuoloMensaDTO();
 				dto.setAssReportRuoloMensaId(associazione.getAssReportRuoloMensaId());
-				dto.setIdReport(associazione.getReport() != null ? associazione.getReport().getCodiceReport() : null);
-				dto.setIdRuolo(associazione.getRuoloMensa() != null ? associazione.getRuoloMensa().getCodiceRuoloMensa() : null);
+				dto.setRuolo(associazione.getRuoloMensa() != null ? associazione.getRuoloMensa().getDescrizioneRuoloMensa() : null);
 				
-				listaAssociazioniDTO.add(null);
+				listaAssociazioniDTO.add(dto);
 			}
 			
 			dettaglio.setListaAssociazioni(listaAssociazioniDTO);
