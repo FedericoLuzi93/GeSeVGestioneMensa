@@ -41,5 +41,18 @@ public class CreaMensaDTO
 	private List<EnteDTO> listaEntiDTO;
 	private List<AssMensaTipoLocaleDTO> assMensaTipoLocaleDTO;
 	
+	@Override
+	public String toString() {
+		return "CreaMensaDTO [codiceMensa=" + codiceMensa + ", descrizioneMensa=" + descrizioneMensa + ", orarioDal="
+				+ orarioDal + ", orarioAl=" + orarioAl + ", servizioFestivo=" + servizioFestivo
+				+ ", numeroAutorizzazioneSanitaria=" + numeroAutorizzazioneSanitaria + ", dataAutorizzazioneSanitaria="
+				+ dataAutorizzazioneSanitaria + ", autSanitariaRilasciataDa=" + autSanitariaRilasciataDa
+				+ ", oraFinePrenotazione=" + oraFinePrenotazione + ", dataInizioServizio=" + dataInizioServizio
+				+ ", dataFineServizio=" + dataFineServizio + ", via=" + via + ", numeroCivico=" + numeroCivico
+				+ ", cap=" + cap + ", citta=" + citta + ", provincia=" + provincia + ", telefono=" + telefono + ", fax="
+				+ fax + ", email=" + email + ", codiceTipoFormaVettovagliamento=" + codiceTipoFormaVettovagliamento
+				+ ", listaEntiDTO=" + listaEntiDTO + ", assMensaTipoLocaleDTO=" + assMensaTipoLocaleDTO + "]";
+	}
+	
 
 }

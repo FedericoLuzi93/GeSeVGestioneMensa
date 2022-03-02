@@ -75,6 +75,7 @@ public class MensaServiceImpl implements MensaService
 		try
 		{
 			logger.info("Accesso a createMensa, classe MensaServiceImpl");
+		
  			mensa = MensaMapper.mapToEntity(creaMensaDTO, dateFormat);	
  			assMensaTipoLocale = AssMensaTipoLocaleMapper.mapToEntity(creaMensaDTO, dateFormat);
  			mensa.setAutorizzazioneSanitaria(multipartFile.getBytes());	

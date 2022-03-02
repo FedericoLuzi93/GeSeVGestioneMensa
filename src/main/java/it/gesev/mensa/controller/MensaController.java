@@ -2,6 +2,7 @@ package it.gesev.mensa.controller;
 
 import java.util.List;
 
+import org.apache.tomcat.util.json.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +24,9 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -84,18 +84,40 @@ public class MensaController
 	}
 
 	/* Crea una Mensa */
-	@PostMapping("/creaMensa")
+	@PostMapping(value = "/creaMensa", consumes = {"multipart/form-data"})
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
 			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
 			@ApiResponse(code = 500, message = "Errore interno") })
-	public ResponseEntity<EsitoDTO> createMensa(@RequestPart("file") MultipartFile multipartFile, @RequestPart("creaMensaDTO") CreaMensaDTO creaMensaDTO)
+	public ResponseEntity<EsitoDTO> createMensa(@RequestParam("file") MultipartFile multipartFile, @RequestParam("creaMensaDTO") String LCreaMensaDTO)
 	{
 		logger.info("Accesso al servizio createMensa");
 		EsitoDTO esito = new EsitoDTO();
 		try
 		{
+			logger.info("log string in entrata LCreaMensaDTO" + LCreaMensaDTO);
+			logger.info("log multipart nome in entrata" + multipartFile.getOriginalFilename());
+			logger.info("log multipart grandezza in entrata" +  multipartFile.getSize());
 			
-			mensaService.createMensa(creaMensaDTO, multipartFile);
+//			ObjectMapper mapper = new ObjectMapper();
+//			JsonFactory factory = mapper.getFactory(); 
+//			JsonParser parser = factory.createParser(LCreaMensaDTO);
+//		    CreaMensaDTO creaMensaDTO = mapper.readTree(parser);
+//		    logger.info(creaMensaDTO + "");
+			
+			int posizione = LCreaMensaDTO.indexOf("\"creaMensaDTO\":");
+			
+			String JSON = LCreaMensaDTO.substring(posizione + "\"creaMensaDTO\":".length(), LCreaMensaDTO.length() - 1);
+			logger.info(JSON);
+			CreaMensaDTO creaMensaDTO = new Gson().fromJson(JSON, CreaMensaDTO.class);
+			
+			logger.info(creaMensaDTO.toString());
+			
+		
+			logger.info(" multipart dopo name convertito" + multipartFile.getOriginalFilename());
+			logger.info(" multipart dopo size convertito" + multipartFile.getSize());
+			
+		    mensaService.createMensa(creaMensaDTO, multipartFile);
+		    
 			esito.setStatus(HttpStatus.OK.value());
 			esito.setMessaggio("INSERIMENTO AVVENUTO CON SUCCESSO");
 			esito.setBody(mensaService.getAllMense());
