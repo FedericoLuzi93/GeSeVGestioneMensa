@@ -99,6 +99,8 @@ public class MensaServiceImpl implements MensaService
  			mensa = MensaMapper.mapToEntity(creaMensaDTO, dateFormat);	
  			if(multipartFile != null)
  				mensa.setAutorizzazioneSanitaria(multipartFile.getBytes());
+ 			else
+ 				mensa.setAutorizzazioneSanitaria(null);
  			assMensaTipoLocale = AssMensaTipoLocaleMapper.mapToEntity(creaMensaDTO, dateFormat);
  			
 		}
@@ -181,7 +183,8 @@ public class MensaServiceImpl implements MensaService
 		List<FELocaliDTO> listaFeLocaliDTO = new ArrayList<>();	
 		String query = "select	tipo_locale.descrizione_tipo_locale,\r\n"
 				+ "		ass_mensa_tipo_locale.superficie,\r\n"
-				+ "		ass_mensa_tipo_locale.numero_locali\r\n"
+				+ "		ass_mensa_tipo_locale.numero_locali,\r\n"
+				+ "		ass_mensa_tipo_locale.note\r\n"
 				+ "from	tipo_locale INNER join ass_mensa_tipo_locale\r\n"
 				+ "on	codice_mensa_fk = " + idMensa + " and \r\n"
 				+ "	tipo_locale.codice_tipo_locale = ass_mensa_tipo_locale.codice_tipo_locale_fk;";
@@ -194,12 +197,11 @@ public class MensaServiceImpl implements MensaService
 		{
 			FELocaliDTO feLocaliDTO = new FELocaliDTO();
 			feLocaliDTO.setNomeLocale((String) ob[0]);
-			//Integer superfice = new Integer(((BigDecimal)ob[1]).intValue());
 			Integer superfice = (Integer) ob[1];
 			feLocaliDTO.setSuperfice(superfice);
-			//Integer numeroLocali = new Integer(((BigDecimal)ob[2]).intValue());
 			Integer numeroLocali = (Integer) ob[2];
 			feLocaliDTO.setNumero(numeroLocali);;
+			feLocaliDTO.setNote((String) ob[3]);
 			listaFeLocaliDTO.add(feLocaliDTO);
 		}
 		return listaFeLocaliDTO;
