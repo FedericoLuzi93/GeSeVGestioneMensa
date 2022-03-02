@@ -11,6 +11,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.jvnet.staxex.MtomEnabled;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,7 +77,10 @@ public class MensaServiceImpl implements MensaService
 		
  			mensa = MensaMapper.mapToEntity(creaMensaDTO, dateFormat);	
  			assMensaTipoLocale = AssMensaTipoLocaleMapper.mapToEntity(creaMensaDTO, dateFormat);
- 			mensa.setAutorizzazioneSanitaria(multipartFile.getBytes());	
+ 			if(multipartFile == null)
+ 				mensa.setAutorizzazioneSanitaria(null);
+ 			else
+ 				mensa.setAutorizzazioneSanitaria(multipartFile.getBytes());	
 		}
 		catch(GesevException exc)
 		{
