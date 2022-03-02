@@ -87,4 +87,33 @@ public class FirmaServiceImpl implements FirmaService
 		
 	}
 
+	@Override
+	public List<AssReportRuoloMensaDTO> getRuoliReportByIdReport(String idReport) 
+	{
+		logger.info("Servizio ricerca ruoli-report sulla base dell'ID del report...");
+		
+		List<AssReportRuoloMensa> listaAssociazioni = firmaDAO.getRuoliReportByIdReport(idReport);
+		List<AssReportRuoloMensaDTO> listaAssociazioniDTO = new ArrayList<>();
+		
+		if(listaAssociazioni != null && listaAssociazioni.size() > 0)
+		{
+			for(AssReportRuoloMensa associazione : listaAssociazioni)
+			{
+				AssReportRuoloMensaDTO associazioneDTO = new AssReportRuoloMensaDTO();
+				associazioneDTO.setAssReportRuoloMensaId(associazione.getAssReportRuoloMensaId());
+				associazioneDTO.setEtichetta(associazione.getRuoloMensa() != null && associazione.getRuoloMensa().getDescrizioneRuoloMensa() != null ? 
+						                     "\"" + associazione.getRuoloMensa().getDescrizioneRuoloMensa().toUpperCase() + "\"" : null);
+				
+				associazioneDTO.setOrdineFirma(associazione.getOrdineFirma());
+				associazioneDTO.setRuolo(associazione.getRuoloMensa() != null ? associazione.getRuoloMensa().getDescrizioneRuoloMensa() : null);
+				
+				listaAssociazioniDTO.add(associazioneDTO);
+				
+				
+			}
+		}
+		
+		return listaAssociazioniDTO;
+	}
+
 }

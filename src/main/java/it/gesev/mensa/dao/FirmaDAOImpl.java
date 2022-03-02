@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -124,6 +125,20 @@ public class FirmaDAOImpl implements FirmaDAO {
 		}
 		
 		logger.info("Fine registrazione firme");
+	}
+
+	@Override
+	public List<AssReportRuoloMensa> getRuoliReportByIdReport(String idReport) 
+	{
+		logger.info("Ricerca associazioni ruolo-report sulla base dell'ID del report...");
+		
+		if(StringUtils.isBlank(idReport))
+			throw new GesevException("ID del report non valido", HttpStatus.BAD_REQUEST);
+		
+		List<AssReportRuoloMensa> listaAssociazioni = assReportRuoloMensaRepository.getAssociazioniByIdReport(idReport);
+		logger.info("Trovati " + listaAssociazioni.size() + " elementi.");
+		
+		return listaAssociazioni;
 	}
 
 }
