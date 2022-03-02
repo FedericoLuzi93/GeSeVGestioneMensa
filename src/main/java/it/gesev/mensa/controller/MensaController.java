@@ -85,7 +85,7 @@ public class MensaController
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
 			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
 			@ApiResponse(code = 500, message = "Errore interno") })
-	public ResponseEntity<EsitoDTO> createMensa(@RequestParam("file") MultipartFile multipartFile, @RequestParam("creaMensaDTO") String LCreaMensaDTO)
+	public ResponseEntity<EsitoDTO> createMensa(@RequestPart( name = "file", required = false) MultipartFile multipartFile, @RequestParam("creaMensaDTO") String LCreaMensaDTO)
 	{
 		logger.info("Accesso al servizio createMensa");
 		EsitoDTO esito = new EsitoDTO();
@@ -115,11 +115,11 @@ public class MensaController
 	}
 
 	/* Aggiorna una Mensa */
-	@PutMapping("/aggiornaMensa/{idMensa}")
+	@PutMapping(value = "/aggiornaMensa/{idMensa}", consumes = {"multipart/form-data"})
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
 			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
 			@ApiResponse(code = 500, message = "Errore interno") })
-	public ResponseEntity<EsitoDTO> updateMensa(@RequestParam("file") MultipartFile multipartFile, @RequestParam("creaMensaDTO") String LCreaMensaDTO, @PathVariable int idMensa)
+	public ResponseEntity<EsitoDTO> updateMensa(@RequestPart( name = "file", required = false) MultipartFile multipartFile, @RequestParam("creaMensaDTO") String LCreaMensaDTO, @PathVariable int idMensa)
 	{
 		logger.info("Accesso al servizio updateMensa");
 		EsitoDTO esito = new EsitoDTO();
