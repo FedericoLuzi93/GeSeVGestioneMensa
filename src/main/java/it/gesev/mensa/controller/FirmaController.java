@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import it.gesev.mensa.dto.EsitoDTO;
+import it.gesev.mensa.dto.FirmaDTO;
 import it.gesev.mensa.dto.TipoReportDTO;
 import it.gesev.mensa.exc.GesevException;
 import it.gesev.mensa.service.FirmaService;
@@ -43,6 +44,40 @@ public class FirmaController
 		try
 		{
 			esito.setBody(firmaService.getDettaglioReport(tipoReport));
+			status = HttpStatus.OK;
+		}
+		
+		catch(GesevException gex)
+		{
+			logger.info("Si e' verificata un'eccezione", gex);
+			esito.setMessaggio(gex.getMessage());
+			status = gex.getStatus();
+		}
+		
+		catch(Exception ex)
+		{
+			logger.info("Si e' verificata un'eccezione interna", ex);
+			esito.setMessaggio(MESSAGGIO_ERRORE_INTERNO);
+			status = HttpStatus.INTERNAL_SERVER_ERROR;	
+		}
+		
+		esito.setStatus(status.value());
+		return ResponseEntity.status(status).headers(new HttpHeaders()).body(esito);
+	}
+	
+	@PostMapping("/registraFirme")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
+			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
+			@ApiResponse(code = 500, message = "Errore interno") })
+	public ResponseEntity<EsitoDTO> registraFirme(@RequestBody FirmaDTO firma)
+	{
+		logger.info("Accesso al servizio dettagliFirma");
+		EsitoDTO esito = new EsitoDTO();
+		HttpStatus status = null;
+		
+		try
+		{
+			firmaService.registraFirme(firma);
 			status = HttpStatus.OK;
 		}
 		

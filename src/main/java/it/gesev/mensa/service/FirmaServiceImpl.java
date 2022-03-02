@@ -1,5 +1,6 @@
 package it.gesev.mensa.service;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +14,7 @@ import it.gesev.mensa.dao.FirmaDAO;
 import it.gesev.mensa.dao.FirmaDAOImpl;
 import it.gesev.mensa.dto.AssReportRuoloMensaDTO;
 import it.gesev.mensa.dto.DettaglioReportDTO;
+import it.gesev.mensa.dto.FirmaDTO;
 import it.gesev.mensa.dto.ReportDTO;
 import it.gesev.mensa.dto.TipoReportDTO;
 import it.gesev.mensa.entity.AssReportRuoloMensa;
@@ -57,10 +59,9 @@ public class FirmaServiceImpl implements FirmaService
 			{
 				AssReportRuoloMensaDTO dto = new AssReportRuoloMensaDTO();
 				dto.setAssReportRuoloMensaId(associazione.getAssReportRuoloMensaId());
-				dto.setIdReport(associazione.getReport() != null ? associazione.getReport().getCodiceReport() : null);
-				dto.setIdRuolo(associazione.getRuoloMensa() != null ? associazione.getRuoloMensa().getCodiceRuoloMensa() : null);
+				dto.setRuolo(associazione.getRuoloMensa() != null ? associazione.getRuoloMensa().getDescrizioneRuoloMensa() : null);
 				
-				listaAssociazioniDTO.add(null);
+				listaAssociazioniDTO.add(dto);
 			}
 			
 			dettaglio.setListaAssociazioni(listaAssociazioniDTO);
@@ -76,6 +77,14 @@ public class FirmaServiceImpl implements FirmaService
 		}
 		
 		return dettaglio;
+	}
+
+	@Override
+	public void registraFirme(FirmaDTO firma) throws ParseException {
+		logger.info("Servizio inserimento firme...");
+		
+		firmaDAO.registraFirme(firma);
+		
 	}
 
 }

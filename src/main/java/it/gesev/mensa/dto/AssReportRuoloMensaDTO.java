@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 public class AssReportRuoloMensaDTO 
 {
 	private Integer assReportRuoloMensaId;
-	private String idReport;
-	private Integer idRuolo;
+	private String ruolo;
+	private String etichetta;
 }
