@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 import it.gesev.mensa.entity.Report;
 
-public interface ReportRepository extends JpaRepository<Report, Integer> 
+public interface ReportRepository extends JpaRepository<Report, String> 
 {
 	@Query("select r from Report r where tipoReport.codiceTipoReport = :idTipoReeport")
 	public List<Report> getReportByTipo(@Param("idTipoReeport") Integer idTipoReeport);
