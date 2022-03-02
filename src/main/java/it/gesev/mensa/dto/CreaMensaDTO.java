@@ -2,8 +2,6 @@ package it.gesev.mensa.dto;
 
 import java.util.List;
 
-import org.springframework.web.multipart.MultipartFile;
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -40,6 +38,19 @@ public class CreaMensaDTO
 	private Integer codiceTipoFormaVettovagliamento;
 	private List<EnteDTO> listaEntiDTO;
 	private List<AssMensaTipoLocaleDTO> assMensaTipoLocaleDTO;
+	
+	@Override
+	public String toString() {
+		return "CreaMensaDTO [codiceMensa=" + codiceMensa + ", descrizioneMensa=" + descrizioneMensa + ", orarioDal="
+				+ orarioDal + ", orarioAl=" + orarioAl + ", servizioFestivo=" + servizioFestivo
+				+ ", numeroAutorizzazioneSanitaria=" + numeroAutorizzazioneSanitaria + ", dataAutorizzazioneSanitaria="
+				+ dataAutorizzazioneSanitaria + ", autSanitariaRilasciataDa=" + autSanitariaRilasciataDa
+				+ ", oraFinePrenotazione=" + oraFinePrenotazione + ", dataInizioServizio=" + dataInizioServizio
+				+ ", dataFineServizio=" + dataFineServizio + ", via=" + via + ", numeroCivico=" + numeroCivico
+				+ ", cap=" + cap + ", citta=" + citta + ", provincia=" + provincia + ", telefono=" + telefono + ", fax="
+				+ fax + ", email=" + email + ", codiceTipoFormaVettovagliamento=" + codiceTipoFormaVettovagliamento
+				+ ", listaEntiDTO=" + listaEntiDTO + ", assMensaTipoLocaleDTO=" + assMensaTipoLocaleDTO + "]";
+	}
 	
 
 }

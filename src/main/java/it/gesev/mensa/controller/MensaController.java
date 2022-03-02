@@ -23,10 +23,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -84,18 +81,20 @@ public class MensaController
 	}
 
 	/* Crea una Mensa */
-	@PostMapping("/creaMensa")
+	@PostMapping(value = "/creaMensa", consumes = {"multipart/form-data"})
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
 			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
 			@ApiResponse(code = 500, message = "Errore interno") })
-	public ResponseEntity<EsitoDTO> createMensa(@RequestPart("file") MultipartFile multipartFile, @RequestPart("creaMensaDTO") CreaMensaDTO creaMensaDTO)
+	public ResponseEntity<EsitoDTO> createMensa(@RequestParam("file") MultipartFile multipartFile, @RequestParam("creaMensaDTO") String LCreaMensaDTO)
 	{
 		logger.info("Accesso al servizio createMensa");
 		EsitoDTO esito = new EsitoDTO();
 		try
 		{
-			
-			mensaService.createMensa(creaMensaDTO, multipartFile);
+			int posizione = LCreaMensaDTO.indexOf("\"creaMensaDTO\":");
+			String JSON = LCreaMensaDTO.substring(posizione + "\"creaMensaDTO\":".length(), LCreaMensaDTO.length() - 1);
+			CreaMensaDTO creaMensaDTO = new Gson().fromJson(JSON, CreaMensaDTO.class);			
+		    mensaService.createMensa(creaMensaDTO, multipartFile);
 			esito.setStatus(HttpStatus.OK.value());
 			esito.setMessaggio("INSERIMENTO AVVENUTO CON SUCCESSO");
 			esito.setBody(mensaService.getAllMense());
@@ -120,12 +119,15 @@ public class MensaController
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
 			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
 			@ApiResponse(code = 500, message = "Errore interno") })
-	public ResponseEntity<EsitoDTO> updateMensa(@RequestPart("creaMensaDTO") CreaMensaDTO creaMensaDTO, @RequestPart("file") MultipartFile multipartFile, @PathVariable int idMensa)
+	public ResponseEntity<EsitoDTO> updateMensa(@RequestParam("file") MultipartFile multipartFile, @RequestParam("creaMensaDTO") String LCreaMensaDTO, @PathVariable int idMensa)
 	{
 		logger.info("Accesso al servizio updateMensa");
 		EsitoDTO esito = new EsitoDTO();
 		try
 		{
+			int posizione = LCreaMensaDTO.indexOf("\"creaMensaDTO\":");
+			String JSON = LCreaMensaDTO.substring(posizione + "\"creaMensaDTO\":".length(), LCreaMensaDTO.length() - 1);
+			CreaMensaDTO creaMensaDTO = new Gson().fromJson(JSON, CreaMensaDTO.class);	
 			mensaService.updateMensa(creaMensaDTO, idMensa, multipartFile);
 			esito.setStatus(HttpStatus.OK.value());
 			esito.setMessaggio("AGGIORNAMENTO AVVENUTO CON SUCCESSO");
@@ -175,6 +177,38 @@ public class MensaController
 			esito.setMessaggio(MESSAGGIO_ERRORE_INTERNO);
 		}
 		return ResponseEntity.status(esito.getStatus()).body(esito);
+	}
+	
+	/* Leggi singola mensa le Mense */
+	@GetMapping("/getSingolaMensa/{idMensa}")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
+			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
+			@ApiResponse(code = 500, message = "Errore interno") })
+	public ResponseEntity<EsitoDTO> getSingolaMensa(@PathVariable int idMensa)
+	{
+		logger.info("Accesso al servizio getSingolaMensa");
+		EsitoDTO esito = new EsitoDTO();
+		HttpStatus status = null;
+		try
+		{
+			MensaDTO mensaDTO = mensaService.getSingolaMensa(idMensa);
+			esito.setBody(mensaDTO);
+			status = HttpStatus.OK;
+		}
+		catch(GesevException gex)
+		{
+			logger.info("Si e' verificata un'eccezione", gex);
+			esito.setMessaggio(gex.getMessage());
+			status = gex.getStatus();
+		}
+		catch(Exception ex)
+		{
+			logger.info("Si e' verificata un'eccezione interna", ex);
+			esito.setMessaggio(MESSAGGIO_ERRORE_INTERNO);
+			status = HttpStatus.INTERNAL_SERVER_ERROR;	
+		}
+		esito.setStatus(status.value());
+		return ResponseEntity.status(status).headers(new HttpHeaders()).body(esito);
 	}
 	
 	/* Invio del File */

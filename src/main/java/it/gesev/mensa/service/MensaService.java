@@ -19,6 +19,7 @@ public interface MensaService
 	public int createMensa(CreaMensaDTO creaMensaDTO, MultipartFile multipartFile) throws ParseException, IOException;
 	public int updateMensa(CreaMensaDTO creaMensaDTO, int idMensa, MultipartFile multipartFile) throws ParseException, IOException;
 	public int disableMensa(MensaDTO mensaDTO, int idMensa) throws ParseException;
+	public MensaDTO getSingolaMensa(int idMensa);
 	
 	public FileDTO getFile(int idMensa);
 	
@@ -26,5 +27,6 @@ public interface MensaService
 	public List<FELocaliDTO> getLocaliPerMensa(int idMensa);
 	
 	public List<EnteDTO> getAllEnti();
+	
 	
 }

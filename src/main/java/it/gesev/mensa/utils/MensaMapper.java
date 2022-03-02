@@ -7,7 +7,6 @@ import java.util.Date;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 
 import it.gesev.mensa.dto.CreaMensaDTO;
 import it.gesev.mensa.dto.MensaDTO;
