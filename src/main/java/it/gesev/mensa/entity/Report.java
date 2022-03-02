@@ -31,7 +31,7 @@ public class Report
 	private String codiceReport;
 	
 	@Column(name = "DESCRIZIONE_REPORT ")
-	private String descrizioneRecord;
+	private String descrizioneReport;
 
 	@OneToMany(mappedBy = "report")
 	private List<AssReportRuoloMensa> listaAssReportRuoloMensa;

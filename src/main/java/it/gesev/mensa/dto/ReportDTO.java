@@ -13,5 +13,5 @@ public class ReportDTO implements Serializable
 {
 	private static final long serialVersionUID = -2108982679473026692L;
 	private String codiceReport;
-	private String descrizioneRecord;
+	private String descrizioneReport;
 }
