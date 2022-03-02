@@ -13,4 +13,5 @@ public interface FirmaService
 	public DettaglioReportDTO getDettaglioReport(TipoReportDTO tipoReport);
 	public void registraFirme(FirmaDTO firma) throws ParseException;
 	public List<AssReportRuoloMensaDTO> getRuoliReportByIdReport(String idReport);
+	public void modificaFirme(FirmaDTO firma) throws ParseException;
 }

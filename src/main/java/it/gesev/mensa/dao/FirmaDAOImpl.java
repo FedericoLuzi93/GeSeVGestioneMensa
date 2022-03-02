@@ -141,4 +141,25 @@ public class FirmaDAOImpl implements FirmaDAO {
 		return listaAssociazioni;
 	}
 
+	@Override
+	@Transactional
+	public void modificaFirme(FirmaDTO firma) throws ParseException 
+	{
+		logger.info("Inizio modifica firme...");
+		
+		logger.info("Controllo presenza dati necessari...");
+		if(StringUtils.isBlank(firma.getIdReport()))
+			throw new GesevException("L'Id del report non e' valido", HttpStatus.BAD_REQUEST);
+		
+		logger.info("Cancellazione ruoli precedenti...");
+		int numRigheCancellate = assReportRuoloMensaRepository.deleteByIdReport(firma.getIdReport());
+		logger.info("Cancellate " + numRigheCancellate + " righe.");
+		
+		logger.info("Aggiornamento con nuovi dati...");
+		
+		registraFirme(firma);
+		
+		logger.info("Fine modifica firme...");		
+	}
+
 }

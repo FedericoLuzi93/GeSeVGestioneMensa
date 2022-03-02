@@ -117,4 +117,12 @@ public class FirmaServiceImpl implements FirmaService
 		return listaAssociazioniDTO;
 	}
 
+	@Override
+	public void modificaFirme(FirmaDTO firma) throws ParseException 
+	{
+		logger.info("Servizioo per la modifica delle firme");
+		firmaDAO.modificaFirme(firma);
+		
+	}
+
 }
