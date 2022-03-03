@@ -38,7 +38,8 @@ public class FirmaServiceImpl implements FirmaService
 		ModelMapper mapper = new ModelMapper();
 		
 		List<Report> listaReport = firmaDAO.getListaReport(tipoReport.getCodiceTipoReport());
-		List<AssReportRuoloMensa> listaAssociazioni = firmaDAO.getReportRuolo();
+//		List<AssReportRuoloMensa> listaAssociazioni = firmaDAO.getReportRuolo();
+		List<Report> listaReportAssociazioni = firmaDAO.selectReportInAssociazione();
 		List<TipoReport> listaTipiReport = firmaDAO.getTipiReport();
 		
 		if(listaReport != null && listaReport.size() > 0)
@@ -52,20 +53,32 @@ public class FirmaServiceImpl implements FirmaService
 			dettaglio.setListaReport(listaReportDTO);
 		}
 		
-		if(listaAssociazioni != null && listaAssociazioni.size() > 0)
+//		if(listaAssociazioni != null && listaAssociazioni.size() > 0)
+//		{
+//			List<AssReportRuoloMensaDTO> listaAssociazioniDTO = new ArrayList<>();
+//			for(AssReportRuoloMensa associazione : listaAssociazioni)
+//			{
+//				AssReportRuoloMensaDTO dto = new AssReportRuoloMensaDTO();
+//				dto.setAssReportRuoloMensaId(associazione.getAssReportRuoloMensaId());
+//				dto.setRuolo(associazione.getRuoloMensa() != null ? associazione.getRuoloMensa().getDescrizioneRuoloMensa() : null);
+//				
+//				listaAssociazioniDTO.add(dto);
+//			}
+//			
+//			dettaglio.setListaAssociazioni(listaAssociazioniDTO);
+//		}
+		
+		if(listaReportAssociazioni != null && listaReportAssociazioni.size() > 0)
 		{
-			List<AssReportRuoloMensaDTO> listaAssociazioniDTO = new ArrayList<>();
-			for(AssReportRuoloMensa associazione : listaAssociazioni)
+			List<ReportDTO> listaReportDTO = new ArrayList<>();
+			for(Report report : listaReportAssociazioni)
 			{
-				AssReportRuoloMensaDTO dto = new AssReportRuoloMensaDTO();
-				dto.setAssReportRuoloMensaId(associazione.getAssReportRuoloMensaId());
-				dto.setRuolo(associazione.getRuoloMensa() != null ? associazione.getRuoloMensa().getDescrizioneRuoloMensa() : null);
-				
-				listaAssociazioniDTO.add(dto);
+				listaReportDTO.add(mapper.map(report, ReportDTO.class));
 			}
 			
-			dettaglio.setListaAssociazioni(listaAssociazioniDTO);
+			dettaglio.setListaReportInAssociazioni(listaReportDTO);
 		}
+		
 		
 		if(listaTipiReport != null && listaTipiReport.size() > 0)
 		{

@@ -16,4 +16,5 @@ public interface FirmaDAO
 	public void registraFirme(FirmaDTO firma) throws ParseException;
 	public List<AssReportRuoloMensa> getRuoliReportByIdReport(String idReport);
 	public void modificaFirme(FirmaDTO firma) throws ParseException;
+	public List<Report> selectReportInAssociazione();
 }
