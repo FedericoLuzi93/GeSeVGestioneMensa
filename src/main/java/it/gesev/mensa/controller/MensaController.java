@@ -33,6 +33,7 @@ import it.gesev.mensa.dto.EsitoDTO;
 import it.gesev.mensa.dto.FELocaliDTO;
 import it.gesev.mensa.dto.FileDTO;
 import it.gesev.mensa.dto.MensaDTO;
+import it.gesev.mensa.dto.TipoFromaVettovagliamentoDTO;
 import it.gesev.mensa.dto.TipoLocaleDTO;
 import it.gesev.mensa.exc.GesevException;
 import it.gesev.mensa.service.MensaService;
@@ -234,7 +235,7 @@ public class MensaController
 	
 	/* --------------------------------------------------------------------------------- */
 
-	/* LEGGI LISTA */
+	/* leggi Lista */
 	@GetMapping("/leggiLista")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
 			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
@@ -298,7 +299,7 @@ public class MensaController
 		return ResponseEntity.status(status).headers(new HttpHeaders()).body(esito);
 	}
 
-	/* LEGGI ENTI */
+	/* leggi enti */
 	@GetMapping("/leggiEnti")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
 			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
@@ -329,5 +330,38 @@ public class MensaController
 		esito.setStatus(status.value());
 		return ResponseEntity.status(status).headers(new HttpHeaders()).body(esito);
 	}
+	
+	/* leggi Tipo froma vettovagliamento */
+	@GetMapping("/leggiTipoFormaVettovagliamento")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
+			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
+			@ApiResponse(code = 500, message = "Errore interno") })
+	public ResponseEntity<EsitoDTO> getAllTipoFormaVettovagliamento()
+	{
+		logger.info("Accesso al servizio getAllTipoFormaVettovagliamento");
+		EsitoDTO esito = new EsitoDTO();
+		HttpStatus status = null;
+		try
+		{
+			List<TipoFromaVettovagliamentoDTO> listaVettovagliamentoDTOs = mensaService.getAllTipoFormaVettovagliamento();
+			esito.setBody(listaVettovagliamentoDTOs);
+			status = HttpStatus.OK;
+		}
+		catch(GesevException gex)
+		{
+			logger.info("Si e' verificata un'eccezione", gex);
+			esito.setMessaggio(gex.getMessage());
+			status = gex.getStatus();
+		}
+		catch(Exception ex)
+		{
+			logger.info("Si e' verificata un'eccezione interna", ex);
+			esito.setMessaggio(MESSAGGIO_ERRORE_INTERNO);
+			status = HttpStatus.INTERNAL_SERVER_ERROR;	
+		}
+		esito.setStatus(status.value());
+		return ResponseEntity.status(status).headers(new HttpHeaders()).body(esito);
+	}
+
 
 }

@@ -10,7 +10,7 @@ import it.gesev.mensa.entity.TipoLocale;
 
 public class TipoLocaleMapper 
 {
-	private static final Logger logger = LoggerFactory.getLogger(MensaMapper.class);
+	private static final Logger logger = LoggerFactory.getLogger(TipoLocaleMapper.class);
 	
 	//Entity to DTO
 	public static TipoLocaleDTO mapToDTO(TipoLocale tipoLocale)

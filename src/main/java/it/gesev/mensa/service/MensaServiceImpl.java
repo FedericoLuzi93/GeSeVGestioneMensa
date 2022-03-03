@@ -27,6 +27,7 @@ import it.gesev.mensa.dto.EnteDTO;
 import it.gesev.mensa.dto.FELocaliDTO;
 import it.gesev.mensa.dto.FileDTO;
 import it.gesev.mensa.dto.MensaDTO;
+import it.gesev.mensa.dto.TipoFromaVettovagliamentoDTO;
 import it.gesev.mensa.dto.TipoLocaleDTO;
 import it.gesev.mensa.entity.AssMensaTipoLocale;
 import it.gesev.mensa.entity.Ente;
@@ -37,6 +38,7 @@ import it.gesev.mensa.exc.GesevException;
 import it.gesev.mensa.utils.AssMensaTipoLocaleMapper;
 import it.gesev.mensa.utils.EnteMapper;
 import it.gesev.mensa.utils.MensaMapper;
+import it.gesev.mensa.utils.TipoFormaVettovagliamentoMapper;
 import it.gesev.mensa.utils.TipoLocaleMapper;
 
 @Service
@@ -230,6 +232,21 @@ public class MensaServiceImpl implements MensaService
 		}
 		logger.info("Fine getAllEnti, classe MensaServiceImpl");
 		return listaEnteDTO;
+	}
+
+	@Override
+	public List<TipoFromaVettovagliamentoDTO> getAllTipoFormaVettovagliamento() 
+	{
+		logger.info("Accesso a getAllTipoFormaVettovagliamento, classe MensaServiceImpl");
+		List<TipoFormaVettovagliamento> listVettovagliamento = mensaDAO.getAllTipoFormaVettovagliamento();
+		List<TipoFromaVettovagliamentoDTO> listVettovagliamentoDTO = new ArrayList<>();
+		logger.info("Inizio ciclo for in getAllTipoFormaVettovagliamento, classe MensaServiceImpl");
+		for(TipoFormaVettovagliamento tm : listVettovagliamento)
+		{
+			listVettovagliamentoDTO.add(TipoFormaVettovagliamentoMapper.mapToDTO(tm));
+		}
+		logger.info("Fine getAllEnti, classe MensaServiceImpl");
+		return listVettovagliamentoDTO;
 	}
 
 
