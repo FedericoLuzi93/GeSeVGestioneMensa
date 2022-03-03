@@ -212,22 +212,24 @@ public class MensaController
 	}
 	
 	/* Invio del File */
-	@PostMapping(value = "/downloadFileAutorizzazioneMensa/{idMensa}")
+	@GetMapping(value = "/downloadFileAutorizzazioneMensa/{idMensa}")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Richiesta download file Autorizzazione Mensa andata a buon fine"),
 	@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
 	@ApiResponse(code = 500, message = "Errore interno") })
 	public ResponseEntity<Resource> downloadFileControdeduzioni(@PathVariable int idMensa)
 	{
-		logger.info("Accesso al servizio downloadFileAutorizzazioneMensa");
-		HttpHeaders headers = new HttpHeaders();
+	logger.info("Accesso al servizio downloadFileAutorizzazioneMensa");
+	HttpHeaders headers = new HttpHeaders();
+
+	/* Invio FIle */
+	FileDTO fileDTO = mensaService.getFile(idMensa);
+
+	headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileDTO.getNomeFile());
+	headers.add(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION);
+
+	return ResponseEntity.ok().headers(headers).contentLength(fileDTO.getAutorizzazioneSanitaria().length)
+	.contentType(MediaType.APPLICATION_OCTET_STREAM).body(new ByteArrayResource(fileDTO.getAutorizzazioneSanitaria()));
 	
-		/* Invio FIle */
-		FileDTO fileDTO = mensaService.getFile(idMensa);
-		
-		headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileDTO.getNomeFile());
-		
-		return ResponseEntity.ok().headers(headers).contentLength(fileDTO.getAutorizzazioneSanitaria().length)
-		.contentType(MediaType.APPLICATION_OCTET_STREAM).body(new ByteArrayResource(fileDTO.getAutorizzazioneSanitaria()));
 	}
 	
 	/* --------------------------------------------------------------------------------- */
