@@ -2,10 +2,14 @@ package it.gesev.mensa.dao;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
@@ -47,6 +51,9 @@ public class FirmaDAOImpl implements FirmaDAO {
 	
 	@Autowired
 	private RuoloMensaRepository ruoloMensaRepository;
+	
+	@PersistenceContext
+	EntityManager entityManager;
 	
 	@Override
 	public List<Report> getListaReport(Integer tipoRecord) 
@@ -160,6 +167,31 @@ public class FirmaDAOImpl implements FirmaDAO {
 		registraFirme(firma);
 		
 		logger.info("Fine modifica firme...");		
+	}
+
+	@Override
+	public List<Report> selectReportInAssociazione() 
+	{
+		logger.info("Ricerca report coinvolti in associazioni con ruoli...");
+		String query = "select distinct arrm.report_fk, r.descrizione_report " +
+				       "from ass_report_ruolo_mensa arrm left join report r " +
+				       "on arrm.report_fk  = r.codice_report ";
+		
+		Query selectQuery = entityManager.createNativeQuery(query);
+		@SuppressWarnings("unchecked")
+		List<Object[]> results = selectQuery.getResultList();
+		List<Report> listaReports = new ArrayList<>();
+		
+		for(Object[] row : results)
+		{
+			Report report = new Report();
+			report.setCodiceReport((String)row[0]);
+			report.setDescrizioneReport((String)row[1]);
+			
+			listaReports.add(report);
+		}
+		
+		return listaReports;
 	}
 
 }
