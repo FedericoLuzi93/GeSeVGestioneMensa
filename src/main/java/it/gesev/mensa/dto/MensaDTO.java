@@ -20,6 +20,7 @@ public class MensaDTO
 	private String oraFinePrenotazione;
 	private String dataInizioServizio;
 	private String dataFineServizio;
+	private String descrizioneTipoFormaVettovagliamento;
 	
 	//Contatti
 	private String via;

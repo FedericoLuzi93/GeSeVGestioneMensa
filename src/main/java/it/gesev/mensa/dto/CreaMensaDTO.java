@@ -35,7 +35,7 @@ public class CreaMensaDTO
 	private String email;
 	
 	//Liste Enti, AssMensaTipoLocale e CodiceTipoFormaVettovagliamento
-	private Integer codiceTipoFormaVettovagliamento;
+	private String descrizioneTipoFormaVettovagliamento;
 	private List<EnteDTO> listaEntiDTO;
 	private List<AssMensaTipoLocaleDTO> assMensaTipoLocaleDTO;
 	
@@ -48,9 +48,14 @@ public class CreaMensaDTO
 				+ ", oraFinePrenotazione=" + oraFinePrenotazione + ", dataInizioServizio=" + dataInizioServizio
 				+ ", dataFineServizio=" + dataFineServizio + ", via=" + via + ", numeroCivico=" + numeroCivico
 				+ ", cap=" + cap + ", citta=" + citta + ", provincia=" + provincia + ", telefono=" + telefono + ", fax="
-				+ fax + ", email=" + email + ", codiceTipoFormaVettovagliamento=" + codiceTipoFormaVettovagliamento
-				+ ", listaEntiDTO=" + listaEntiDTO + ", assMensaTipoLocaleDTO=" + assMensaTipoLocaleDTO + "]";
+				+ fax + ", email=" + email + ", descrizioneTipoFormaVettovagliamento="
+				+ descrizioneTipoFormaVettovagliamento + ", listaEntiDTO=" + listaEntiDTO + ", assMensaTipoLocaleDTO="
+				+ assMensaTipoLocaleDTO + "]";
 	}
+	
+
+	
+
 	
 
 }

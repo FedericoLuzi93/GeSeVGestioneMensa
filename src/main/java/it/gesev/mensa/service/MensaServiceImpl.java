@@ -11,6 +11,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jvnet.staxex.MtomEnabled;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,7 @@ import it.gesev.mensa.dto.TipoLocaleDTO;
 import it.gesev.mensa.entity.AssMensaTipoLocale;
 import it.gesev.mensa.entity.Ente;
 import it.gesev.mensa.entity.Mensa;
+import it.gesev.mensa.entity.TipoFormaVettovagliamento;
 import it.gesev.mensa.entity.TipoLocale;
 import it.gesev.mensa.exc.GesevException;
 import it.gesev.mensa.utils.AssMensaTipoLocaleMapper;
@@ -57,9 +59,9 @@ public class MensaServiceImpl implements MensaService
 		logger.info("Accesso a getAllMense, classe MensaServiceImpl");
 		List<Mensa> listaMensa = mensaDAO.getAllMense();
 		List<MensaDTO> listaMensaDTO = new ArrayList<>();
+		logger.info("Inizio ciclo For in getAllMense, classe MensaServiceImpl");
 		for(Mensa m : listaMensa)
 		{
-			logger.info("Ciclo For in getAllMense, classe MensaServiceImpl");
 			listaMensaDTO.add(MensaMapper.mapToDTO(m, dateFormat));
 		}
 		logger.info("Fine getAllMense, classe MensaServiceImpl");
@@ -71,12 +73,13 @@ public class MensaServiceImpl implements MensaService
 	{
 		Mensa mensa = null;
 		List<AssMensaTipoLocale> assMensaTipoLocale = null;
+		String descrizioneTipoVettovagliamento = "";
 		try
 		{
 			logger.info("Accesso a createMensa, classe MensaServiceImpl");
-		
  			mensa = MensaMapper.mapToEntity(creaMensaDTO, dateFormat);	
  			assMensaTipoLocale = AssMensaTipoLocaleMapper.mapToEntity(creaMensaDTO, dateFormat);
+ 			descrizioneTipoVettovagliamento = creaMensaDTO.getDescrizioneTipoFormaVettovagliamento();
  			if(multipartFile == null)
  				mensa.setAutorizzazioneSanitaria(null);
  			else
@@ -89,7 +92,7 @@ public class MensaServiceImpl implements MensaService
 		}
 		logger.info("Crezione mensa in corso...");
 		
-		return mensaDAO.createMensa(mensa, assMensaTipoLocale);
+		return mensaDAO.createMensa(mensa, assMensaTipoLocale, descrizioneTipoVettovagliamento);
 	}
 
 	/* Aggiorna una Mensa */
@@ -97,10 +100,12 @@ public class MensaServiceImpl implements MensaService
 	{
 		Mensa mensa = null;
 		List<AssMensaTipoLocale> assMensaTipoLocale = null;
+		String descrizioneTipoVettovagliamento = "";
 		try
 		{
 			logger.info("Accesso a updateMensa, classe MensaServiceImpl");
  			mensa = MensaMapper.mapToEntity(creaMensaDTO, dateFormat);	
+ 			descrizioneTipoVettovagliamento = creaMensaDTO.getDescrizioneTipoFormaVettovagliamento();
  			if(multipartFile != null)
  				mensa.setAutorizzazioneSanitaria(multipartFile.getBytes());
  			else
@@ -114,7 +119,7 @@ public class MensaServiceImpl implements MensaService
 			throw new GesevException("Non è stato possibile modificare la Mensa " + exc, HttpStatus.BAD_REQUEST);
 		}
 		logger.info("Modifica mensa in corso...");
-		return mensaDAO.updateMensa(mensa, assMensaTipoLocale, idMensa);
+		return mensaDAO.updateMensa(mensa, assMensaTipoLocale, idMensa, descrizioneTipoVettovagliamento);
 	}
 
 	/* Disabilita una Mensa */
@@ -169,9 +174,9 @@ public class MensaServiceImpl implements MensaService
 		logger.info("Accesso a getAllLocali, classe MensaServiceImpl");
 		List<TipoLocale> listaTipoLocali = mensaDAO.getAllLocali();
 		List<TipoLocaleDTO> listaTipoLocaliDTO = new ArrayList<>();
+		logger.info("Inizio ciclo For in getAllLocali, classe MensaServiceImpl");
 		for(TipoLocale tp : listaTipoLocali)
 		{
-			logger.info("Ciclo For in getAllLocali, classe MensaServiceImpl");
 			listaTipoLocaliDTO.add(TipoLocaleMapper.mapToDTO(tp));
 		}
 		logger.info("Fine getAllLocali, classe MensaServiceImpl");
@@ -218,9 +223,9 @@ public class MensaServiceImpl implements MensaService
 		logger.info("Accesso a getAllEnti, classe MensaServiceImpl");
 		List<Ente> enteLista = mensaDAO.getAllEnti();
 		List<EnteDTO> listaEnteDTO = new ArrayList<>();
+		logger.info("Inizio ciclo for in getAllEnti, classe MensaServiceImpl");
 		for(Ente e : enteLista)
 		{
-			logger.info("Ciclo For in getAllEnti, classe MensaServiceImpl");
 			listaEnteDTO.add(EnteMapper.mapToDTO(e));
 		}
 		logger.info("Fine getAllEnti, classe MensaServiceImpl");

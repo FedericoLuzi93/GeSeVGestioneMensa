@@ -17,11 +17,13 @@ import org.springframework.stereotype.Repository;
 import it.gesev.mensa.entity.AssMensaTipoLocale;
 import it.gesev.mensa.entity.Ente;
 import it.gesev.mensa.entity.Mensa;
+import it.gesev.mensa.entity.TipoFormaVettovagliamento;
 import it.gesev.mensa.entity.TipoLocale;
 import it.gesev.mensa.exc.GesevException;
 import it.gesev.mensa.repository.AssMensaTipoLocaleRepository;
 import it.gesev.mensa.repository.EnteRepository;
 import it.gesev.mensa.repository.MensaRepository;
+import it.gesev.mensa.repository.TipoFormaVettovagliamentoRepository;
 import it.gesev.mensa.repository.TipoLocaliRepository;
 
 @Repository
@@ -39,6 +41,9 @@ public class MensaDAOImpl implements MensaDAO
 
 	@Autowired
 	private AssMensaTipoLocaleRepository assMensaTipoLocaleRepository;
+	
+	@Autowired
+	private TipoFormaVettovagliamentoRepository tipoFormaVettovagliamentoRepository;
 
 	private static final Logger logger = LoggerFactory.getLogger(MensaDAOImpl.class);
 
@@ -53,7 +58,7 @@ public class MensaDAOImpl implements MensaDAO
 	/* Crea una Mensa */
 	@Override
 	@Transactional
-	public int createMensa(Mensa mensa, List<AssMensaTipoLocale> assMensaTipoLocale) 
+	public int createMensa(Mensa mensa, List<AssMensaTipoLocale> assMensaTipoLocale, String descrizioneTipoVettovagliamento) 
 	{
 		logger.info("Accesso a createMensa, classe MensaDAOImpl");	
 
@@ -62,17 +67,27 @@ public class MensaDAOImpl implements MensaDAO
 		if(StringUtils.isBlank(mensa.getDescrizioneMensa()) || mensa.getOrarioDal() == null || mensa.getOrarioAl() == null || 
 				StringUtils.isBlank(mensa.getServizioFestivo()) || mensa.getOraFinePrenotazione() == null)
 		{
-			logger.info("Impossibile modificare la mensa, campi mensa non validi");
-			throw new GesevException("Impossibile modificare la mensa, campi mensa non validi", HttpStatus.BAD_REQUEST);
+			logger.info("Impossibile creare la mensa, campi mensa non validi");
+			throw new GesevException("Impossibile creare la mensa, campi mensa non validi", HttpStatus.BAD_REQUEST);
 		}
 
 		//Controllo Campi Contatto
 		if(StringUtils.isBlank(mensa.getVia()) || mensa.getNumeroCivico() == null || StringUtils.isBlank(mensa.getCap()) || 
 				StringUtils.isBlank(mensa.getCitta()) || StringUtils.isBlank(mensa.getProvincia()) || StringUtils.isBlank(mensa.getTelefono()))
 		{
-			logger.info("Impossibile modificare la mensa, campi contatto non validi");
-			throw new GesevException("Impossibile modificare la mensa, campi contatto non validi", HttpStatus.BAD_REQUEST);
+			logger.info("Impossibile creare la mensa, campi contatto non validi");
+			throw new GesevException("Impossibile creare la mensa, campi  non validi", HttpStatus.BAD_REQUEST);
 		}
+		
+		//Ricerca TipoVettovagliamento
+		Optional<TipoFormaVettovagliamento> optionalTipoFormaVett = tipoFormaVettovagliamentoRepository.findByDescrizione(descrizioneTipoVettovagliamento);
+		if(!optionalTipoFormaVett.isPresent())
+		{
+			logger.info("Impossibile creare la mensa, Tipo Vettovagliamento non valido");
+			throw new GesevException("Impossibile creare la mensa, Tipo Vettovagliamento non valido", HttpStatus.BAD_REQUEST);
+		}
+		TipoFormaVettovagliamento tipoFormaVettovagliamento = optionalTipoFormaVett.get();
+		mensa.setTipoFormaVettovagliamento(tipoFormaVettovagliamento);
 
 		//Salvataggio Mensa
 		logger.info("Inserimento nuova mensa in corso...");
@@ -100,7 +115,7 @@ public class MensaDAOImpl implements MensaDAO
 	/* Aggiorna una Mensa */
 	@Override
 	@Transactional
-	public int updateMensa(Mensa mensa, List<AssMensaTipoLocale> assMensaTipoLocale, int idMensa) 
+	public int updateMensa(Mensa mensa, List<AssMensaTipoLocale> assMensaTipoLocale, int idMensa, String descrizioneTipoVettovagliamento) 
 	{
 		logger.info("Accesso a updateMensa, classe MensaDAOImpl");	
 		Mensa mensaMom = null;
@@ -131,13 +146,23 @@ public class MensaDAOImpl implements MensaDAO
 			logger.info("Impossibile modificare la mensa, campi contatto non validi");
 			throw new GesevException("Impossibile modificare la mensa, campi contatto non validi", HttpStatus.BAD_REQUEST);
 		}
-
+		
+		//Ricerca TipoVettovagliamento
+		Optional<TipoFormaVettovagliamento> optionalTipoFormaVett = tipoFormaVettovagliamentoRepository.findByDescrizione(descrizioneTipoVettovagliamento);
+		if(!optionalTipoFormaVett.isPresent())
+		{
+			logger.info("Impossibile creare la mensa, Tipo Vettovagliamento non valido");
+			throw new GesevException("Impossibile creare la mensa, Tipo Vettovagliamento non valido", HttpStatus.BAD_REQUEST);
+		}
+		TipoFormaVettovagliamento tipoFormaVettovagliamento = optionalTipoFormaVett.get();
+		
 		// Aggiornamento 
 		logger.info("Aggiornamento in corso...");
 		if(optionalMensa.isPresent())
 		{
 			mensaMom = mensa;
 			mensaMom.setCodiceMensa(idMensa);
+			mensaMom.setTipoFormaVettovagliamento(tipoFormaVettovagliamento);
 			mensaRepository.save(mensaMom);
 
 			for(AssMensaTipoLocale assocazione : assMensaTipoLocale)		
@@ -225,7 +250,6 @@ public class MensaDAOImpl implements MensaDAO
 	public Mensa getFile(int idMensa) 
 	{
 		Optional<Mensa> optionalMensa = mensaRepository.findByCodiceMensa(idMensa);
-		
 		Mensa mensa = optionalMensa.get();
 		return mensa;
 	}

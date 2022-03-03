@@ -8,6 +8,7 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import antlr.StringUtils;
 import it.gesev.mensa.dto.CreaMensaDTO;
 import it.gesev.mensa.dto.MensaDTO;
 import it.gesev.mensa.entity.Mensa;
@@ -23,6 +24,9 @@ public class MensaMapper
 		ModelMapper mapper = new ModelMapper();
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
 		MensaDTO mensaDTO= mapper.map(mensa, MensaDTO.class);
+		
+		//TipoVettovagliamento	
+		mensaDTO.setDescrizioneTipoFormaVettovagliamento(mensa.getTipoFormaVettovagliamento().getDescrizione());
 		
 		//Date to String
 		if(mensa.getDataAutorizzazioneSanitaria() != null)
