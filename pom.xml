@@ -12,6 +12,7 @@
 	<groupId>it.gesev.mensa</groupId>
 	<artifactId>GeSeVGestioneMensa</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
 	<name>GeSeVGestioneMensa</name>
 	<description>GeSeV GestioneMensa</description>
 	<properties>
@@ -89,6 +90,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>${project.name}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
