@@ -11,6 +11,7 @@ import it.gesev.mensa.dto.EnteDTO;
 import it.gesev.mensa.dto.FELocaliDTO;
 import it.gesev.mensa.dto.FileDTO;
 import it.gesev.mensa.dto.MensaDTO;
+import it.gesev.mensa.dto.TipoFromaVettovagliamentoDTO;
 import it.gesev.mensa.dto.TipoLocaleDTO;
 
 public interface MensaService 
@@ -27,6 +28,8 @@ public interface MensaService
 	public List<FELocaliDTO> getLocaliPerMensa(int idMensa);
 	
 	public List<EnteDTO> getAllEnti();
+	
+	public List<TipoFromaVettovagliamentoDTO> getAllTipoFormaVettovagliamento();
 	
 	
 }

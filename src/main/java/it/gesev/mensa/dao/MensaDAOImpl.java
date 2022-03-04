@@ -279,4 +279,12 @@ public class MensaDAOImpl implements MensaDAO
 		logger.info("Accesso a getAllEnti, classe MensaDAOImpl");
 		return enteRepository.findAll();
 	}
+
+	/* Lista Tipo Forma Vettovagliamento */
+	@Override
+	public List<TipoFormaVettovagliamento> getAllTipoFormaVettovagliamento() 
+	{
+		logger.info("Accesso a getAllTipoFormaVettovagliamento, classe MensaDAOImpl");
+		return tipoFormaVettovagliamentoRepository.findAll();
+	}
 }

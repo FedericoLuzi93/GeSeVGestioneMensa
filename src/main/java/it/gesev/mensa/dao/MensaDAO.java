@@ -5,6 +5,7 @@ import java.util.List;
 import it.gesev.mensa.entity.AssMensaTipoLocale;
 import it.gesev.mensa.entity.Ente;
 import it.gesev.mensa.entity.Mensa;
+import it.gesev.mensa.entity.TipoFormaVettovagliamento;
 import it.gesev.mensa.entity.TipoLocale;
 
 
@@ -23,5 +24,7 @@ public interface MensaDAO
 	public List<AssMensaTipoLocale> getAssMensaTipoLocaleByMensa(int idMensa);
 	
 	public List<Ente> getAllEnti();
+	
+	public List<TipoFormaVettovagliamento> getAllTipoFormaVettovagliamento();
 	
 }
