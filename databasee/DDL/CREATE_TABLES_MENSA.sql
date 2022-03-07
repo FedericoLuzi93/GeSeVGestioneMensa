@@ -1,24 +1,27 @@
 ALTER TABLE ente ADD COLUMN ente_riferimento VARCHAR(256) references ente(codice_aced);
 alter table ente add column mensa_fk int references mensa(codice_mensa);
 
-CREATE TABLE DIPENDENTE
+CREATE TABLE dipendente 
 (
-	CODICE_DIPENDENTE SERIAL PRIMARY KEY,
-	FOTO BYTEA,
-	NOME VARCHAR(50) NOT NULL,
-	COGNOME VARCHAR(50) NOT NULL,
-	CODICE_FISCALE VARCHAR(16) NOT NULL,
-	CMD VARCHAR(20) NOT NULL,
-	MATRICOLA VARCHAR(20) NOT NULL,
-	EMAIL VARCHAR(100) NOT NULL,
-	TIPO_PERSONALE VARCHAR(2) NOT NULL,  -- (M, C, T)
-	GRADO VARCHAR(50),
-	ENTE_APPARTENENZA VARCHAR(6) REFERENCES ENTE(CODICE_ACED) NOT NULL,
-	DATA_ASSUNZIONE_FORZA DATE NOT NULL,
-	DATA_PERDITA_FORZA DATE NOT NULL,
-	RUOLO_GIURIDICO VARCHAR(50),
-	RUOLO_FUNZIONALE VARCHAR(50)
+	codice_dipendente serial4 NOT NULL,
+	foto bytea NULL,
+	nome varchar(50) NOT NULL,
+	cognome varchar(50) NOT NULL,
+	codice_fiscale varchar(16) NOT NULL,
+	cmd varchar(20) NOT NULL,
+	matricola varchar(20) NOT NULL,
+	email varchar(100) NOT NULL,
+	tipo_personale varchar(2) NOT NULL,
+	grado varchar(50) NULL,
+	ente_appartenenza int4 NULL,
+	data_assunzione_forza date NOT NULL,
+	data_perdita_forza date NOT NULL,
+	ruolo_giuridico varchar(50) NULL,
+	ruolo_funzionale varchar(50) NULL,
+	CONSTRAINT dipendente_pkey PRIMARY KEY (codice_dipendente)
 );
+
+ALTER TABLE public.dipendente ADD CONSTRAINT ente_fk FOREIGN KEY (ente_appartenenza) REFERENCES ente(id_ente);
 
 CREATE TABLE ORGANO_DIRETTIVO
 (

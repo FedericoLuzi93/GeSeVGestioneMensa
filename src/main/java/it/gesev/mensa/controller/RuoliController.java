@@ -295,6 +295,7 @@ public class RuoliController
 			ruoliService.creaOrganoDirettivo(organoDirettivoDTO);
 			status = HttpStatus.OK;
 			esito.setMessaggio("INSERIMENTO AVVENUTO CON SUCCESSO");
+			
 		}
 		catch(GesevException gex)
 		{

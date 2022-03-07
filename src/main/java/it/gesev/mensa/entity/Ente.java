@@ -25,8 +25,14 @@ public class Ente
 {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name="id_ente")
+	private Integer idEnte;
+	
 	@Column(name="CODICE_ACED")
 	private String codiceACED;
+	
+	@Column(name="descrizione_ente")
+	private String descrizioneEnte;
 	
 	@OneToMany(mappedBy="ente", cascade={CascadeType.PERSIST, CascadeType.DETACH,
 		 	CascadeType.MERGE, CascadeType.REFRESH})
