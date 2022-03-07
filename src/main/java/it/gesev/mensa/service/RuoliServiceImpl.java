@@ -189,4 +189,25 @@ public class RuoliServiceImpl implements RuoliService
 		return getDettaglioRuoli();
 	}
 
+	/* --------------------------------------------------------------------------------- */
+	
+	/* Crea nuovo Organo Direttivo */
+	@Override
+	public OrganoDirettivoDTO creaOrganoDirettivo(OrganoDirettivoDTO organoDirettivoDTO) 
+	{
+		OrganoDirettivo organoDirettivo = new OrganoDirettivo();
+		try
+		{
+			logger.info("Servizio per la creazione dello organo direttivo...");
+			organoDirettivo.setDescrizioneOrganoDirettivo(organoDirettivoDTO.getDescrizioneOrganoDirettivo());
+		}
+		catch(GesevException exc)
+		{
+			logger.info("Eccezione nel servizio creaOrganoDirettivo" + exc);
+			throw new GesevException("Non è stato possibile creare un organo direttivo" + exc, HttpStatus.BAD_REQUEST);
+		}
+		ruoliDAO.creaOrganoDirettivo(organoDirettivo);
+		return organoDirettivoDTO;
+	}
+
 }

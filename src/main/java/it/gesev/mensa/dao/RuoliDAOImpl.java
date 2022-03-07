@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
+import it.gesev.mensa.dto.OrganoDirettivoDTO;
 import it.gesev.mensa.dto.RicercaColonnaDTO;
 import it.gesev.mensa.entity.AssDipendenteRuolo;
 import it.gesev.mensa.entity.Dipendente;
@@ -249,6 +250,16 @@ public class RuoliDAOImpl implements RuoliDAO
 		logger.info("Fine cancellazione ruolo");
 			
 		
+	}
+
+	/* --------------------------------------------------------------------------------- */
+	
+	/* Crea nuovo Organo Direttivo */
+	@Override
+	public OrganoDirettivo creaOrganoDirettivo(OrganoDirettivo organoDirettivo) 
+	{
+		organoDirettivoRepository.save(organoDirettivo);
+		return organoDirettivo;
 	}
 
 }
