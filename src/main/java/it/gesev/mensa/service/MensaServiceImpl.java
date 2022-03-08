@@ -167,6 +167,22 @@ public class MensaServiceImpl implements MensaService
 		fileDTO.setAutorizzazioneSanitaria(mensa.getAutorizzazioneSanitaria());
 		return fileDTO;
 	}
+	
+	/* Cerca Mense per Id Ente */
+	@Override
+	public List<MensaDTO> getMensaPerEnte(int idEnte)
+	{
+		logger.info("Accesso a getMensaPerEnte classe MensaServiceImpl");
+		List<Mensa> listaMensa = mensaDAO.getMensaPerEnte(idEnte);
+		List<MensaDTO> listaMensaDTO = new ArrayList<>();
+		logger.info("Inizio ciclo For in getMensaPerEnte classe MensaServiceImpl");
+		for(Mensa m : listaMensa)
+		{
+			listaMensaDTO.add(MensaMapper.mapToDTO(m, dateFormat));
+		}
+		logger.info("Fine getMensaPerEnte classe MensaServiceImpl");
+		return listaMensaDTO;
+	}
 
 	/* --------------------------------------------------------------------------------- */
 
@@ -248,6 +264,8 @@ public class MensaServiceImpl implements MensaService
 		logger.info("Fine getAllEnti, classe MensaServiceImpl");
 		return listVettovagliamentoDTO;
 	}
+
+
 
 
 }

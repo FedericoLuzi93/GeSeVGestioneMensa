@@ -16,6 +16,7 @@ public interface MensaDAO
 	public int updateMensa(Mensa mensa, List<AssMensaTipoLocale> assMensaTipoLocale, int idMensa, String descrizioneTipoVettovagliamento);
 	public int disableMensa(Mensa mensa, int idMensa);
 	public Mensa getSingolaMensa(int idMensa);
+	public List<Mensa> getMensaPerEnte(int idEnte);
 	
 	public Mensa getFile(int idMensa);
 	
@@ -26,5 +27,4 @@ public interface MensaDAO
 	public List<Ente> getAllEnti();
 	
 	public List<TipoFormaVettovagliamento> getAllTipoFormaVettovagliamento();
-	
 }

@@ -1,5 +1,6 @@
 package it.gesev.mensa.dao;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -253,6 +254,22 @@ public class MensaDAOImpl implements MensaDAO
 		Mensa mensa = optionalMensa.get();
 		return mensa;
 	}
+	
+	/* Cerca Mense per Id Ente */
+	@Override
+	public List<Mensa> getMensaPerEnte(int idEnte) 
+	{
+		logger.info("Accesso a getMensaPerEnte classe MensaDAOImpl");
+		Optional<Ente> optionalEnte = enteRepository.findById(idEnte);
+		
+		//Controlli
+		
+		List<Mensa> listaMensa = new ArrayList<>();
+		Ente ente = optionalEnte.get();
+		listaMensa = ente.getListaMensa();
+		return listaMensa;
+		
+	}
 
 	/* --------------------------------------------------------------------------------- */
 
@@ -287,4 +304,6 @@ public class MensaDAOImpl implements MensaDAO
 		logger.info("Accesso a getAllTipoFormaVettovagliamento, classe MensaDAOImpl");
 		return tipoFormaVettovagliamentoRepository.findAll();
 	}
+
+
 }
