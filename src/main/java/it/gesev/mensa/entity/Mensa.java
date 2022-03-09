@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -34,15 +35,15 @@ public class Mensa
 	
 	@Column(name="DESCRIZIONE_MENSA")
 	private String descrizioneMensa;
-	
-	@Column(name="ORARIO_DAL")
-	private LocalTime orarioDal;
-	
-	@Column(name="ORARIO_AL")
-	private LocalTime orarioAl;
-	
+
 	@Column(name="SERVIZIO_FESTIVO")
 	private String servizioFestivo;
+	
+	@Column(name="SERVIZIO_FESTIVO_SABATO")
+	private String servizioFestivoSabato;
+	
+	@Column(name="SERVIZIO_FESTIVO_DOMENICA")
+	private String servizioFestivoDomenica;
 	
 	@Column(name="AUTORIZZAZIONE_SANITARIA")
 	private byte[] autorizzazioneSanitaria;
@@ -55,10 +56,7 @@ public class Mensa
 	
 	@Column(name="AUT_SANITARAIA_RILASCIATA_DA")
 	private String autSanitariaRilasciataDa;
-	
-	@Column(name="ORA_FINE_PRENOTAZIONE")
-	private LocalTime oraFinePrenotazione;
-	
+
 	@Column(name="VIA")
 	private String via;
 	
@@ -98,12 +96,12 @@ public class Mensa
 	
 	@OneToMany(mappedBy = "mensa")
 	private List<AssDipendenteRuolo> listaDipendentiRuoli;
-	
-	//
+
 	@ManyToOne
 	@JoinColumn(name="ENTE_FK")
 	private Ente ente;
 	
+	@OneToMany(mappedBy= "mensa", fetch = FetchType.LAZY)
+	private List<AssTipoPastoMensa> assTipoPastoMensa;
 	
-
 }

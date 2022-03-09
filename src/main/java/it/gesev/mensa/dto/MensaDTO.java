@@ -10,14 +10,9 @@ public class MensaDTO
 	//Mensa
 	private Integer codiceMensa;
 	private String descrizioneMensa;
-	private String orarioDal;
-	private String orarioAl;
-	private String servizioFestivo;
-	//private byte[] autorizzazioneSanitaria;
 	private String numeroAutorizzazioneSanitaria;
 	private String dataAutorizzazioneSanitaria;
 	private String autSanitariaRilasciataDa;
-	private String oraFinePrenotazione;
 	private String dataInizioServizio;
 	private String dataFineServizio;
 	private String descrizioneTipoFormaVettovagliamento;
@@ -31,4 +26,9 @@ public class MensaDTO
 	private String telefono;
 	private String fax;
 	private String email;
+	
+	//Servizii Festivi
+	private String servizioFestivo;
+	private String servizioFestivoSabato;
+	private String servizioFestivoDomenica;
 }
