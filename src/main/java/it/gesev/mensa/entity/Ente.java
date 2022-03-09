@@ -25,8 +25,14 @@ public class Ente
 {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name="ID_ENTE")
+	private Integer idEnte;
+	
 	@Column(name="CODICE_ACED")
 	private String codiceACED;
+	
+	@Column(name="descrizione_ente")
+	private String descrizioneEnte;
 	
 	@OneToMany(mappedBy="ente", cascade={CascadeType.PERSIST, CascadeType.DETACH,
 		 	CascadeType.MERGE, CascadeType.REFRESH})
@@ -44,6 +50,11 @@ public class Ente
 	@OneToMany(mappedBy = "ente", cascade={CascadeType.PERSIST, CascadeType.DETACH,
 		 	CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
 	List<Dipendente> listaDipendenti;
+	
+	//
+	@OneToMany(mappedBy = "ente", cascade={CascadeType.PERSIST, CascadeType.DETACH,
+		 	CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
+	List<Mensa> listaMensa;
 	
 	public Ente()
 	{

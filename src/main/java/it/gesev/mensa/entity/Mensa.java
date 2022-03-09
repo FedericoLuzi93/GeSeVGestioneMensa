@@ -98,4 +98,12 @@ public class Mensa
 	
 	@OneToMany(mappedBy = "mensa")
 	private List<AssDipendenteRuolo> listaDipendentiRuoli;
+	
+	//
+	@ManyToOne
+	@JoinColumn(name="ENTE_FK")
+	private Ente ente;
+	
+	
+
 }

@@ -21,6 +21,7 @@ public interface MensaService
 	public int updateMensa(CreaMensaDTO creaMensaDTO, int idMensa, MultipartFile multipartFile) throws ParseException, IOException;
 	public int disableMensa(MensaDTO mensaDTO, int idMensa) throws ParseException;
 	public MensaDTO getSingolaMensa(int idMensa);
+	public List<MensaDTO> getMensaPerEnte(int idEnte);
 	
 	public FileDTO getFile(int idMensa);
 	
@@ -29,7 +30,5 @@ public interface MensaService
 	
 	public List<EnteDTO> getAllEnti();
 	
-	public List<TipoFromaVettovagliamentoDTO> getAllTipoFormaVettovagliamento();
-	
-	
+	public List<TipoFromaVettovagliamentoDTO> getAllTipoFormaVettovagliamento();	
 }

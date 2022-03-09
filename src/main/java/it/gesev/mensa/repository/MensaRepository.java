@@ -16,4 +16,7 @@ public interface MensaRepository  extends JpaRepository<Mensa, Integer>
 	public Integer getMaxMensaId();
 	
 	public Optional<Mensa> findByCodiceMensa(int idMensa);
+
+//	@Query("select m from Mensa m inner join Ente e on m.ente. = m.codiceMensa where e.mensaFK =: idEnte")
+//	public List<Mensa> getMensaPerEnte(int idEnte);
 }
