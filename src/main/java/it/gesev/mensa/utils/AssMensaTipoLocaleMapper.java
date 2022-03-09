@@ -17,7 +17,7 @@ import it.gesev.mensa.entity.TipoLocale;
 
 public class AssMensaTipoLocaleMapper 
 {
-	private static final Logger logger = LoggerFactory.getLogger(MensaMapper.class);
+	private static final Logger logger = LoggerFactory.getLogger(AssMensaTipoLocaleMapper.class);
 
 	//Entity to DTO
 	public static AssMensaTipoLocaleDTO mapToDTO(AssMensaTipoLocale assMensaTipoLocale, String dateFormat)

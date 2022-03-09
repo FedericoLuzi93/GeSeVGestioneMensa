@@ -6,13 +6,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.apache.commons.lang3.StringUtils;
-import org.jvnet.staxex.MtomEnabled;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,21 +24,27 @@ import it.gesev.mensa.dao.MensaDAO;
 import it.gesev.mensa.dto.CreaMensaDTO;
 import it.gesev.mensa.dto.EnteDTO;
 import it.gesev.mensa.dto.FELocaliDTO;
+import it.gesev.mensa.dto.FEServizioMensaDTO;
 import it.gesev.mensa.dto.FileDTO;
 import it.gesev.mensa.dto.MensaDTO;
 import it.gesev.mensa.dto.TipoFromaVettovagliamentoDTO;
 import it.gesev.mensa.dto.TipoLocaleDTO;
+import it.gesev.mensa.dto.TipoPastoDTO;
 import it.gesev.mensa.entity.AssMensaTipoLocale;
+import it.gesev.mensa.entity.AssTipoPastoMensa;
 import it.gesev.mensa.entity.Ente;
 import it.gesev.mensa.entity.Mensa;
 import it.gesev.mensa.entity.TipoFormaVettovagliamento;
 import it.gesev.mensa.entity.TipoLocale;
+import it.gesev.mensa.entity.TipoPasto;
 import it.gesev.mensa.exc.GesevException;
 import it.gesev.mensa.utils.AssMensaTipoLocaleMapper;
+import it.gesev.mensa.utils.AssTipoPastoMensaMapper;
 import it.gesev.mensa.utils.EnteMapper;
 import it.gesev.mensa.utils.MensaMapper;
 import it.gesev.mensa.utils.TipoFormaVettovagliamentoMapper;
 import it.gesev.mensa.utils.TipoLocaleMapper;
+import it.gesev.mensa.utils.TipoPastoMapper;
 
 @Service
 public class MensaServiceImpl implements MensaService 
@@ -75,12 +80,14 @@ public class MensaServiceImpl implements MensaService
 	{
 		Mensa mensa = null;
 		List<AssMensaTipoLocale> assMensaTipoLocale = null;
+		List<AssTipoPastoMensa> assTipoPastoMensa = null;
 		String descrizioneTipoVettovagliamento = "";
 		try
 		{
 			logger.info("Accesso a createMensa, classe MensaServiceImpl");
  			mensa = MensaMapper.mapToEntity(creaMensaDTO, dateFormat);	
  			assMensaTipoLocale = AssMensaTipoLocaleMapper.mapToEntity(creaMensaDTO, dateFormat);
+ 			assTipoPastoMensa = AssTipoPastoMensaMapper.mapToEntity(creaMensaDTO, dateFormat);
  			descrizioneTipoVettovagliamento = creaMensaDTO.getDescrizioneTipoFormaVettovagliamento();
  			if(multipartFile == null)
  				mensa.setAutorizzazioneSanitaria(null);
@@ -94,7 +101,7 @@ public class MensaServiceImpl implements MensaService
 		}
 		logger.info("Crezione mensa in corso...");
 		
-		return mensaDAO.createMensa(mensa, assMensaTipoLocale, descrizioneTipoVettovagliamento);
+		return mensaDAO.createMensa(mensa, assMensaTipoLocale, assTipoPastoMensa, descrizioneTipoVettovagliamento);
 	}
 
 	/* Aggiorna una Mensa */
@@ -250,6 +257,7 @@ public class MensaServiceImpl implements MensaService
 		return listaEnteDTO;
 	}
 
+	/* Lista Tipo Froma Vettovagliamento */
 	@Override
 	public List<TipoFromaVettovagliamentoDTO> getAllTipoFormaVettovagliamento() 
 	{
@@ -263,6 +271,41 @@ public class MensaServiceImpl implements MensaService
 		}
 		logger.info("Fine getAllEnti, classe MensaServiceImpl");
 		return listVettovagliamentoDTO;
+	}
+
+	/* Lista Tipo Pasto */
+	@Override
+	public List<TipoPastoDTO> getAllTipoPasto() 
+	{
+		logger.info("Accesso a getAllTipoPasto classe MensaServiceImpl");
+		List<TipoPasto> listaTipoPasto = mensaDAO.getAllTipoPasto();
+		List<TipoPastoDTO> listaTipoPastoDTO = new ArrayList<>();
+		logger.info("Inizio ciclo for in getAllTipoPasto classe MensaServiceImpl");
+		for(TipoPasto tp: listaTipoPasto)
+		{
+			listaTipoPastoDTO.add(TipoPastoMapper.mapToDTO(tp));
+		}
+		logger.info("Fine getAllTipoPasto classe MensaServiceImpl");
+		return listaTipoPastoDTO;
+	}
+
+	/* Get Servizi per idMensa */
+	@Override
+	public List<FEServizioMensaDTO> getServiziPerMensa(int idMensa) 
+	{
+		logger.info("Accesso a getServiziPerMensa  classe MensaServiceImpl");
+		List<FEServizioMensaDTO> listaServiziMensa = new ArrayList<>();	
+		List<AssTipoPastoMensa> listaAssTipoPastoMensa = mensaDAO.getServiziPerMensa(idMensa);
+		
+		for(AssTipoPastoMensa ass : listaAssTipoPastoMensa)
+		{
+			FEServizioMensaDTO feServizioMensaDTO = new FEServizioMensaDTO();
+			int codiceTipoPastoFK = ass.getTipoPasto().getCodiceTipoPasto();
+			Optional<TipoPasto> optionalTipoPasto = mensaDAO.getTipoPastoPerId(codiceTipoPastoFK);
+			feServizioMensaDTO.setAssTipoPastoMensa(ass);
+			feServizioMensaDTO.setTipoPasto(optionalTipoPasto.get());
+		}
+		return listaServiziMensa;
 	}
 
 

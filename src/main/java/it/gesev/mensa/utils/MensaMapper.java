@@ -37,9 +37,9 @@ public class MensaMapper
 			mensaDTO.setDataInizioServizio(simpleDateFormat.format(mensa.getDataInizioServizio()));
 		
 		//LocalTime a String
-		mensaDTO.setOrarioAl(mensa.getOrarioAl().toString());
-		mensaDTO.setOrarioDal(mensa.getOrarioDal().toString());
-		mensaDTO.setOraFinePrenotazione(mensa.getOraFinePrenotazione().toString());
+//		mensaDTO.setOrarioAl(mensa.getOrarioAl().toString());
+//		mensaDTO.setOrarioDal(mensa.getOrarioDal().toString());
+//		mensaDTO.setOraFinePrenotazione(mensa.getOraFinePrenotazione().toString());
 		
 		return mensaDTO;
 	}
@@ -58,9 +58,9 @@ public class MensaMapper
 		mensa.setDataAutorizzazioneSanitaria(date);
 			
 		//String to LocalTime
-		mensa.setOrarioAl(ControlloData.controlloTempo(creaMensaDTO.getOrarioAl()));
-		mensa.setOrarioDal(ControlloData.controlloTempo(creaMensaDTO.getOrarioDal()));
-		mensa.setOraFinePrenotazione(ControlloData.controlloTempo(creaMensaDTO.getOraFinePrenotazione()));
+//		mensa.setOrarioAl(ControlloData.controlloTempo(creaMensaDTO.getOrarioAl()));
+//		mensa.setOrarioDal(ControlloData.controlloTempo(creaMensaDTO.getOrarioDal()));
+//		mensa.setOraFinePrenotazione(ControlloData.controlloTempo(creaMensaDTO.getOraFinePrenotazione()));
 		
 		return mensa;
 	}
@@ -79,9 +79,9 @@ public class MensaMapper
 		mensa.setDataAutorizzazioneSanitaria(date);
 			
 		//String to LocalTime
-		mensa.setOrarioAl(ControlloData.controlloTempo(mensaDTO.getOrarioAl()));
-		mensa.setOrarioDal(ControlloData.controlloTempo(mensaDTO.getOrarioDal()));
-		mensa.setOraFinePrenotazione(ControlloData.controlloTempo(mensaDTO.getOraFinePrenotazione()));
+//		mensa.setOrarioAl(ControlloData.controlloTempo(mensaDTO.getOrarioAl()));
+//		mensa.setOrarioDal(ControlloData.controlloTempo(mensaDTO.getOrarioDal()));
+//		mensa.setOraFinePrenotazione(ControlloData.controlloTempo(mensaDTO.getOraFinePrenotazione()));
 			
 		return mensa;
 		

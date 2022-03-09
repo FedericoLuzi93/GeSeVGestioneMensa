@@ -9,13 +9,16 @@ import org.springframework.web.multipart.MultipartFile;
 import it.gesev.mensa.dto.CreaMensaDTO;
 import it.gesev.mensa.dto.EnteDTO;
 import it.gesev.mensa.dto.FELocaliDTO;
+import it.gesev.mensa.dto.FEServizioMensaDTO;
 import it.gesev.mensa.dto.FileDTO;
 import it.gesev.mensa.dto.MensaDTO;
 import it.gesev.mensa.dto.TipoFromaVettovagliamentoDTO;
 import it.gesev.mensa.dto.TipoLocaleDTO;
+import it.gesev.mensa.dto.TipoPastoDTO;
 
 public interface MensaService 
 {
+	/* Mensa */
 	public List<MensaDTO> getAllMense();
 	public int createMensa(CreaMensaDTO creaMensaDTO, MultipartFile multipartFile) throws ParseException, IOException;
 	public int updateMensa(CreaMensaDTO creaMensaDTO, int idMensa, MultipartFile multipartFile) throws ParseException, IOException;
@@ -25,10 +28,14 @@ public interface MensaService
 	
 	public FileDTO getFile(int idMensa);
 	
+	/* Associative */
 	public List<TipoLocaleDTO> getAllLocali();
 	public List<FELocaliDTO> getLocaliPerMensa(int idMensa);
 	
 	public List<EnteDTO> getAllEnti();
 	
-	public List<TipoFromaVettovagliamentoDTO> getAllTipoFormaVettovagliamento();	
+	public List<TipoFromaVettovagliamentoDTO> getAllTipoFormaVettovagliamento();
+	public List<TipoPastoDTO> getAllTipoPasto();
+	
+	public List<FEServizioMensaDTO> getServiziPerMensa(int idMensa);	
 }

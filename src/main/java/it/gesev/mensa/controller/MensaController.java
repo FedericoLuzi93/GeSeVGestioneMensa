@@ -31,10 +31,12 @@ import it.gesev.mensa.dto.CreaMensaDTO;
 import it.gesev.mensa.dto.EnteDTO;
 import it.gesev.mensa.dto.EsitoDTO;
 import it.gesev.mensa.dto.FELocaliDTO;
+import it.gesev.mensa.dto.FEServizioMensaDTO;
 import it.gesev.mensa.dto.FileDTO;
 import it.gesev.mensa.dto.MensaDTO;
 import it.gesev.mensa.dto.TipoFromaVettovagliamentoDTO;
 import it.gesev.mensa.dto.TipoLocaleDTO;
+import it.gesev.mensa.dto.TipoPastoDTO;
 import it.gesev.mensa.exc.GesevException;
 import it.gesev.mensa.service.MensaService;
 
@@ -92,8 +94,10 @@ public class MensaController
 		EsitoDTO esito = new EsitoDTO();
 		try
 		{
-			int posizione = LCreaMensaDTO.indexOf("\"creaMensaDTO\":");
-			String JSON = LCreaMensaDTO.substring(posizione + "\"creaMensaDTO\":".length(), LCreaMensaDTO.length() - 1);
+			//int posizione = LCreaMensaDTO.indexOf("\"creaMensaDTO\":");
+			//String JSON = LCreaMensaDTO.substring(posizione + "\"creaMensaDTO\":".length(), LCreaMensaDTO.length() - 1);
+			//String JSON = LCreaMensaDTO.substring(posizione + "\"creaMensaDTO\":".length());
+			String JSON = LCreaMensaDTO;
 			CreaMensaDTO creaMensaDTO = new Gson().fromJson(JSON, CreaMensaDTO.class);			
 		    mensaService.createMensa(creaMensaDTO, multipartFile);
 			esito.setStatus(HttpStatus.OK.value());
@@ -267,8 +271,8 @@ public class MensaController
 	
 	/* --------------------------------------------------------------------------------- */
 
-	/* leggi Lista */
-	@GetMapping("/leggiLista")
+	/* leggi Lista Locali */
+	@GetMapping("/leggiListaLocali")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
 			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
 			@ApiResponse(code = 500, message = "Errore interno") })
@@ -394,6 +398,72 @@ public class MensaController
 		esito.setStatus(status.value());
 		return ResponseEntity.status(status).headers(new HttpHeaders()).body(esito);
 	}
+	
+	/* leggi Tipo Pasto */
+	@GetMapping("/leggiTipoPasto")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
+			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
+			@ApiResponse(code = 500, message = "Errore interno") })
+	public ResponseEntity<EsitoDTO> getAllTipoPasto()
+	{
+		logger.info("Accesso al servizio getAllTipoPasto");
+		EsitoDTO esito = new EsitoDTO();
+		HttpStatus status = null;
+		try
+		{
+			List<TipoPastoDTO> lisaTipoPastoDTO = mensaService.getAllTipoPasto();
+			esito.setBody(lisaTipoPastoDTO);
+			status = HttpStatus.OK;
+		}
+		catch(GesevException gex)
+		{
+			logger.info("Si e' verificata un'eccezione", gex);
+			esito.setMessaggio(gex.getMessage());
+			status = gex.getStatus();
+		}
+		catch(Exception ex)
+		{
+			logger.info("Si e' verificata un'eccezione interna", ex);
+			esito.setMessaggio(MESSAGGIO_ERRORE_INTERNO);
+			status = HttpStatus.INTERNAL_SERVER_ERROR;	
+		}
+		esito.setStatus(status.value());
+		return ResponseEntity.status(status).headers(new HttpHeaders()).body(esito);
+	}
+	
+	/* Get Servizi per idMensa */
+	@GetMapping("/getServiziPerMensa/{idMensa}")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
+			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
+			@ApiResponse(code = 500, message = "Errore interno") })
+	public ResponseEntity<EsitoDTO> getServiziPerMensa(@PathVariable int idMensa)
+	{
+		logger.info("Accesso al servizio getServiziPerMensa");
+		EsitoDTO esito = new EsitoDTO();
+		HttpStatus status = null;
+		try
+		{
+			List<FEServizioMensaDTO> listaServizioMensa = mensaService.getServiziPerMensa(idMensa);
+			esito.setBody(listaServizioMensa);
+			status = HttpStatus.OK;
+		}
+		catch(GesevException gex)
+		{
+			logger.info("Si e' verificata un'eccezione", gex);
+			esito.setMessaggio(gex.getMessage());
+			status = gex.getStatus();
+		}
+		catch(Exception ex)
+		{
+			logger.info("Si e' verificata un'eccezione interna", ex);
+			esito.setMessaggio(MESSAGGIO_ERRORE_INTERNO);
+			status = HttpStatus.INTERNAL_SERVER_ERROR;	
+		}
+		esito.setStatus(status.value());
+		return ResponseEntity.status(status).headers(new HttpHeaders()).body(esito);
+	}
+	
+	
 
 
 }

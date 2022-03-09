@@ -16,16 +16,20 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import it.gesev.mensa.entity.AssMensaTipoLocale;
+import it.gesev.mensa.entity.AssTipoPastoMensa;
 import it.gesev.mensa.entity.Ente;
 import it.gesev.mensa.entity.Mensa;
 import it.gesev.mensa.entity.TipoFormaVettovagliamento;
 import it.gesev.mensa.entity.TipoLocale;
+import it.gesev.mensa.entity.TipoPasto;
 import it.gesev.mensa.exc.GesevException;
 import it.gesev.mensa.repository.AssMensaTipoLocaleRepository;
+import it.gesev.mensa.repository.AssTipoPastoMensaRepository;
 import it.gesev.mensa.repository.EnteRepository;
 import it.gesev.mensa.repository.MensaRepository;
 import it.gesev.mensa.repository.TipoFormaVettovagliamentoRepository;
 import it.gesev.mensa.repository.TipoLocaliRepository;
+import it.gesev.mensa.repository.TipoPastoRepository;
 
 @Repository
 @Component
@@ -45,6 +49,12 @@ public class MensaDAOImpl implements MensaDAO
 	
 	@Autowired
 	private TipoFormaVettovagliamentoRepository tipoFormaVettovagliamentoRepository;
+	
+	@Autowired
+	private TipoPastoRepository tipoPastoRepository;
+	
+	@Autowired
+	private AssTipoPastoMensaRepository assTipoPastoMensaRepository;
 
 	private static final Logger logger = LoggerFactory.getLogger(MensaDAOImpl.class);
 
@@ -59,14 +69,13 @@ public class MensaDAOImpl implements MensaDAO
 	/* Crea una Mensa */
 	@Override
 	@Transactional
-	public int createMensa(Mensa mensa, List<AssMensaTipoLocale> assMensaTipoLocale, String descrizioneTipoVettovagliamento) 
+	public int createMensa(Mensa mensa, List<AssMensaTipoLocale> assMensaTipoLocale, List<AssTipoPastoMensa> assTipoPastoMensa, String descrizioneTipoVettovagliamento) 
 	{
 		logger.info("Accesso a createMensa, classe MensaDAOImpl");	
 
-		logger.info("Inizio controlli in corso...");		
+ 		logger.info("Inizio controlli in corso...");		
 		//Controllo Campi mensa
-		if(StringUtils.isBlank(mensa.getDescrizioneMensa()) || mensa.getOrarioDal() == null || mensa.getOrarioAl() == null || 
-				StringUtils.isBlank(mensa.getServizioFestivo()) || mensa.getOraFinePrenotazione() == null)
+		if(StringUtils.isBlank(mensa.getDescrizioneMensa()) ||	StringUtils.isBlank(mensa.getServizioFestivo()))
 		{
 			logger.info("Impossibile creare la mensa, campi mensa non validi");
 			throw new GesevException("Impossibile creare la mensa, campi mensa non validi", HttpStatus.BAD_REQUEST);
@@ -95,19 +104,29 @@ public class MensaDAOImpl implements MensaDAO
 		Mensa mensaSalvata = mensaRepository.save(mensa);
 
 		//Salvataggio AssMensaTipoLocale
-		for(AssMensaTipoLocale assocazione : assMensaTipoLocale)
+		for(AssMensaTipoLocale associazione : assMensaTipoLocale)
 		{
 			//Controllo AssMensaTipoLocale
-			if(assocazione.getSuperficie() <= 0 || assocazione.getNumeroLocali() <0 || assocazione.getTipoLocale().getCodiceTipoLocale() <= 0)
+			if(associazione.getSuperficie() <= 0 || associazione.getNumeroLocali() <0 || associazione.getTipoLocale().getCodiceTipoLocale() <= 0)
 			{
 				logger.info("Impossibile modificare la mensa, campi associativi non validi");
 				throw new GesevException("Impossibile modificare la mensa, campi associativi non validi", HttpStatus.BAD_REQUEST);
 			}
-			assocazione.setDataInizio(mensa.getDataInizioServizio());
-			assocazione.setDataFine(mensa.getDataFineServizio());
-			assocazione.setMensa(mensaSalvata);
-			assMensaTipoLocaleRepository.save(assocazione);
+			associazione.setDataInizio(mensa.getDataInizioServizio());
+			associazione.setDataFine(mensa.getDataFineServizio());
+			associazione.setMensa(mensaSalvata);
+			assMensaTipoLocaleRepository.save(associazione);
 		}
+		
+		//Salvataggio AssTipoPastoMensa
+		for(AssTipoPastoMensa assTipoPas : assTipoPastoMensa)
+		{
+			//Controllo AssTipoPastoMensa
+			
+			assTipoPas.setMensa(mensaSalvata);
+			assTipoPastoMensaRepository.save(assTipoPas);
+		}
+
 		logger.info("Inserimento avvenuto con successo");
 
 		return mensa.getCodiceMensa();
@@ -133,8 +152,7 @@ public class MensaDAOImpl implements MensaDAO
 			throw new GesevException("Impossibile modificare la mensa, Mensa non presente", HttpStatus.BAD_REQUEST);
 
 		//Controllo Campi mensa
-		if(StringUtils.isBlank(mensa.getDescrizioneMensa()) || mensa.getOrarioDal() == null || mensa.getOrarioAl() == null || 
-				StringUtils.isBlank(mensa.getServizioFestivo()) || mensa.getOraFinePrenotazione() == null)
+		if(StringUtils.isBlank(mensa.getDescrizioneMensa()) || StringUtils.isBlank(mensa.getServizioFestivo()))
 		{
 			logger.info("Impossibile modificare la mensa, campi mensa non validi");
 			throw new GesevException("Impossibile modificare la mensa, campi mensa non validi", HttpStatus.BAD_REQUEST);
@@ -213,8 +231,7 @@ public class MensaDAOImpl implements MensaDAO
 				throw new GesevException("Impossibile disabilitare la mensa, Data Fine Servizio non valida", HttpStatus.BAD_REQUEST);
 		
 			//Controllo Campi mensa
-			if(StringUtils.isBlank(mensa.getDescrizioneMensa()) || mensa.getOrarioDal() == null || mensa.getOrarioAl() == null || 
-					StringUtils.isBlank(mensa.getServizioFestivo()) || mensa.getOraFinePrenotazione() == null)
+			if(StringUtils.isBlank(mensa.getDescrizioneMensa()) || StringUtils.isBlank(mensa.getServizioFestivo()))
 			{
 				logger.info("Impossibile modificare la mensa, campi mensa non validi");
 				throw new GesevException("Impossibile modificare la mensa, campi mensa non validi", HttpStatus.BAD_REQUEST);
@@ -305,5 +322,32 @@ public class MensaDAOImpl implements MensaDAO
 		return tipoFormaVettovagliamentoRepository.findAll();
 	}
 
+	/* Lista Tipo Pasto */
+	@Override
+	public List<TipoPasto> getAllTipoPasto() 
+	{
+		logger.info("Accesso a getAllTipoPasto classe MensaDAOImpl");
+		return tipoPastoRepository.findAll();
+	}
+	
+	/* Get Servizi per idMensa */ 
+	@Override
+	public List<AssTipoPastoMensa> getServiziPerMensa(int idMensa) 
+	{
+		logger.info("Accesso a getServiziPerMensa classe MensaDAOImpl");
+		List<AssTipoPastoMensa> listaAssMensaTipoLocale = assTipoPastoMensaRepository.cercaPerMensa(idMensa);
+
+		return listaAssMensaTipoLocale;
+	}
+	
+	//----------------------------------------------------------------------------
+
+	/* TipoPasto per ID */
+	@Override
+	public Optional<TipoPasto> getTipoPastoPerId(int idTipoPasto)
+	{
+		logger.info("Accesso a getTipoPastoPerId classe MensaDAOImpl");
+		return tipoPastoRepository.findById(idTipoPasto);
+	}
 
 }

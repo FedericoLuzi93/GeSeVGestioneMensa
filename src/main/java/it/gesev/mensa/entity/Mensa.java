@@ -101,7 +101,7 @@ public class Mensa
 	@JoinColumn(name="ENTE_FK")
 	private Ente ente;
 	
-	@OneToMany(mappedBy= "mensa", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy= "mensa")
 	private List<AssTipoPastoMensa> assTipoPastoMensa;
 	
 }
