@@ -3,15 +3,16 @@ package it.gesev.mensa.service;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -291,21 +292,54 @@ public class MensaServiceImpl implements MensaService
 
 	/* Get Servizi per idMensa */
 	@Override
-	public List<FEServizioMensaDTO> getServiziPerMensa(int idMensa) 
+	public FEServizioMensaDTO getServiziPerMensa(int idMensa) 
 	{
 		logger.info("Accesso a getServiziPerMensa  classe MensaServiceImpl");
-		List<FEServizioMensaDTO> listaServiziMensa = new ArrayList<>();	
+		FEServizioMensaDTO feServizioMensaDTO = new FEServizioMensaDTO();
 		List<AssTipoPastoMensa> listaAssTipoPastoMensa = mensaDAO.getServiziPerMensa(idMensa);
 		
-		for(AssTipoPastoMensa ass : listaAssTipoPastoMensa)
+		if(listaAssTipoPastoMensa.size()>0)
 		{
-			FEServizioMensaDTO feServizioMensaDTO = new FEServizioMensaDTO();
-			int codiceTipoPastoFK = ass.getTipoPasto().getCodiceTipoPasto();
-			Optional<TipoPasto> optionalTipoPasto = mensaDAO.getTipoPastoPerId(codiceTipoPastoFK);
-			feServizioMensaDTO.setAssTipoPastoMensa(ass);
-			feServizioMensaDTO.setTipoPasto(optionalTipoPasto.get());
+			ModelMapper mapper = new ModelMapper();
+			List<TipoPastoDTO> listaTipoPastoDTO = new ArrayList<>();
+			Mensa mensa = null;
+			DateTimeFormatter dateTime = DateTimeFormatter.ofPattern("HH:mm");
+			
+			for(AssTipoPastoMensa ass : listaAssTipoPastoMensa)
+			{
+				if(mensa == null)
+					mensa = ass.getMensa();
+				
+				TipoPastoDTO tipoPastoDTO = (mapper.map(ass.getTipoPasto(), TipoPastoDTO.class));
+				tipoPastoDTO.setOraFinePrenotazione(ass.getOraFinePrenotazione() != null ? ass.getOraFinePrenotazione().format(dateTime) : null);
+				tipoPastoDTO.setOrarioAl(ass.getOrarioAl() != null ? ass.getOrarioAl().format(dateTime) : null);
+				tipoPastoDTO.setOrarioDal(ass.getOrarioDal() != null ? ass.getOrarioDal().format(dateTime) : null);
+				listaTipoPastoDTO.add(tipoPastoDTO);
+			}
+			
+			feServizioMensaDTO.setListaTipoPastoDTO(listaTipoPastoDTO);
+			SimpleDateFormat formatter = new SimpleDateFormat(this.dateFormat);
+			
+			feServizioMensaDTO.setDataFineServizio(mensa.getDataFineServizio() != null ? formatter.format(mensa.getDataFineServizio()) : null);
+			feServizioMensaDTO.setDataInizioServizio(mensa.getDataInizioServizio() != null ? formatter.format(mensa.getDataInizioServizio()) : null);	
 		}
-		return listaServiziMensa;
+		
+		return feServizioMensaDTO;
+	}
+
+	@Override
+	public List<EnteDTO> getEntiFiltratiPerMensa(int idMensa) 
+	{
+		logger.info("Accesso a getEntiFiltratiPerMensa classe MensaServiceImpl");
+		List<Ente> enteLista = mensaDAO.getEntiFiltratiPerMensa(idMensa);
+		List<EnteDTO> listaEnteDTO = new ArrayList<>();
+		logger.info("Inizio ciclo for in getEntiFiltratiPerMensa classe MensaServiceImpl");
+		for(Ente e : enteLista)
+		{
+			listaEnteDTO.add(EnteMapper.mapToDTO(e));
+		}
+		logger.info("Fine getEntiFiltratiPerMensa, classe MensaServiceImpl");
+		return listaEnteDTO;
 	}
 
 

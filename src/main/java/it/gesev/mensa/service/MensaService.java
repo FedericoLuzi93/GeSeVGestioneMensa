@@ -33,9 +33,11 @@ public interface MensaService
 	public List<FELocaliDTO> getLocaliPerMensa(int idMensa);
 	
 	public List<EnteDTO> getAllEnti();
+	public List<EnteDTO> getEntiFiltratiPerMensa(int idMensa);	
 	
 	public List<TipoFromaVettovagliamentoDTO> getAllTipoFormaVettovagliamento();
 	public List<TipoPastoDTO> getAllTipoPasto();
 	
-	public List<FEServizioMensaDTO> getServiziPerMensa(int idMensa);	
+	public FEServizioMensaDTO getServiziPerMensa(int idMensa);
+
 }

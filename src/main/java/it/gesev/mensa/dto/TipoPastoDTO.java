@@ -7,4 +7,8 @@ public class TipoPastoDTO
 {
 	private Integer codiceTipoPasto;
 	private String descrizione;
+	
+	private String orarioDal;
+	private String orarioAl;
+	private String oraFinePrenotazione;
 }

@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name="MENSA")
+@Table(name="ass_tipo_pasto_mensa")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -39,7 +39,7 @@ public class AssTipoPastoMensa
 	private LocalTime oraFinePrenotazione;
 	
 	@ManyToOne
-	@JoinColumn(name="codice_mensa_fk")
+	@JoinColumn(name="CODICE_MENSA_FK")
 	private Mensa mensa;
 	
 	@ManyToOne

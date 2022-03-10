@@ -304,7 +304,7 @@ public class MensaController
 	}
 	
 	/* Leggi locali per mensa */
-	@GetMapping("/leggiLocaliPerMensa")
+	@GetMapping("/leggiLocaliPerMensa/{idMensa}")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
 			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
 			@ApiResponse(code = 500, message = "Errore interno") })
@@ -443,8 +443,40 @@ public class MensaController
 		HttpStatus status = null;
 		try
 		{
-			List<FEServizioMensaDTO> listaServizioMensa = mensaService.getServiziPerMensa(idMensa);
-			esito.setBody(listaServizioMensa);
+			FEServizioMensaDTO serviziMensa = mensaService.getServiziPerMensa(idMensa);
+			esito.setBody(serviziMensa);
+			status = HttpStatus.OK;
+		}
+		catch(GesevException gex)
+		{
+			logger.info("Si e' verificata un'eccezione", gex);
+			esito.setMessaggio(gex.getMessage());
+			status = gex.getStatus();
+		}
+		catch(Exception ex)
+		{
+			logger.info("Si e' verificata un'eccezione interna", ex);
+			esito.setMessaggio(MESSAGGIO_ERRORE_INTERNO);
+			status = HttpStatus.INTERNAL_SERVER_ERROR;	
+		}
+		esito.setStatus(status.value());
+		return ResponseEntity.status(status).headers(new HttpHeaders()).body(esito);
+	}
+	
+	/* Lista Ente Filtrato Per Mensa */
+	@GetMapping("/getEntiFiltratiPerMensa/{idMensa}")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
+			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
+			@ApiResponse(code = 500, message = "Errore interno") })
+	public ResponseEntity<EsitoDTO> getEntiFiltratiPerMensa(@PathVariable int idMensa)
+	{
+		logger.info("Accesso al servizio getEntiFiltratiPerMensa");
+		EsitoDTO esito = new EsitoDTO();
+		HttpStatus status = null;
+		try
+		{
+			List<EnteDTO> listaEnteDTO = mensaService.getEntiFiltratiPerMensa(idMensa);
+			esito.setBody(listaEnteDTO);
 			status = HttpStatus.OK;
 		}
 		catch(GesevException gex)
@@ -464,6 +496,5 @@ public class MensaController
 	}
 	
 	
-
 
 }

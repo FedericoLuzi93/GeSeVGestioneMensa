@@ -26,14 +26,13 @@ public interface MensaDAO
 	
 	/* Associative */
 	public List<TipoLocale> getAllLocali();
-	
-	public List<AssMensaTipoLocale> getAssMensaTipoLocaleByMensa(int idMensa);
+	public List<TipoPasto> getAllTipoPasto();
+	public List<TipoFormaVettovagliamento> getAllTipoFormaVettovagliamento();
 	
 	public List<Ente> getAllEnti();
-	
-	public List<TipoFormaVettovagliamento> getAllTipoFormaVettovagliamento();
-	public List<TipoPasto> getAllTipoPasto();
+	public List<Ente> getEntiFiltratiPerMensa(int idMensa);
 
+	public List<AssMensaTipoLocale> getAssMensaTipoLocaleByMensa(int idMensa);
 	public List<AssTipoPastoMensa> getServiziPerMensa(int idMensa);
 	
 	//Senza Service

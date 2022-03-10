@@ -340,6 +340,14 @@ public class MensaDAOImpl implements MensaDAO
 		return listaAssMensaTipoLocale;
 	}
 	
+	/* Lista Ente Filtrato Per Mensa */
+	@Override
+	public List<Ente> getEntiFiltratiPerMensa(int idMensa) 
+	{
+		logger.info("Accesso a getEntiFiltratiPerMensa classe MensaDAOImpl");
+		return null;
+	}
+	
 	//----------------------------------------------------------------------------
 
 	/* TipoPasto per ID */
