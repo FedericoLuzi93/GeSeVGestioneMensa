@@ -251,4 +251,53 @@ public class RuoliDAOImpl implements RuoliDAO
 		
 	}
 
+	/* Crea Organo Direttivo */
+	@Override
+	public int creaOrganoDirettivo(OrganoDirettivo organoDirettivo) 
+	{
+		logger.info("Creazione organo direttivo in corso...");
+		organoDirettivoRepository.save(organoDirettivo);
+		logger.info("Creazione organo direttivo avvenuta con successo");
+		return organoDirettivo.getCodiceOrganoDirettivo();
+	}
+
+	/* Modifica Organo Direttivo */
+	@Override
+	public int modificaOrganoDirettivo(OrganoDirettivo organoDirettivo, int idOrganoDirettivo) 
+	{
+		logger.info("Modifica organo direttivo in corso...");
+		OrganoDirettivo organoDirettivoMom = null;
+		
+		//Controllo presenza Organo Direttivo
+		Optional<OrganoDirettivo> optionalOrganoDirettivo = organoDirettivoRepository.findById(idOrganoDirettivo);
+		if(optionalOrganoDirettivo.isPresent())
+		{
+			organoDirettivoMom = optionalOrganoDirettivo.get();
+			organoDirettivoMom.setDescrizioneOrganoDirettivo(organoDirettivo.getDescrizioneOrganoDirettivo());
+			organoDirettivoRepository.save(organoDirettivoMom);
+		}
+		else
+		{
+			throw new GesevException("Codice Organo direttivo non presente", HttpStatus.BAD_REQUEST);
+		}	
+		logger.info("Modifica organo direttivo avvenuta con successo");
+		return idOrganoDirettivo;
+	}
+
+	/* Cancella Organo Direttivo */
+	@Override
+	public int cancellaOrganoDirettivo(int idOrganoDirettivo) 
+	{
+		logger.info("Cancellazione organo direttivo in corso...");
+		Optional<OrganoDirettivo> optionalOrganoDirettivo = organoDirettivoRepository.findById(idOrganoDirettivo);
+		if(optionalOrganoDirettivo.isPresent())
+		{
+			organoDirettivoRepository.deleteById(idOrganoDirettivo);
+		}
+		else
+		{
+			throw new GesevException("Codice Organo direttivo non presente", HttpStatus.BAD_REQUEST);
+		}
+		return idOrganoDirettivo;	
+	}
 }

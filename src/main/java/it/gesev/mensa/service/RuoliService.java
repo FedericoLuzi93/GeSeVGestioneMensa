@@ -18,4 +18,8 @@ public interface RuoliService
 	public DettaglioRuoloDTO ricercaDipendenti(List<RicercaColonnaDTO> listaColonne);
 	public DettaglioRuoloDTO updateRuoloDipendente(AssDipendenteRuoloDTO associazione);
 	public DettaglioRuoloDTO cancellaRuolo(Integer idRuoloDipendente);
+
+	public int creaNuovoOrganoDirettivo(OrganoDirettivoDTO organoDirettivoDTO);
+	public int modificaOrganoDirettivo(OrganoDirettivoDTO organoDirettivoDTO, int idOrganoDirettivo);
+	public int cancellaOrganoDirettivo(int idOrganoDirettivo);
 }

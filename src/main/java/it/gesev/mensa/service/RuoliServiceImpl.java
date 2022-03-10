@@ -23,6 +23,7 @@ import it.gesev.mensa.entity.Dipendente;
 import it.gesev.mensa.entity.OrganoDirettivo;
 import it.gesev.mensa.entity.RuoloMensa;
 import it.gesev.mensa.exc.GesevException;
+import it.gesev.mensa.utils.OrganoDirettivoMapper;
 
 @Service
 public class RuoliServiceImpl implements RuoliService 
@@ -187,6 +188,55 @@ public class RuoliServiceImpl implements RuoliService
 		ruoliDAO.cancellaRuolo(idRuoloDipendente);
 		
 		return getDettaglioRuoli();
+	}
+	
+	/* Crea Organo Direttivo */
+	@Override
+	public int creaNuovoOrganoDirettivo(OrganoDirettivoDTO organoDirettivoDTO) 
+	{
+		OrganoDirettivo organoDirettivo = null;
+		try
+		{
+			logger.info("Servizio per la creazione del organo direttivo...");
+			organoDirettivo = OrganoDirettivoMapper.mapToEntity(organoDirettivoDTO);
+		}
+		catch(GesevException exc)
+		{
+			logger.info("Eccezione nel servizio creaNuovoOrganoDirettivo" + exc);
+			throw new GesevException("Non è stato possibile inserire il nuovo organo direttivo" + exc, HttpStatus.BAD_REQUEST);
+		}
+		logger.info("Creazione nuovo organo direttivo corso...");
+		ruoliDAO.creaOrganoDirettivo(organoDirettivo);
+		return organoDirettivo.getCodiceOrganoDirettivo();
+	}
+
+	/* Modifica Organo Direttivo */
+	@Override
+	public int modificaOrganoDirettivo(OrganoDirettivoDTO organoDirettivoDTO, int idOrganoDirettivo) 
+	{
+		OrganoDirettivo organoDirettivo = null;
+		try
+		{
+			logger.info("Servizio per la modifica organo direttivo...");
+			organoDirettivo = OrganoDirettivoMapper.mapToEntity(organoDirettivoDTO);
+		}
+		catch(GesevException exc)
+		{
+			logger.info("Eccezione nel servizio modificaOrganoDirettivo" + exc);
+			throw new GesevException("Non è stato possibile modificare organo direttivo" + exc, HttpStatus.BAD_REQUEST);
+		}
+		logger.info("Modifica organo direttivo corso...");
+		ruoliDAO.modificaOrganoDirettivo(organoDirettivo, idOrganoDirettivo);
+		return idOrganoDirettivo;
+	}
+
+	/* Cancella Organo Direttivo */
+	@Override
+	public int cancellaOrganoDirettivo(int idOrganoDirettivo) 
+	{
+		logger.info("Servizio per la cancellazione di un organo direttivo...");
+		ruoliDAO.cancellaOrganoDirettivo(idOrganoDirettivo);
+		return idOrganoDirettivo;
 	}
 
 }

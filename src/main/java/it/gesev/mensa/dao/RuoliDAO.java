@@ -19,4 +19,8 @@ public interface RuoliDAO
 	public List<Dipendente> ricercaDipendenti(List<RicercaColonnaDTO> listaColonne);
 	public void updateRuoloDipendente(Integer idRuoloDipendente, Integer idRuolo, Integer idDipendente, Integer idOrganoDirettivo);
 	public void cancellaRuolo(Integer idRuoloDipendente);
+	
+	public int creaOrganoDirettivo(OrganoDirettivo organoDirettivo);
+	public int modificaOrganoDirettivo(OrganoDirettivo organoDirettivo, int idOrganoDirettivo);
+	public int cancellaOrganoDirettivo(int idOrganoDirettivo);
 }
