@@ -42,6 +42,7 @@ public class MensaMapper
 		else
 			mensaDTO.setPresenzaFile(false);
 		
+		
 		//LocalTime a String
 //		mensaDTO.setOrarioAl(mensa.getOrarioAl().toString());
 //		mensaDTO.setOrarioDal(mensa.getOrarioDal().toString());

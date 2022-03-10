@@ -35,4 +35,5 @@ public class MensaDTO
 	
 	//Controlli Aggiuntivi
 	private boolean presenzaFile;
+	private String descrizioneEnte;
 }

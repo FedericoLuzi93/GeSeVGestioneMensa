@@ -101,8 +101,8 @@ public class MensaDAOImpl implements MensaDAO
 			//Controllo AssMensaTipoLocale
 			if(associazione.getSuperficie() <= 0 || associazione.getNumeroLocali() <0 || associazione.getTipoLocale().getCodiceTipoLocale() <= 0)
 			{
-				logger.info("Impossibile modificare la mensa, campi associativi non validi");
-				throw new GesevException("Impossibile modificare la mensa, campi associativi non validi", HttpStatus.BAD_REQUEST);
+				logger.info("Impossibile creare la mensa, campi associativi tipo locale non validi");
+				throw new GesevException("Impossibile creare la mensa, campi associativi tipo locale non validi", HttpStatus.BAD_REQUEST);
 			}
 			associazione.setDataInizio(mensa.getDataInizioServizio());
 			associazione.setDataFine(mensa.getDataFineServizio());
@@ -113,7 +113,21 @@ public class MensaDAOImpl implements MensaDAO
 		//Salvataggio AssTipoPastoMensa
 		for(AssTipoPastoMensa assTipoPas : assTipoPastoMensa)
 		{
-			//Controllo AssTipoPastoMensa
+			if(assTipoPas.getTipoPasto() != null)
+			{
+				TipoPasto pasto = new TipoPasto();
+				Optional<TipoPasto> optionalTipoPasto = tipoPastoRepository.findById(assTipoPas.getTipoPasto().getCodiceTipoPasto());
+				pasto = optionalTipoPasto.get();
+			
+				//Controllo AssTipoPastoMensa
+				if(pasto.getDescrizione().equalsIgnoreCase("Pranzo"))
+						if(assTipoPas.getOrarioAl() == null || assTipoPas.getOrarioDal() == null || assTipoPas.getOraFinePrenotazione() == null )
+							throw new GesevException("Impossibile creare la mensa, campi associativi tipo pasto non validi", HttpStatus.BAD_REQUEST);
+				
+				if(pasto.getDescrizione().equalsIgnoreCase("Colazione") ||  pasto.getDescrizione().equalsIgnoreCase("Cena"))
+					if(assTipoPas.getOrarioAl() == null || assTipoPas.getOrarioDal() == null)
+						throw new GesevException("Impossibile creare la mensa, campi associativi tipo pasto non validi", HttpStatus.BAD_REQUEST);
+			}
 			assTipoPas.setMensa(mensaSalvata);
 			assTipoPastoMensaRepository.save(assTipoPas);
 		}

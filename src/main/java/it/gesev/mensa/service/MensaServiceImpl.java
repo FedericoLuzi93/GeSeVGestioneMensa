@@ -70,7 +70,11 @@ public class MensaServiceImpl implements MensaService
 		logger.info("Inizio ciclo For in getAllMense, classe MensaServiceImpl");
 		for(Mensa m : listaMensa)
 		{
-			listaMensaDTO.add(MensaMapper.mapToDTO(m, dateFormat));
+			MensaDTO mensaDTO = null;
+			mensaDTO = MensaMapper.mapToDTO(m, dateFormat);
+			if(m.getEnte() != null)
+				mensaDTO.setDescrizioneEnte(m.getEnte().getDescrizioneEnte());
+			listaMensaDTO.add(mensaDTO);
 		}
 		logger.info("Fine getAllMense, classe MensaServiceImpl");
 		return listaMensaDTO;
