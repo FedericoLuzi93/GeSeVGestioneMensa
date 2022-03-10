@@ -8,4 +8,7 @@ import lombok.Setter;
 public class EnteDTO 
 {
 	private String codiceACED;
+	private String descrizioneEnte;
+	private String indirizzo;
+	private String localita;
 }

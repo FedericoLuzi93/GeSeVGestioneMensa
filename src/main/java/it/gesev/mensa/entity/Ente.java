@@ -34,6 +34,12 @@ public class Ente
 	@Column(name="descrizione_ente")
 	private String descrizioneEnte;
 	
+	@Column(name="indirizzo")
+	private String indirizzo;
+	
+	@Column(name="localita")
+	private String localita;
+	
 	@OneToMany(mappedBy="ente", cascade={CascadeType.PERSIST, CascadeType.DETACH,
 		 	CascadeType.MERGE, CascadeType.REFRESH})
 	private List<TestataMovimento> testataMovimento;
