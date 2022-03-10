@@ -36,6 +36,12 @@ public class MensaMapper
 		if(mensa.getDataInizioServizio() != null)
 			mensaDTO.setDataInizioServizio(simpleDateFormat.format(mensa.getDataInizioServizio()));
 		
+		//Controllo presenza file
+		if(mensa.getAutorizzazioneSanitaria() != null)
+			mensaDTO.setPresenzaFile(true);
+		else
+			mensaDTO.setPresenzaFile(false);
+		
 		//LocalTime a String
 //		mensaDTO.setOrarioAl(mensa.getOrarioAl().toString());
 //		mensaDTO.setOrarioDal(mensa.getOrarioDal().toString());

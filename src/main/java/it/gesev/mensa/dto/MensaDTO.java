@@ -16,6 +16,7 @@ public class MensaDTO
 	private String dataInizioServizio;
 	private String dataFineServizio;
 	private String descrizioneTipoFormaVettovagliamento;
+	private String tipoDieta;
 	
 	//Contatti
 	private String via;
@@ -31,4 +32,7 @@ public class MensaDTO
 	private String servizioFestivo;
 	private String servizioFestivoSabato;
 	private String servizioFestivoDomenica;
+	
+	//Controlli Aggiuntivi
+	private boolean presenzaFile;
 }

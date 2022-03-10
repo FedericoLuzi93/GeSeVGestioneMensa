@@ -80,14 +80,6 @@ public class MensaDAOImpl implements MensaDAO
 			logger.info("Impossibile creare la mensa, campi mensa non validi");
 			throw new GesevException("Impossibile creare la mensa, campi mensa non validi", HttpStatus.BAD_REQUEST);
 		}
-
-		//Controllo Campi Contatto
-		if(StringUtils.isBlank(mensa.getVia()) || mensa.getNumeroCivico() == null || StringUtils.isBlank(mensa.getCap()) || 
-				StringUtils.isBlank(mensa.getCitta()) || StringUtils.isBlank(mensa.getProvincia()) || StringUtils.isBlank(mensa.getTelefono()))
-		{
-			logger.info("Impossibile creare la mensa, campi contatto non validi");
-			throw new GesevException("Impossibile creare la mensa, campi  non validi", HttpStatus.BAD_REQUEST);
-		}
 		
 		//Ricerca TipoVettovagliamento
 		Optional<TipoFormaVettovagliamento> optionalTipoFormaVett = tipoFormaVettovagliamentoRepository.findByDescrizione(descrizioneTipoVettovagliamento);
@@ -122,7 +114,6 @@ public class MensaDAOImpl implements MensaDAO
 		for(AssTipoPastoMensa assTipoPas : assTipoPastoMensa)
 		{
 			//Controllo AssTipoPastoMensa
-			
 			assTipoPas.setMensa(mensaSalvata);
 			assTipoPastoMensaRepository.save(assTipoPas);
 		}
@@ -158,14 +149,6 @@ public class MensaDAOImpl implements MensaDAO
 			throw new GesevException("Impossibile modificare la mensa, campi mensa non validi", HttpStatus.BAD_REQUEST);
 		}
 
-		//Controllo Campi Contatto
-		if(StringUtils.isBlank(mensa.getVia()) || mensa.getNumeroCivico() == null || StringUtils.isBlank(mensa.getCap()) || 
-				StringUtils.isBlank(mensa.getCitta()) || StringUtils.isBlank(mensa.getProvincia()) || StringUtils.isBlank(mensa.getTelefono()))
-		{
-			logger.info("Impossibile modificare la mensa, campi contatto non validi");
-			throw new GesevException("Impossibile modificare la mensa, campi contatto non validi", HttpStatus.BAD_REQUEST);
-		}
-		
 		//Ricerca TipoVettovagliamento
 		Optional<TipoFormaVettovagliamento> optionalTipoFormaVett = tipoFormaVettovagliamentoRepository.findByDescrizione(descrizioneTipoVettovagliamento);
 		if(!optionalTipoFormaVett.isPresent())
