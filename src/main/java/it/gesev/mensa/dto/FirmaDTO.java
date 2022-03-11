@@ -12,6 +12,6 @@ public class FirmaDTO implements Serializable
 {
 	private static final long serialVersionUID = -7862928031716979173L;
 	private String idReport;
-	private List<OrdineFirmaDTO> listaForma;
+	private List<OrdineFirmaDTO> listaFirma;
 
 }

@@ -97,7 +97,7 @@ public class FirmaDAOImpl implements FirmaDAO {
 	{
 		logger.info("Registrazione firme...");
 		
-		if(firma.getIdReport() == null || firma.getListaForma() == null || firma.getListaForma().size() == 0)
+		if(firma.getIdReport() == null || firma.getListaFirma() == null || firma.getListaFirma().size() == 0)
 			throw new GesevException("I dati forniti non sono corretti", HttpStatus.BAD_REQUEST);
 		
 		logger.info("Controllo presenza associazione report-firma...");
@@ -105,7 +105,7 @@ public class FirmaDAOImpl implements FirmaDAO {
 		if(numeroFirme > 0)
 			throw new GesevException("Report gia' associato ad elenco firme", HttpStatus.BAD_REQUEST);
 		
-		for(OrdineFirmaDTO ordine : firma.getListaForma())
+		for(OrdineFirmaDTO ordine : firma.getListaFirma())
 		{
 			Optional<Report> reportOpt = reportRepository.findById(firma.getIdReport());
 			if(!reportOpt.isPresent())
@@ -164,7 +164,8 @@ public class FirmaDAOImpl implements FirmaDAO {
 		
 		logger.info("Aggiornamento con nuovi dati...");
 		
-		registraFirme(firma);
+		if(firma.getListaFirma() != null && firma.getListaFirma().size() > 0)
+			registraFirme(firma);
 		
 		logger.info("Fine modifica firme...");		
 	}
