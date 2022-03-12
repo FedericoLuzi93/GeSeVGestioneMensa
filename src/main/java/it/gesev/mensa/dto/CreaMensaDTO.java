@@ -10,6 +10,8 @@ import lombok.Setter;
 public class CreaMensaDTO 
 {
 	//Base
+	private int idEnte;
+	
 	private Integer codiceMensa;
 	private String descrizioneMensa;
 	private String servizioFestivo;
@@ -32,21 +34,26 @@ public class CreaMensaDTO
 	private String email;
 	
 	//Liste Enti, AssMensaTipoLocale, AssTipoPastoMensa e descrizioneTipoFormaVettovagliamento
-	private String descrizioneTipoFormaVettovagliamento;
-	private List<EnteDTO> listaEntiDTO;
-	private List<AssMensaTipoLocaleDTO> assMensaTipoLocaleDTO;	
-	private List<AssTipoPastoMensaDTO> assTipoPastoMensaDTO;
+	private int codiceTipoFormaVettovagliamento;
+	private List<TipoLocaleDTO> listaTipoLocaleDTO;
+	private List<TipoPastoDTO> listaTipoPastoDTO;	
+	private List<ServizioEventoDTO> listaServizioEventoDTO;
 	
 	@Override
 	public String toString() {
-		return "CreaMensaDTO [codiceMensa=" + codiceMensa + ", descrizioneMensa=" + descrizioneMensa
-				+ ", servizioFestivo=" + servizioFestivo + ", numeroAutorizzazioneSanitaria="
-				+ numeroAutorizzazioneSanitaria + ", dataAutorizzazioneSanitaria=" + dataAutorizzazioneSanitaria
-				+ ", autSanitariaRilasciataDa=" + autSanitariaRilasciataDa + ", dataInizioServizio="
-				+ dataInizioServizio + ", dataFineServizio=" + dataFineServizio + ", via=" + via + ", numeroCivico="
-				+ numeroCivico + ", cap=" + cap + ", citta=" + citta + ", provincia=" + provincia + ", telefono="
-				+ telefono + ", fax=" + fax + ", email=" + email + ", descrizioneTipoFormaVettovagliamento="
-				+ descrizioneTipoFormaVettovagliamento + ", listaEntiDTO=" + listaEntiDTO + ", assMensaTipoLocaleDTO="
-				+ assMensaTipoLocaleDTO + ", assTipoPastoMensaDTO=" + assTipoPastoMensaDTO + "]";
+		return "CreaMensaDTO [idEnte=" + idEnte + ", descrizioneMensa=" + descrizioneMensa + ", servizioFestivo="
+				+ servizioFestivo + ", servizioFestivoSabato=" + servizioFestivoSabato + ", servizioFestivoDomenica="
+				+ servizioFestivoDomenica + ", dataAutorizzazioneSanitaria=" + dataAutorizzazioneSanitaria
+				+ ", numeroAutorizzazioneSanitaria=" + numeroAutorizzazioneSanitaria + ", autSanitariaRilasciataDa="
+				+ autSanitariaRilasciataDa + ", dataInizioServizio=" + dataInizioServizio + ", dataFineServizio="
+				+ dataFineServizio + ", via=" + via + ", numeroCivico=" + numeroCivico + ", cap=" + cap + ", citta="
+				+ citta + ", provincia=" + provincia + ", telefono=" + telefono + ", fax=" + fax + ", email=" + email
+				+ ", codiceTipoFormaVettovagliamento=" + codiceTipoFormaVettovagliamento + ", listaTipoLocaleDTO="
+				+ listaTipoLocaleDTO + ", listaTipoPastoDTO=" + listaTipoPastoDTO + ", listaServizioEventoDTO="
+				+ listaServizioEventoDTO + "]";
 	}
+	
+	
+
+
 }

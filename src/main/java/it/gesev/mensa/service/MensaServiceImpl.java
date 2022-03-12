@@ -12,6 +12,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.apache.catalina.valves.CrawlerSessionManagerValve;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,13 +53,13 @@ public class MensaServiceImpl implements MensaService
 {
 	@Autowired
 	private MensaDAO mensaDAO;
-	
+
 	@Value("${gesev.data.format}")
 	private String dateFormat;
-	
+
 	@PersistenceContext
 	EntityManager entityManager;
-		
+
 	private static final Logger logger = LoggerFactory.getLogger(MensaServiceImpl.class);
 
 	/* Leggi tutte le Mense */
@@ -84,48 +85,39 @@ public class MensaServiceImpl implements MensaService
 	public int createMensa(CreaMensaDTO creaMensaDTO, MultipartFile multipartFile) throws ParseException, IOException 
 	{
 		Mensa mensa = null;
-		List<AssMensaTipoLocale> assMensaTipoLocale = null;
-		List<AssTipoPastoMensa> assTipoPastoMensa = null;
-		String descrizioneTipoVettovagliamento = "";
 		try
 		{
-			logger.info("Accesso a createMensa, classe MensaServiceImpl");
- 			mensa = MensaMapper.mapToEntity(creaMensaDTO, dateFormat);	
- 			assMensaTipoLocale = AssMensaTipoLocaleMapper.mapToEntity(creaMensaDTO, dateFormat);
- 			assTipoPastoMensa = AssTipoPastoMensaMapper.mapToEntity(creaMensaDTO, dateFormat);
- 			descrizioneTipoVettovagliamento = creaMensaDTO.getDescrizioneTipoFormaVettovagliamento();
- 			if(multipartFile == null)
- 				mensa.setAutorizzazioneSanitaria(null);
- 			else
- 				mensa.setAutorizzazioneSanitaria(multipartFile.getBytes());	
+			logger.info("Accesso a creaMensa classe MensaServiceImpl");
+			mensa = MensaMapper.mapToEntity(creaMensaDTO, dateFormat);	
+			if(multipartFile != null)
+				mensa.setAutorizzazioneSanitaria(multipartFile.getBytes());
+			else
+				mensa.setAutorizzazioneSanitaria(null);
 		}
-		catch(GesevException exc)
+		catch(Exception exc)
 		{
-			logger.info("Eccezione nel servizio createMensa" + exc);
-			throw new GesevException("Non è stato possibile creare la Mensa " + exc, HttpStatus.BAD_REQUEST);
+			logger.info("Eccezione nel servizio updateMensa" + exc);
+			throw new GesevException("Non è stato possibile modificare la Mensa " + exc, HttpStatus.BAD_REQUEST);
 		}
-		logger.info("Crezione mensa in corso...");
 		
-		return mensaDAO.createMensa(mensa, assMensaTipoLocale, assTipoPastoMensa, descrizioneTipoVettovagliamento);
+		logger.info("Accesso a createMensa, classe MensaServiceImpl");
+		logger.info("Crezione mensa in corso...");
+		return mensaDAO.createMensa(mensa, creaMensaDTO.getListaTipoLocaleDTO(), creaMensaDTO.getListaTipoPastoDTO() ,
+				creaMensaDTO.getListaServizioEventoDTO(), creaMensaDTO.getCodiceTipoFormaVettovagliamento(), creaMensaDTO.getIdEnte());
 	}
 
 	/* Aggiorna una Mensa */
 	public int updateMensa(CreaMensaDTO creaMensaDTO, int idMensa, MultipartFile multipartFile) throws ParseException, IOException 
 	{
 		Mensa mensa = null;
-		List<AssMensaTipoLocale> assMensaTipoLocale = null;
-		String descrizioneTipoVettovagliamento = "";
 		try
 		{
 			logger.info("Accesso a updateMensa, classe MensaServiceImpl");
- 			mensa = MensaMapper.mapToEntity(creaMensaDTO, dateFormat);	
- 			descrizioneTipoVettovagliamento = creaMensaDTO.getDescrizioneTipoFormaVettovagliamento();
- 			if(multipartFile != null)
- 				mensa.setAutorizzazioneSanitaria(multipartFile.getBytes());
- 			else
- 				mensa.setAutorizzazioneSanitaria(null);
- 			assMensaTipoLocale = AssMensaTipoLocaleMapper.mapToEntity(creaMensaDTO, dateFormat);
- 			
+			mensa = MensaMapper.mapToEntity(creaMensaDTO, dateFormat);	
+			if(multipartFile != null)
+				mensa.setAutorizzazioneSanitaria(multipartFile.getBytes());
+			else
+				mensa.setAutorizzazioneSanitaria(null);
 		}
 		catch(GesevException exc)
 		{
@@ -133,7 +125,8 @@ public class MensaServiceImpl implements MensaService
 			throw new GesevException("Non è stato possibile modificare la Mensa " + exc, HttpStatus.BAD_REQUEST);
 		}
 		logger.info("Modifica mensa in corso...");
-		return mensaDAO.updateMensa(mensa, assMensaTipoLocale, idMensa, descrizioneTipoVettovagliamento);
+		return mensaDAO.updateMensa(idMensa, mensa, creaMensaDTO.getListaTipoLocaleDTO(), creaMensaDTO.getListaTipoPastoDTO() ,
+				creaMensaDTO.getListaServizioEventoDTO(), creaMensaDTO.getCodiceTipoFormaVettovagliamento(), creaMensaDTO.getIdEnte());
 	}
 
 	/* Disabilita una Mensa */
@@ -156,7 +149,7 @@ public class MensaServiceImpl implements MensaService
 		logger.info("disabilitazione mensa in corso...");
 		return mensaDAO.disableMensa(mensa, idMensa);
 	}
-	
+
 	/* Get Singola Mensa */
 	@Override
 	public MensaDTO getSingolaMensa(int idMensa) 
@@ -167,7 +160,7 @@ public class MensaServiceImpl implements MensaService
 		logger.info("Fine getSingolaMensa classe MensaServiceImpl");
 		return mensaDTO;
 	}
-	
+
 	/* Invio del File */
 	@Override
 	public FileDTO getFile(int idMensa) 
@@ -179,7 +172,7 @@ public class MensaServiceImpl implements MensaService
 		fileDTO.setAutorizzazioneSanitaria(mensa.getAutorizzazioneSanitaria());
 		return fileDTO;
 	}
-	
+
 	/* Cerca Mense per Id Ente */
 	@Override
 	public List<MensaDTO> getMensaPerEnte(int idEnte)
@@ -212,7 +205,7 @@ public class MensaServiceImpl implements MensaService
 		logger.info("Fine getAllLocali, classe MensaServiceImpl");
 		return listaTipoLocaliDTO;
 	}
-	
+
 
 	/* Lista Locali per Mensa */
 	@Override
@@ -227,11 +220,11 @@ public class MensaServiceImpl implements MensaService
 				+ "from	tipo_locale INNER join ass_mensa_tipo_locale\r\n"
 				+ "on	codice_mensa_fk = " + idMensa + " and \r\n"
 				+ "	tipo_locale.codice_tipo_locale = ass_mensa_tipo_locale.codice_tipo_locale_fk;";
-		
+
 		logger.info("Esecuzione query: " + query); 
 		Query sumQuery = entityManager.createNativeQuery(query);
 		List<Object[]> listOfResults = sumQuery.getResultList();
-		
+
 		for(Object[] ob : listOfResults)
 		{
 			FELocaliDTO feLocaliDTO = new FELocaliDTO();
@@ -301,33 +294,33 @@ public class MensaServiceImpl implements MensaService
 		logger.info("Accesso a getServiziPerMensa  classe MensaServiceImpl");
 		FEServizioMensaDTO feServizioMensaDTO = new FEServizioMensaDTO();
 		List<AssTipoPastoMensa> listaAssTipoPastoMensa = mensaDAO.getServiziPerMensa(idMensa);
-		
+
 		if(listaAssTipoPastoMensa.size()>0)
 		{
 			ModelMapper mapper = new ModelMapper();
 			List<TipoPastoDTO> listaTipoPastoDTO = new ArrayList<>();
 			Mensa mensa = null;
 			DateTimeFormatter dateTime = DateTimeFormatter.ofPattern("HH:mm");
-			
+
 			for(AssTipoPastoMensa ass : listaAssTipoPastoMensa)
 			{
 				if(mensa == null)
 					mensa = ass.getMensa();
-				
+
 				TipoPastoDTO tipoPastoDTO = (mapper.map(ass.getTipoPasto(), TipoPastoDTO.class));
 				tipoPastoDTO.setOraFinePrenotazione(ass.getOraFinePrenotazione() != null ? ass.getOraFinePrenotazione().format(dateTime) : null);
 				tipoPastoDTO.setOrarioAl(ass.getOrarioAl() != null ? ass.getOrarioAl().format(dateTime) : null);
 				tipoPastoDTO.setOrarioDal(ass.getOrarioDal() != null ? ass.getOrarioDal().format(dateTime) : null);
 				listaTipoPastoDTO.add(tipoPastoDTO);
 			}
-			
+
 			feServizioMensaDTO.setListaTipoPastoDTO(listaTipoPastoDTO);
 			SimpleDateFormat formatter = new SimpleDateFormat(this.dateFormat);
-			
+
 			feServizioMensaDTO.setDataFineServizio(mensa.getDataFineServizio() != null ? formatter.format(mensa.getDataFineServizio()) : null);
 			feServizioMensaDTO.setDataInizioServizio(mensa.getDataInizioServizio() != null ? formatter.format(mensa.getDataInizioServizio()) : null);	
 		}
-		
+
 		return feServizioMensaDTO;
 	}
 

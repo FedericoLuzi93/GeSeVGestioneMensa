@@ -9,5 +9,8 @@ public class TipoLocaleDTO
 {
 	private Integer codiceTipoLocale;
 	private String descrizioneTipoLocale;
-	//private List<AssMensaTipoLocale> listaAssDipendenteRuolo;
+	
+	private int superfice;
+	private int numeroLocali;
+	
 }
