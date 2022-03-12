@@ -119,7 +119,7 @@ public class MensaServiceImpl implements MensaService
 			else
 				mensa.setAutorizzazioneSanitaria(null);
 		}
-		catch(GesevException exc)
+		catch(Exception exc)
 		{
 			logger.info("Eccezione nel servizio updateMensa" + exc);
 			throw new GesevException("Non è stato possibile modificare la Mensa " + exc, HttpStatus.BAD_REQUEST);
@@ -141,7 +141,7 @@ public class MensaServiceImpl implements MensaService
 			Date date = simpleDateFormat.parse(dataString);
 			mensa.setDataFineServizio(date);	 			
 		}
-		catch(GesevException exc)
+		catch(Exception exc)
 		{
 			logger.info("Eccezione nel servizio disableMensa" + exc);
 			throw new GesevException("Non è stato possibile disabilitare la Mensa " + exc, HttpStatus.BAD_REQUEST);

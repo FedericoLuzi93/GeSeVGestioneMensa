@@ -24,10 +24,10 @@ public class MensaMapper
 		ModelMapper mapper = new ModelMapper();
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
 		MensaDTO mensaDTO= mapper.map(mensa, MensaDTO.class);
-		
+
 		//TipoVettovagliamento	
 		mensaDTO.setDescrizioneTipoFormaVettovagliamento(mensa.getTipoFormaVettovagliamento().getDescrizione());
-		
+
 		//Date to String
 		if(mensa.getDataAutorizzazioneSanitaria() != null)
 			mensaDTO.setDataAutorizzazioneSanitaria(simpleDateFormat.format(mensa.getDataAutorizzazioneSanitaria()));
@@ -35,57 +35,55 @@ public class MensaMapper
 			mensaDTO.setDataFineServizio(simpleDateFormat.format(mensa.getDataFineServizio()));
 		if(mensa.getDataInizioServizio() != null)
 			mensaDTO.setDataInizioServizio(simpleDateFormat.format(mensa.getDataInizioServizio()));
-		
+
 		//Controllo presenza file
 		if(mensa.getAutorizzazioneSanitaria() != null)
 			mensaDTO.setPresenzaFile(true);
 		else
 			mensaDTO.setPresenzaFile(false);
-		
-		
+
 		//LocalTime a String
-//		mensaDTO.setOrarioAl(mensa.getOrarioAl().toString());
-//		mensaDTO.setOrarioDal(mensa.getOrarioDal().toString());
-//		mensaDTO.setOraFinePrenotazione(mensa.getOraFinePrenotazione().toString());
-		
+		//		mensaDTO.setOrarioAl(mensa.getOrarioAl().toString());
+		//		mensaDTO.setOrarioDal(mensa.getOrarioDal().toString());
+		//		mensaDTO.setOraFinePrenotazione(mensa.getOraFinePrenotazione().toString());
+
 		return mensaDTO;
 	}
-	
+
 	//DTO to Entity
 	public static Mensa mapToEntity(CreaMensaDTO creaMensaDTO, String dateFormat) throws ParseException
 	{
 		logger.info("Accesso a mapToEntity, classe MensaMapper");
 		ModelMapper mapper = new ModelMapper();	
-		String dataString = creaMensaDTO.getDataAutorizzazioneSanitaria();
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
-		Date date = simpleDateFormat.parse(dataString);
 		Mensa mensa= mapper.map(creaMensaDTO, Mensa.class);
-		
-		//if dataAut ci sta faccio la conversione 
-			mensa.setDataAutorizzazioneSanitaria(date);
 
+		if(mensa.getDataAutorizzazioneSanitaria() != null)
+		{	String dataString = creaMensaDTO.getDataAutorizzazioneSanitaria();
+		Date date = simpleDateFormat.parse(dataString);
+		mensa.setDataAutorizzazioneSanitaria(date);
+		}
 		return mensa;
 	}
-	
+
 	//DTO to Entity
 	public static Mensa mapToEntityBase(MensaDTO mensaDTO, String dateFormat) throws ParseException
 	{
 		logger.info("Accesso a mapToEntity, classe MensaMapper");
 		ModelMapper mapper = new ModelMapper();
-			
-		
+
+
 		String dataString = mensaDTO.getDataAutorizzazioneSanitaria();
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
 		Date date = simpleDateFormat.parse(dataString);
 		Mensa mensa= mapper.map(mensaDTO, Mensa.class);
 		mensa.setDataAutorizzazioneSanitaria(date);
-			
+
 		//String to LocalTime
-//		mensa.setOrarioAl(ControlloData.controlloTempo(mensaDTO.getOrarioAl()));
-//		mensa.setOrarioDal(ControlloData.controlloTempo(mensaDTO.getOrarioDal()));
-//		mensa.setOraFinePrenotazione(ControlloData.controlloTempo(mensaDTO.getOraFinePrenotazione()));
-			
+		//		mensa.setOrarioAl(ControlloData.controlloTempo(mensaDTO.getOrarioAl()));
+		//		mensa.setOrarioDal(ControlloData.controlloTempo(mensaDTO.getOrarioDal()));
+		//		mensa.setOraFinePrenotazione(ControlloData.controlloTempo(mensaDTO.getOraFinePrenotazione()));
+
 		return mensa;
-		
-		}
+	}
 }
