@@ -22,27 +22,67 @@ public class AssTipoPastoMensaMapper
 	{
 		return null;
 	}
-	
+
+	//DTO to Entity con ListaPassata
+//	public static List<AssTipoPastoMensa> mapToEntityConLista(CreaMensaDTO creaMensaDTO, String dateFormat, List<TipoPasto> listaTipoPasto) throws ParseException
+//	{
+//		logger.info("Accesso a mapToEntity classe AssTipoPastoMensaDTO");
+//		ModelMapper mapper = new ModelMapper();
+//
+//		List<AssTipoPastoMensa> listaAssTipoPastoMensa = new ArrayList<>();
+//		List<TipoPasto> listaTipoPasti = listaTipoPasto;
+//		for(AssTipoPastoMensaDTO assTipoPasto : creaMensaDTO.getAssTipoPastoMensaDTO())
+//		{
+//			AssTipoPastoMensa assTipoPastoMensa = new AssTipoPastoMensa();
+//
+//			if(assTipoPasto.getOrarioDal() != null)
+//				assTipoPastoMensa.setOrarioDal(ControlloData.controlloTempo(assTipoPasto.getOrarioDal()));
+//
+//			if(assTipoPasto.getOrarioAl() != null)
+//				assTipoPastoMensa.setOrarioAl(ControlloData.controlloTempo(assTipoPasto.getOrarioAl()));
+//
+//			if(assTipoPasto.getOraFinePrenotazione() != null)
+//				assTipoPastoMensa.setOraFinePrenotazione(ControlloData.controlloTempo(assTipoPasto.getOraFinePrenotazione()));
+//
+//			for(TipoPasto tp : listaTipoPasti)
+//			{
+//				if(assTipoPasto.getTipoPastoDTO().getCodiceTipoPasto() == tp.getCodiceTipoPasto())
+//					assTipoPastoMensa.setTipoPasto(tp);
+//			}
+//
+//			listaAssTipoPastoMensa.add(assTipoPastoMensa);
+//		}
+//
+//		return listaAssTipoPastoMensa;
+//	}
+
 	//DTO to Entity
 	public static List<AssTipoPastoMensa> mapToEntity(CreaMensaDTO creaMensaDTO, String dateFormat) throws ParseException
 	{
 		logger.info("Accesso a mapToEntity classe AssTipoPastoMensaDTO");
 		ModelMapper mapper = new ModelMapper();
-		//SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
-		
-		List<AssTipoPastoMensa> listaAssTipoPastoMensa = new ArrayList<>();
-		for(AssTipoPastoMensaDTO assTipoPasto : creaMensaDTO.getAssTipoPastoMensaDTO())
-		{
-			AssTipoPastoMensa assTipoPastoMensa = new AssTipoPastoMensa();
-			
-			assTipoPastoMensa.setOrarioDal(ControlloData.controlloTempo(assTipoPasto.getOrarioDal()));
-			assTipoPastoMensa.setOrarioAl(ControlloData.controlloTempo(assTipoPasto.getOrarioAl()));
-			assTipoPastoMensa.setOraFinePrenotazione(ControlloData.controlloTempo(assTipoPasto.getOraFinePrenotazione()));
-			assTipoPastoMensa.setTipoPasto(mapper.map(assTipoPasto.getTipoPastoDTO(), TipoPasto.class));
-			
-			listaAssTipoPastoMensa.add(assTipoPastoMensa);
-		}
-		
-		return listaAssTipoPastoMensa;
+
+//		List<AssTipoPastoMensa> listaAssTipoPastoMensa = new ArrayList<>();
+//		for(AssTipoPastoMensaDTO assTipoPasto : creaMensaDTO.get())
+//		{
+//			AssTipoPastoMensa assTipoPastoMensa = new AssTipoPastoMensa();
+//
+//			if(assTipoPasto.getOrarioDal() != null)
+//				assTipoPastoMensa.setOrarioDal(ControlloData.controlloTempo(assTipoPasto.getOrarioDal()));
+//
+//			if(assTipoPasto.getOrarioAl() != null)
+//				assTipoPastoMensa.setOrarioAl(ControlloData.controlloTempo(assTipoPasto.getOrarioAl()));
+//
+//			if(assTipoPasto.getOraFinePrenotazione() != null)
+//				assTipoPastoMensa.setOraFinePrenotazione(ControlloData.controlloTempo(assTipoPasto.getOraFinePrenotazione()));
+//
+//			//assTipoPastoMensa.setTipoPasto(mapper.map(assTipoPasto.getTipoPastoDTO(), TipoPasto.class));
+//
+//			listaAssTipoPastoMensa.add(assTipoPastoMensa);
+//		}
+
+		return null;
 	}
+
+
 }

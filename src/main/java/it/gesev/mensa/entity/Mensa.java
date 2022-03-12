@@ -1,12 +1,10 @@
 package it.gesev.mensa.entity;
 
-import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -37,7 +35,7 @@ public class Mensa
 	private String descrizioneMensa;
 	
 	@Column(name="TIPO_DIETA")
-	private String tipoDieta;
+	private String tipoDieta = "Normale";
 
 	@Column(name="SERVIZIO_FESTIVO")
 	private String servizioFestivo;
@@ -106,5 +104,8 @@ public class Mensa
 	
 	@OneToMany(mappedBy= "mensa")
 	private List<AssTipoPastoMensa> assTipoPastoMensa;
+	
+	@OneToMany(mappedBy= "mensa")
+	private List<ServizioEvento> listaServizioEvento;
 	
 }

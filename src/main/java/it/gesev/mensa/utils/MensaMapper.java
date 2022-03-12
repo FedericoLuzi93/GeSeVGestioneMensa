@@ -55,20 +55,15 @@ public class MensaMapper
 	public static Mensa mapToEntity(CreaMensaDTO creaMensaDTO, String dateFormat) throws ParseException
 	{
 		logger.info("Accesso a mapToEntity, classe MensaMapper");
-		ModelMapper mapper = new ModelMapper();
-		
-		
+		ModelMapper mapper = new ModelMapper();	
 		String dataString = creaMensaDTO.getDataAutorizzazioneSanitaria();
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
 		Date date = simpleDateFormat.parse(dataString);
 		Mensa mensa= mapper.map(creaMensaDTO, Mensa.class);
-		mensa.setDataAutorizzazioneSanitaria(date);
-			
-		//String to LocalTime
-//		mensa.setOrarioAl(ControlloData.controlloTempo(creaMensaDTO.getOrarioAl()));
-//		mensa.setOrarioDal(ControlloData.controlloTempo(creaMensaDTO.getOrarioDal()));
-//		mensa.setOraFinePrenotazione(ControlloData.controlloTempo(creaMensaDTO.getOraFinePrenotazione()));
 		
+		//if dataAut ci sta faccio la conversione 
+			mensa.setDataAutorizzazioneSanitaria(date);
+
 		return mensa;
 	}
 	
