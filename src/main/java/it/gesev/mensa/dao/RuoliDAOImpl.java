@@ -26,12 +26,16 @@ import org.springframework.stereotype.Component;
 import it.gesev.mensa.dto.RicercaColonnaDTO;
 import it.gesev.mensa.entity.AssDipendenteRuolo;
 import it.gesev.mensa.entity.Dipendente;
+import it.gesev.mensa.entity.Ente;
+import it.gesev.mensa.entity.Mensa;
 import it.gesev.mensa.entity.OrganoDirettivo;
 import it.gesev.mensa.entity.RuoloMensa;
 import it.gesev.mensa.enums.ColonneDipendenteEnum;
 import it.gesev.mensa.exc.GesevException;
 import it.gesev.mensa.repository.AssRuoloDipendenteRepository;
 import it.gesev.mensa.repository.DipendenteRepository;
+import it.gesev.mensa.repository.EnteRepository;
+import it.gesev.mensa.repository.MensaRepository;
 import it.gesev.mensa.repository.OrganoDirettivoRepository;
 import it.gesev.mensa.repository.RuoloMensaRepository;
 
@@ -56,6 +60,12 @@ public class RuoliDAOImpl implements RuoliDAO
 	@Value("${gesev.data.format}")
 	private String dateFormat;
 	
+	@Autowired
+	private MensaRepository mensaRepository;
+	
+	@Autowired
+	private EnteRepository enteRepository;
+	
 	@PersistenceContext
 	EntityManager entityManager;
 	
@@ -74,6 +84,17 @@ public class RuoliDAOImpl implements RuoliDAO
 	{
 		logger.info("Ricerca di dipendenti/ruoli...");
 		List<AssDipendenteRuolo> listaDipendentiRuolo = assRuoloDipendenteRepository.findAll();
+		logger.info("Trovati " + listaDipendentiRuolo.size() + " elementi.");
+		
+		return listaDipendentiRuolo;
+		
+	}
+	
+	@Override
+	public List<AssDipendenteRuolo> getListaDipendenteRuolo(Integer idEnte) 
+	{
+		logger.info("Ricerca di dipendenti/ruoli...");
+		List<AssDipendenteRuolo> listaDipendentiRuolo = assRuoloDipendenteRepository.findAssociazioneByIdEnte(idEnte);
 		logger.info("Trovati " + listaDipendentiRuolo.size() + " elementi.");
 		
 		return listaDipendentiRuolo;
@@ -299,5 +320,27 @@ public class RuoliDAOImpl implements RuoliDAO
 			throw new GesevException("Codice Organo direttivo non presente", HttpStatus.BAD_REQUEST);
 		}
 		return idOrganoDirettivo;	
+	}
+	
+	@Override
+	public List<Dipendente> findDipendenteByIdEnte(Integer idMensa) 
+	{
+		logger.info("Ricerca dipendenti della mensa con ID " + idMensa);
+		
+		logger.info("Ricerca mensa...");
+		Optional<Mensa> optMensa = mensaRepository.findById(idMensa);
+		if(!optMensa.isPresent())
+			throw new GesevException("Nessuna mensa presente con l'ID specificato", HttpStatus.BAD_REQUEST);
+		
+		logger.info("Ricerca ente di apparteneenza della mensa...");
+		Mensa mensa = optMensa.get();
+		if(mensa.getEnte() == null || mensa.getEnte().getIdEnte() == null)
+			throw new GesevException("Impossibile reperire l'ente di appartennza della mensa", HttpStatus.INTERNAL_SERVER_ERROR);
+		
+		Optional<Ente> optEnte = enteRepository.findById(optMensa.get().getEnte().getIdEnte());
+		if(!optEnte.isPresent())
+			throw new GesevException("Impossibile reperire l'ente di appartennza della mensa", HttpStatus.INTERNAL_SERVER_ERROR);
+		
+		return dipendenteRepository.findDipendenteByIdEnte(optEnte.get().getIdEnte());
 	}
 }

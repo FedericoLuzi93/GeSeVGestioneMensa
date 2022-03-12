@@ -5,6 +5,7 @@ import java.util.List;
 
 import it.gesev.mensa.dto.FirmaDTO;
 import it.gesev.mensa.entity.AssReportRuoloMensa;
+import it.gesev.mensa.entity.Dipendente;
 import it.gesev.mensa.entity.Report;
 import it.gesev.mensa.entity.TipoReport;
 
@@ -17,4 +18,5 @@ public interface FirmaDAO
 	public List<AssReportRuoloMensa> getRuoliReportByIdReport(String idReport);
 	public void modificaFirme(FirmaDTO firma) throws ParseException;
 	public List<Report> selectReportInAssociazione();
+	 
 }

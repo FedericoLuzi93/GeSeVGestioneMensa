@@ -14,10 +14,12 @@ import it.gesev.mensa.dao.FirmaDAO;
 import it.gesev.mensa.dao.FirmaDAOImpl;
 import it.gesev.mensa.dto.AssReportRuoloMensaDTO;
 import it.gesev.mensa.dto.DettaglioReportDTO;
+import it.gesev.mensa.dto.DipendenteDTO;
 import it.gesev.mensa.dto.FirmaDTO;
 import it.gesev.mensa.dto.ReportDTO;
 import it.gesev.mensa.dto.TipoReportDTO;
 import it.gesev.mensa.entity.AssReportRuoloMensa;
+import it.gesev.mensa.entity.Dipendente;
 import it.gesev.mensa.entity.Report;
 import it.gesev.mensa.entity.TipoReport;
 
@@ -32,14 +34,14 @@ public class FirmaServiceImpl implements FirmaService
 	@Override
 	public DettaglioReportDTO getDettaglioReport(TipoReportDTO tipoReport) 
 	{
-		logger.info("Servizio per la generazione del dettaglio deelle firme...");
+		logger.info("Servizio per la generazione del dettaglio delle firme...");
 		
 		DettaglioReportDTO dettaglio = new DettaglioReportDTO();
 		ModelMapper mapper = new ModelMapper();
 		
 		List<Report> listaReport = firmaDAO.getListaReport(tipoReport.getCodiceTipoReport());
 //		List<AssReportRuoloMensa> listaAssociazioni = firmaDAO.getReportRuolo();
-		List<Report> listaReportAssociazioni = firmaDAO.selectReportInAssociazione();
+//		List<Report> listaReportAssociazioni = firmaDAO.selectReportInAssociazione();
 		List<TipoReport> listaTipiReport = firmaDAO.getTipiReport();
 		
 		if(listaReport != null && listaReport.size() > 0)
@@ -47,7 +49,9 @@ public class FirmaServiceImpl implements FirmaService
 			List<ReportDTO> listaReportDTO = new ArrayList<>();
 			for(Report report : listaReport)
 			{
-				listaReportDTO.add(mapper.map(report, ReportDTO.class));
+				ReportDTO reportDTO = mapper.map(report, ReportDTO.class);
+				reportDTO.setHasFirma(report.getListaAssReportRuoloMensa() != null && report.getListaAssReportRuoloMensa().size() > 0);
+				listaReportDTO.add(reportDTO);
 			}
 			
 			dettaglio.setListaReport(listaReportDTO);
@@ -67,19 +71,19 @@ public class FirmaServiceImpl implements FirmaService
 //			
 //			dettaglio.setListaAssociazioni(listaAssociazioniDTO);
 //		}
-		
-		if(listaReportAssociazioni != null && listaReportAssociazioni.size() > 0)
-		{
-			List<ReportDTO> listaReportDTO = new ArrayList<>();
-			for(Report report : listaReportAssociazioni)
-			{
-				listaReportDTO.add(mapper.map(report, ReportDTO.class));
-			}
-			
-			dettaglio.setListaReportInAssociazioni(listaReportDTO);
-		}
-		
-		
+//		
+//		if(listaReportAssociazioni != null && listaReportAssociazioni.size() > 0)
+//		{
+//			List<ReportDTO> listaReportDTO = new ArrayList<>();
+//			for(Report report : listaReportAssociazioni)
+//			{
+//				listaReportDTO.add(mapper.map(report, ReportDTO.class));
+//			}
+//			
+//			dettaglio.setListaReportInAssociazioni(listaReportDTO);
+//		}
+//		
+//		
 		if(listaTipiReport != null && listaTipiReport.size() > 0)
 		{
 			List<TipoReportDTO> listaDTO = new ArrayList<>();
@@ -133,9 +137,11 @@ public class FirmaServiceImpl implements FirmaService
 	@Override
 	public void modificaFirme(FirmaDTO firma) throws ParseException 
 	{
-		logger.info("Servizioo per la modifica delle firme");
+		logger.info("Servizio per la modifica delle firme");
 		firmaDAO.modificaFirme(firma);
 		
 	}
+
+	
 
 }
