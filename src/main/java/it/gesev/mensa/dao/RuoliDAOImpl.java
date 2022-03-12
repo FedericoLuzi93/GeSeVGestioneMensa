@@ -89,6 +89,17 @@ public class RuoliDAOImpl implements RuoliDAO
 		return listaDipendentiRuolo;
 		
 	}
+	
+	@Override
+	public List<AssDipendenteRuolo> getListaDipendenteRuolo(Integer idEnte) 
+	{
+		logger.info("Ricerca di dipendenti/ruoli...");
+		List<AssDipendenteRuolo> listaDipendentiRuolo = assRuoloDipendenteRepository.findAssociazioneByIdEnte(idEnte);
+		logger.info("Trovati " + listaDipendentiRuolo.size() + " elementi.");
+		
+		return listaDipendentiRuolo;
+		
+	}
 
 	@Override
 	public List<OrganoDirettivo> getListaOrganiDirettivi() 

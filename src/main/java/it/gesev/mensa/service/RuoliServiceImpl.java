@@ -240,12 +240,18 @@ public class RuoliServiceImpl implements RuoliService
 	}
 	
 	@Override
-	public List<DipendenteDTO> findDipendenteByIdEnte(Integer idMensa) 
+	public DettaglioRuoloDTO findDipendenteByIdEnte(Integer idMensa) 
 	{
 		logger.info("Servizio per la ricerca dei dipendenti della mensa...");
 		
 		List<Dipendente> listaDipendenti = ruoliDAO.findDipendenteByIdEnte(idMensa);
+		
+		List<AssDipendenteRuolo> listaAss = listaDipendenti.size() > 0 ? ruoliDAO.getListaDipendenteRuolo(listaDipendenti.get(0).getEnte().getIdEnte()) : null;
+		
 		List<DipendenteDTO> listaDTO = new ArrayList<>();
+		List<AssDipendenteRuoloDTO> listaAssDTO = new ArrayList<>();
+		DettaglioRuoloDTO dettaglio = new DettaglioRuoloDTO();
+		
 		ModelMapper mapper = new ModelMapper();
 		
 		if(listaDipendenti.size() > 0)
@@ -254,8 +260,16 @@ public class RuoliServiceImpl implements RuoliService
 				listaDTO.add(mapper.map(dipendente, DipendenteDTO.class));
 		}
 		
-		return listaDTO;
+		if(listaAss.size() > 0)
+		{
+			for(AssDipendenteRuolo ass : listaAss)
+				listaAssDTO.add(mapper.map(ass, AssDipendenteRuoloDTO.class));
+		}
 		
+		dettaglio.setAssociazioniRuolo(listaAssDTO);
+		dettaglio.setListaDipendenti(listaDTO);
+		
+		return dettaglio;
 	}
 
 }

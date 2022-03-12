@@ -24,6 +24,6 @@ public interface RuoliService
 	public int modificaOrganoDirettivo(OrganoDirettivoDTO organoDirettivoDTO, int idOrganoDirettivo);
 	public int cancellaOrganoDirettivo(int idOrganoDirettivo);
 	
-	public List<DipendenteDTO> findDipendenteByIdEnte(Integer idMensa);
+	public DettaglioRuoloDTO findDipendenteByIdEnte(Integer idMensa);
 
 }

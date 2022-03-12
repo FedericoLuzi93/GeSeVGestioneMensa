@@ -13,6 +13,8 @@ public interface RuoliDAO
 {
 	public List<Dipendente> getListaDipendenti();
 	public List<AssDipendenteRuolo> getListaDipendenteRuolo();
+	public List<AssDipendenteRuolo> getListaDipendenteRuolo(Integer idEnte);
+	
 	public List<OrganoDirettivo> getListaOrganiDirettivi();
 	public List<RuoloMensa> getRuoliByIdOrdineDirettivo();
 	public void aggiungiRuoloDipendente(Integer idDipendente, Integer idRuolo, Integer idOrganoDirettivo) throws ParseException;
