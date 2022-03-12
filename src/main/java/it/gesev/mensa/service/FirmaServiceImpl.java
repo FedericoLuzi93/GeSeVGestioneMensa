@@ -40,7 +40,7 @@ public class FirmaServiceImpl implements FirmaService
 		List<Report> listaReport = firmaDAO.getListaReport(tipoReport.getCodiceTipoReport());
 //		List<AssReportRuoloMensa> listaAssociazioni = firmaDAO.getReportRuolo();
 //		List<Report> listaReportAssociazioni = firmaDAO.selectReportInAssociazione();
-//		List<TipoReport> listaTipiReport = firmaDAO.getTipiReport();
+		List<TipoReport> listaTipiReport = firmaDAO.getTipiReport();
 		
 		if(listaReport != null && listaReport.size() > 0)
 		{
@@ -82,14 +82,14 @@ public class FirmaServiceImpl implements FirmaService
 //		}
 //		
 //		
-//		if(listaTipiReport != null && listaTipiReport.size() > 0)
-//		{
-//			List<TipoReportDTO> listaDTO = new ArrayList<>();
-//			for(TipoReport tipo : listaTipiReport)
-//				listaDTO.add(mapper.map(tipo, TipoReportDTO.class));
-//			
-//			dettaglio.setListaTipiReport(listaDTO);
-//		}
+		if(listaTipiReport != null && listaTipiReport.size() > 0)
+		{
+			List<TipoReportDTO> listaDTO = new ArrayList<>();
+			for(TipoReport tipo : listaTipiReport)
+				listaDTO.add(mapper.map(tipo, TipoReportDTO.class));
+			
+			dettaglio.setListaTipiReport(listaDTO);
+		}
 		
 		return dettaglio;
 	}

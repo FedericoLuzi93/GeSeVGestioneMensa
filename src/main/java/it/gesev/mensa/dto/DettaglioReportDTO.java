@@ -16,5 +16,5 @@ public class DettaglioReportDTO implements Serializable
 	private List<ReportDTO> listaReport;
 //	private List<ReportDTO> listaReportInAssociazioni;
 //	private List<AssReportRuoloMensaDTO> listaAssociazioni;
-//	private List<TipoReportDTO> listaTipiReport;
+	private List<TipoReportDTO> listaTipiReport;
 }
