@@ -3,6 +3,7 @@ package it.gesev.mensa.service;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import it.gesev.mensa.dao.MensaDAO;
 import it.gesev.mensa.dao.RuoliDAO;
 import it.gesev.mensa.dto.AssDipendenteRuoloDTO;
 import it.gesev.mensa.dto.DettaglioRuoloDTO;
@@ -20,6 +22,7 @@ import it.gesev.mensa.dto.RicercaColonnaDTO;
 import it.gesev.mensa.dto.RuoloDTO;
 import it.gesev.mensa.entity.AssDipendenteRuolo;
 import it.gesev.mensa.entity.Dipendente;
+import it.gesev.mensa.entity.Mensa;
 import it.gesev.mensa.entity.OrganoDirettivo;
 import it.gesev.mensa.entity.RuoloMensa;
 import it.gesev.mensa.exc.GesevException;
@@ -32,6 +35,9 @@ public class RuoliServiceImpl implements RuoliService
 	
 	@Autowired
 	private RuoliDAO ruoliDAO;
+	
+	@Autowired
+	private MensaDAO mensaDao;
 	
 	@Override
 	public DettaglioRuoloDTO getDettaglioRuoli() 
@@ -117,6 +123,9 @@ public class RuoliServiceImpl implements RuoliService
 	{
 		logger.info("Servizio per l'associazione del ruolo...");
 		
+		if(associazione.getIdMensa() == null)
+			throw new GesevException("Impossibile trovare una mensa con l'ID specificato", HttpStatus.BAD_REQUEST);
+		
 		ruoliDAO.aggiungiRuoloDipendente(associazione.getDipendente().getCodiceDipendente(), associazione.getRuolo().getCodiceRuoloMensa(), associazione.getOrganoDirettivo().getCodiceOrganoDirettivo());
 		
 	}
@@ -172,22 +181,29 @@ public class RuoliServiceImpl implements RuoliService
 		if(associazione == null || associazione.getAssDipendenteRuoloId() == null || associazione.getRuolo() == null || associazione.getDipendente() == null)
 			throw new GesevException("I dati forniti non sono corretti", HttpStatus.BAD_REQUEST);
 		
+		if(associazione.getIdMensa() == null)
+			throw new GesevException("Impossibile trovare una mensa con l'ID specificato", HttpStatus.BAD_REQUEST);
+		
+		Mensa optMensa = mensaDao.getSingolaMensa(associazione.getIdMensa());
+		if(optMensa == null)
+			throw new GesevException("Impossibile trovare una mensa con l'ID specificato", HttpStatus.BAD_REQUEST);
+		
 		ruoliDAO.updateRuoloDipendente(associazione.getAssDipendenteRuoloId(), associazione.getRuolo().getCodiceRuoloMensa(), 
 				                       associazione.getDipendente().getCodiceDipendente(), 
 				                       associazione.getOrganoDirettivo() != null ? associazione.getOrganoDirettivo().getCodiceOrganoDirettivo() : null);
 		
-		return getDettaglioRuoli();
+		return findDipendenteByIdEnte(associazione.getIdMensa());
 		
 	}
 
 	@Override
-	public DettaglioRuoloDTO cancellaRuolo(Integer idRuoloDipendente) 
+	public DettaglioRuoloDTO cancellaRuolo(Integer idRuoloDipendente, Integer idMensa) 
 	{
 		logger.info("Servizio per la cancellazione del ruolo del dipendente...");
 		
 		ruoliDAO.cancellaRuolo(idRuoloDipendente);
 		
-		return getDettaglioRuoli();
+		return findDipendenteByIdEnte(idMensa); 
 	}
 	
 	/* Crea Organo Direttivo */
@@ -243,6 +259,9 @@ public class RuoliServiceImpl implements RuoliService
 	public DettaglioRuoloDTO findDipendenteByIdEnte(Integer idMensa) 
 	{
 		logger.info("Servizio per la ricerca dei dipendenti della mensa...");
+		
+		if(idMensa == null)
+			throw new GesevException("Impossibile trovare una mensa con l'ID specificato", HttpStatus.BAD_REQUEST);
 		
 		List<Dipendente> listaDipendenti = ruoliDAO.findDipendenteByIdEnte(idMensa);
 		

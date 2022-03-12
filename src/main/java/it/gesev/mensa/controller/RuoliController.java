@@ -155,7 +155,7 @@ public class RuoliController
 		try
 		{
 			ruoliService.aggiungiRuoloDipendente(associazione);
-			esito.setBody(ruoliService.getDettaglioRuoli());
+			esito.setBody(ruoliService.findDipendenteByIdEnte(associazione.getIdMensa()));
 			status = HttpStatus.OK;
 		}
 		
@@ -245,11 +245,11 @@ public class RuoliController
 		return ResponseEntity.status(status).headers(new HttpHeaders()).body(esito);
 	}
 	
-	@DeleteMapping("/cancellaRuolo/{idRuoloDipendente}")
+	@DeleteMapping("/cancellaRuolo/{idRuoloDipendente}/{idMensa}")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
 			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
 			@ApiResponse(code = 500, message = "Errore interno") })
-	public ResponseEntity<EsitoDTO> cancellaRuolo(@PathVariable("idRuoloDipendente") Integer idRuoloDipendente)
+	public ResponseEntity<EsitoDTO> cancellaRuolo(@PathVariable("idRuoloDipendente") Integer idRuoloDipendente, @PathVariable("idMensa") Integer idMensa)
 	{
 		logger.info("Accesso al servizio cancellaRuolo");
 		EsitoDTO esito = new EsitoDTO();
@@ -257,7 +257,7 @@ public class RuoliController
 		
 		try
 		{
-			esito.setBody(ruoliService.cancellaRuolo(idRuoloDipendente));
+			esito.setBody(ruoliService.cancellaRuolo(idRuoloDipendente, idMensa));
 			status = HttpStatus.OK;
 		}
 		
