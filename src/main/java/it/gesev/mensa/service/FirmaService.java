@@ -5,6 +5,7 @@ import java.util.List;
 
 import it.gesev.mensa.dto.AssReportRuoloMensaDTO;
 import it.gesev.mensa.dto.DettaglioReportDTO;
+import it.gesev.mensa.dto.DipendenteDTO;
 import it.gesev.mensa.dto.FirmaDTO;
 import it.gesev.mensa.dto.TipoReportDTO;
 

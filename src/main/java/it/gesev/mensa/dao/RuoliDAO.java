@@ -23,4 +23,6 @@ public interface RuoliDAO
 	public int creaOrganoDirettivo(OrganoDirettivo organoDirettivo);
 	public int modificaOrganoDirettivo(OrganoDirettivo organoDirettivo, int idOrganoDirettivo);
 	public int cancellaOrganoDirettivo(int idOrganoDirettivo);
+	
+	public List<Dipendente> findDipendenteByIdEnte(Integer idMensa);
 }

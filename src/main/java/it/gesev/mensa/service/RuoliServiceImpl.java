@@ -238,5 +238,24 @@ public class RuoliServiceImpl implements RuoliService
 		ruoliDAO.cancellaOrganoDirettivo(idOrganoDirettivo);
 		return idOrganoDirettivo;
 	}
+	
+	@Override
+	public List<DipendenteDTO> findDipendenteByIdEnte(Integer idMensa) 
+	{
+		logger.info("Servizio per la ricerca dei dipendenti della mensa...");
+		
+		List<Dipendente> listaDipendenti = ruoliDAO.findDipendenteByIdEnte(idMensa);
+		List<DipendenteDTO> listaDTO = new ArrayList<>();
+		ModelMapper mapper = new ModelMapper();
+		
+		if(listaDipendenti.size() > 0)
+		{
+			for(Dipendente dipendente : listaDipendenti)
+				listaDTO.add(mapper.map(dipendente, DipendenteDTO.class));
+		}
+		
+		return listaDTO;
+		
+	}
 
 }

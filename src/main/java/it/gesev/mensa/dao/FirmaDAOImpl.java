@@ -23,11 +23,17 @@ import org.springframework.stereotype.Component;
 import it.gesev.mensa.dto.FirmaDTO;
 import it.gesev.mensa.dto.OrdineFirmaDTO;
 import it.gesev.mensa.entity.AssReportRuoloMensa;
+import it.gesev.mensa.entity.Dipendente;
+import it.gesev.mensa.entity.Ente;
+import it.gesev.mensa.entity.Mensa;
 import it.gesev.mensa.entity.Report;
 import it.gesev.mensa.entity.RuoloMensa;
 import it.gesev.mensa.entity.TipoReport;
 import it.gesev.mensa.exc.GesevException;
 import it.gesev.mensa.repository.AssReportRuoloMensaRepository;
+import it.gesev.mensa.repository.DipendenteRepository;
+import it.gesev.mensa.repository.EnteRepository;
+import it.gesev.mensa.repository.MensaRepository;
 import it.gesev.mensa.repository.ReportRepository;
 import it.gesev.mensa.repository.RuoloMensaRepository;
 import it.gesev.mensa.repository.TipoReportRepository;
@@ -174,6 +180,7 @@ public class FirmaDAOImpl implements FirmaDAO {
 	public List<Report> selectReportInAssociazione() 
 	{
 		logger.info("Ricerca report coinvolti in associazioni con ruoli...");
+		
 		String query = "select distinct arrm.report_fk, r.descrizione_report " +
 				       "from ass_report_ruolo_mensa arrm left join report r " +
 				       "on arrm.report_fk  = r.codice_report ";
@@ -194,5 +201,7 @@ public class FirmaDAOImpl implements FirmaDAO {
 		
 		return listaReports;
 	}
+
+	
 
 }

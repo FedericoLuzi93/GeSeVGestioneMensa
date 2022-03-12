@@ -5,6 +5,7 @@ import java.util.List;
 
 import it.gesev.mensa.dto.AssDipendenteRuoloDTO;
 import it.gesev.mensa.dto.DettaglioRuoloDTO;
+import it.gesev.mensa.dto.DipendenteDTO;
 import it.gesev.mensa.dto.OrganoDirettivoDTO;
 import it.gesev.mensa.dto.RicercaColonnaDTO;
 import it.gesev.mensa.dto.RuoloDTO;
@@ -22,4 +23,7 @@ public interface RuoliService
 	public int creaNuovoOrganoDirettivo(OrganoDirettivoDTO organoDirettivoDTO);
 	public int modificaOrganoDirettivo(OrganoDirettivoDTO organoDirettivoDTO, int idOrganoDirettivo);
 	public int cancellaOrganoDirettivo(int idOrganoDirettivo);
+	
+	public List<DipendenteDTO> findDipendenteByIdEnte(Integer idMensa);
+
 }
