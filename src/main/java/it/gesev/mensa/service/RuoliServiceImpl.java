@@ -131,15 +131,28 @@ public class RuoliServiceImpl implements RuoliService
 	}
 
 	@Override
-	public DettaglioRuoloDTO ricercaDipendenti(List<RicercaColonnaDTO> listaColonne) {
+	public DettaglioRuoloDTO ricercaDipendenti(List<RicercaColonnaDTO> listaColonne, Integer idMensa) {
 		logger.info("Servizio per la ricerca dei dipendenti...");
 		
 		DettaglioRuoloDTO dettaglio = new DettaglioRuoloDTO();
 		ModelMapper mapper = new ModelMapper();
 		
+		logger.info("Controllo esistenza mensa...");
+		if(idMensa == null)
+			throw new GesevException("ID mensa non valido", HttpStatus.BAD_REQUEST);
+		
+		Mensa mensa = mensaDao.getSingolaMensa(idMensa);
+		if(mensa == null)
+			throw new GesevException("Non e' stato possibile trovare una mensa con l'ID specificato", HttpStatus.BAD_REQUEST);
+		
+		logger.info("Ricerca ente associato...");
+		
+		if(mensa.getEnte() == null || mensa.getEnte().getIdEnte() == null)
+			throw new GesevException("Impossibile trovare l'ente associato alla mensa", HttpStatus.BAD_REQUEST);
+		
 		if(listaColonne != null && listaColonne.size() > 0)
 		{
-			List<Dipendente> listaDipendenti = ruoliDAO.ricercaDipendenti(listaColonne);
+			List<Dipendente> listaDipendenti = ruoliDAO.ricercaDipendenti(listaColonne, mensa.getEnte().getIdEnte());
 			logger.info("Trovati " + listaDipendenti.size() + " elementi.");
 			
 			List<DipendenteDTO> listaDTO = new ArrayList<>();
@@ -147,12 +160,11 @@ public class RuoliServiceImpl implements RuoliService
 				listaDTO.add(mapper.map(dipendente, DipendenteDTO.class));
 			
 			dettaglio.setListaDipendenti(listaDTO);
-			
-			
 		}
 		
 		/* lista ruoli */
-		List<AssDipendenteRuolo> listaDipendentiRuoli = ruoliDAO.getListaDipendenteRuolo();
+//		List<AssDipendenteRuolo> listaDipendentiRuoli = ruoliDAO.getListaDipendenteRuolo();
+		List<AssDipendenteRuolo> listaDipendentiRuoli = ruoliDAO.getListaDipendenteRuolo(mensa.getEnte().getIdEnte());
 		if(listaDipendentiRuoli.size() > 0)
 		{
 			List<AssDipendenteRuoloDTO> listaRuoliDTO = new ArrayList<AssDipendenteRuoloDTO>();

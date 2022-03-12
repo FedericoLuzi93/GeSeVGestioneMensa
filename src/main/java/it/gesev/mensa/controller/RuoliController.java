@@ -177,11 +177,11 @@ public class RuoliController
 		return ResponseEntity.status(status).headers(new HttpHeaders()).body(esito);
 	}
 	
-	@PostMapping("/ricercaDipendenti")
+	@PostMapping("/ricercaDipendenti/{idMensa} ")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
 			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
 			@ApiResponse(code = 500, message = "Errore interno") })
-	public ResponseEntity<EsitoDTO> ricercaDipendenti(@RequestBody List<RicercaColonnaDTO> listaColonne)
+	public ResponseEntity<EsitoDTO> ricercaDipendenti(@RequestBody List<RicercaColonnaDTO> listaColonne, @PathVariable("idMensa") Integer idMensa)
 	{
 		logger.info("Accesso al servizio inserisciRuolo");
 		EsitoDTO esito = new EsitoDTO();
@@ -189,7 +189,7 @@ public class RuoliController
 		
 		try
 		{
-			esito.setBody(ruoliService.ricercaDipendenti(listaColonne));
+			esito.setBody(ruoliService.ricercaDipendenti(listaColonne, idMensa));
 			status = HttpStatus.OK;
 		}
 		

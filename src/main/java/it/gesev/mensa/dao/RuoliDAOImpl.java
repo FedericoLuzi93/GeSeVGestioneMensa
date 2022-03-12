@@ -12,6 +12,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -167,7 +168,7 @@ public class RuoliDAOImpl implements RuoliDAO
 	}
 
 	@Override
-	public List<Dipendente> ricercaDipendenti(List<RicercaColonnaDTO> listaColonne) 
+	public List<Dipendente> ricercaDipendenti(List<RicercaColonnaDTO> listaColonne, Integer idEnte) 
 	{
 		logger.info("Ricerca dei dipendenti sulla base dei seguenti dati : " + listaColonne.stream().map(col -> col.getValue()).collect(Collectors.toList()));
 		
@@ -175,6 +176,8 @@ public class RuoliDAOImpl implements RuoliDAO
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<Dipendente> criteriaQuery = criteriaBuilder.createQuery(Dipendente.class);
 		Root<Dipendente> fornitoreRoot = criteriaQuery.from(Dipendente.class);
+		
+		Join<Dipendente, Ente> enteJoin = fornitoreRoot.join("ente");
 		
 		/* predicato finale per la ricerca */
 		Predicate finalPredicate = null;
@@ -203,6 +206,11 @@ public class RuoliDAOImpl implements RuoliDAO
 			
 			finalPredicate = finalPredicate == null ? nuovoPredicato : criteriaBuilder.and(finalPredicate, nuovoPredicato);
 		}
+		
+		/* controllo ente */
+		Predicate controlloEnte = criteriaBuilder.equal(enteJoin.get("idEnte"), idEnte);
+		finalPredicate = criteriaBuilder.and(finalPredicate, controlloEnte);
+		
 		
 		return entityManager.createQuery(criteriaQuery.where(finalPredicate)).getResultList();
 	}
@@ -343,4 +351,6 @@ public class RuoliDAOImpl implements RuoliDAO
 		
 		return dipendenteRepository.findDipendenteByIdEnte(optEnte.get().getIdEnte());
 	}
+
+	
 }
