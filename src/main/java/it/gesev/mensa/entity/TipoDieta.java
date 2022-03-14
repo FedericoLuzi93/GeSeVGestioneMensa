@@ -12,30 +12,24 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
-@Table(name="TIPO_PASTO")
-@Getter
-@Setter
+@Table(name="TIPO_DIETA")
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TipoPasto 
+public class TipoDieta 
 {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="codice_tipo_pasto")
-	private Integer codiceTipoPasto;
+	@Column(name="id_tipo_dieta")
+	private Integer idTipoDieta;
 	
-	@Column(name="descrizione")
-	private String descrizione;
+	@Column(name = "descrizione_tipo_dieta")
+	private String descrizioneTipoDieta;
 	
-	@OneToMany(mappedBy= "tipoPasto", fetch = FetchType.LAZY)
-	private List<AssTipoPastoMensa> assTipoPastoMensa;
-	
-	@OneToMany(mappedBy= "tipoPasto", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy= "tipoDieta", fetch = FetchType.LAZY)
 	private List<Prenotazione> listaPrenotazioni;
-
 }
