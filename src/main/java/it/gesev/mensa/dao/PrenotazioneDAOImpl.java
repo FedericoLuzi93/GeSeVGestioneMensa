@@ -1,10 +1,14 @@
 package it.gesev.mensa.dao;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
@@ -15,6 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
+import it.gesev.mensa.dto.CaricamentoPrenotazioniDTO;
 import it.gesev.mensa.dto.PrenotazioneDTO;
 import it.gesev.mensa.entity.Ente;
 import it.gesev.mensa.entity.IdentificativoSistema;
@@ -56,13 +61,16 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO
 	@Autowired
 	private PrenotazioneRepository prenotazioneRepository;
 	
+	@PersistenceContext
+	EntityManager entityManager;
+	
 	@Override
 	@Transactional
-	public void insertPrenotazione(List<PrenotazioneDTO> listaPrenotazioni) 
+	public void insertPrenotazione(List<CaricamentoPrenotazioniDTO> listaPrenotazioni) 
 	{
 		logger.info("Inserimento prenotazioni...");
 		
-		for(PrenotazioneDTO prenotazione : listaPrenotazioni)
+		for(CaricamentoPrenotazioniDTO prenotazione : listaPrenotazioni)
 		{
 			logger.info("Controllo identificativo...");
 			if(prenotazione.getIdentificativoSistema() == null || prenotazione.getIdentificativoSistema().getIdSistema() == null)
@@ -143,6 +151,52 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO
 		
 		logger.info("Fine salvataggio prenotazioni");
 
+	}
+
+	@Override
+	public List<PrenotazioneDTO> getListaPrenotazioni() 
+	{
+		logger.info("Ricerca lista prenotazioni...");
+		
+		List<PrenotazioneDTO> listaPrenotazioni = new ArrayList<>();
+		String query = "select sistema.descrizione_sistema, e.descrizione_ente, TO_CHAR(p.data_prenotazione, 'DD-MM-YYYY'), p.codice_fiscale, "
+				+ "d.nome || ' ' || d.cognome as NOME_COGNOME, "
+				+ "case when d.tipo_personale = 'M' then 'Militare' else 'Civile' end as TIPO_PERSONALE, "
+				+ "d.grado, tp.descrizione as tipo_pasto, "
+				+ "case when p.flag_cestino = 'Y' then 'SI' else 'NO' end FLAG_CESTINO, "
+				+ "td.descrizione_tipo_dieta, "
+				+ "tr.descrizione_tipo_razione "
+				+ "from prenotazione p "
+				+ "left join identificativo_sistema sistema on p.identificativo_sistema_fk = sistema.id_sistema "
+				+ "left join ente e on p.ente_fk = e.id_ente "
+				+ "left join dipendente d on p.codice_fiscale = d.codice_fiscale "
+				+ "left join tipo_pasto tp on tp.codice_tipo_pasto = p.tipo_pasto_fk "
+				+ "left join tipo_dieta td on p.tipo_dieta_fk = td.id_tipo_dieta "
+				+ "left join tipo_razione tr on tr.id_tipo_razione = p.tipo_razione_fk ";
+		
+		Query selectQuery = entityManager.createNativeQuery(query);
+		@SuppressWarnings("unchecked")
+		List<Object[]> results = selectQuery.getResultList();
+		
+		for(Object[] record : results)
+		{
+			PrenotazioneDTO prenotazione = new PrenotazioneDTO();
+			prenotazione.setSistemaPersonale((String)record[0]);
+			prenotazione.setDenominazioneEnte((String)record[1]);
+			prenotazione.setDataPrenotazione((String)record[2]);
+			prenotazione.setCodiceFiscale((String)record[3]);
+			prenotazione.setNomeCognome((String)record[4]);
+			prenotazione.setTipoPersonale((String)record[5]);
+			prenotazione.setGrado((String)record[6]);
+			prenotazione.setTipoPasto((String)record[7]);
+			prenotazione.setFlagCestino((String)record[8]);
+			prenotazione.setTipoDieta((String)record[9]);
+			prenotazione.setTipoRazione((String)record[10]);
+			
+			listaPrenotazioni.add(prenotazione);
+		}
+		
+		return listaPrenotazioni;
 	}
 
 }

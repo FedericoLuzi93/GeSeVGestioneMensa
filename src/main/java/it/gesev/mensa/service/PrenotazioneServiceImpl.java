@@ -2,10 +2,11 @@ package it.gesev.mensa.service;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -21,6 +22,7 @@ import it.gesev.mensa.dao.PrenotazioneDAO;
 import it.gesev.mensa.dto.EnteDTO;
 import it.gesev.mensa.dto.IdentificativoSistemaDTO;
 import it.gesev.mensa.dto.PrenotazioneDTO;
+import it.gesev.mensa.dto.CaricamentoPrenotazioniDTO;
 import it.gesev.mensa.dto.TipoDietaDTO;
 import it.gesev.mensa.dto.TipoPastoDTO;
 import it.gesev.mensa.dto.TipoRazioneDTO;
@@ -40,10 +42,11 @@ public class PrenotazioneServiceImpl implements PrenotazioneService {
 	{
 		Workbook workbook = new XSSFWorkbook(file.getInputStream());
 		Sheet sheet = workbook.getSheetAt(0);
+		List<CaricamentoPrenotazioniDTO> listaPrenotazioni = new ArrayList<>();
 		
 		for (Row row : sheet)
 		{
-			PrenotazioneDTO prenotazione = new PrenotazioneDTO();
+			CaricamentoPrenotazioniDTO prenotazione = new CaricamentoPrenotazioniDTO();
 						
 			IdentificativoSistemaDTO identificativo = new IdentificativoSistemaDTO();
 			identificativo.setIdSistema(row.getCell(0).getStringCellValue());
@@ -73,40 +76,17 @@ public class PrenotazioneServiceImpl implements PrenotazioneService {
 			tipoRazione.setIdTipoRazione(Double.valueOf(row.getCell(7).getNumericCellValue()).intValue());
 			prenotazione.setTipoRazione(tipoRazione);
 			
-			prenotazioneDAO.insertPrenotazione(Arrays.asList(prenotazione));
-			
-			logger.info("Fine");
-				
-//				switch (cell.getCellType()) 
-//				{
-//	            case STRING: 
-//	            	logger.info("String");
-//	            	break;
-//	            case NUMERIC:
-//	            	logger.info("Numeric");
-//	            	break;
-//				case BLANK:
-//					logger.info("Blank");
-//					break;
-//				case BOOLEAN:
-//					logger.info("Boolean");
-//					break;
-//				case ERROR:
-//					logger.info("Error");
-//					break;
-//				case FORMULA:
-//					logger.info("Formula");
-//					break;
-//				case _NONE:
-//					logger.info("None");
-//					break;
-//				default:
-//					logger.info("Default");
-//					break;
-//				}
+			listaPrenotazioni.add(prenotazione);				
 			
 		}
 		
+		prenotazioneDAO.insertPrenotazione(listaPrenotazioni);
+		
+	}
+
+	@Override
+	public List<PrenotazioneDTO> getListaPrenotazioni() {
+		return prenotazioneDAO.getListaPrenotazioni();
 	}
 
 }

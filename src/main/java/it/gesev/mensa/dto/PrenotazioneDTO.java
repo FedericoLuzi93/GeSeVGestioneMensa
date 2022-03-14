@@ -9,15 +9,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PrenotazioneDTO 
 {
-	private Integer idPrenotazione;
-	private String dataPrenotazione;
+	private String sistemaPersonale;
+	private String denominazioneEnte;
+	private String dataPrenotazione; 
 	private String codiceFiscale;
+	private String nomeCognome;
+	private String tipoPersonale;
+	private String grado;
+	private String tipoPasto;
 	private String flagCestino;
-	private IdentificativoSistemaDTO identificativoSistema;
-	private EnteDTO ente;
-	private TipoPastoDTO tipoPasto;
-	private TipoDietaDTO tipoDieta;
-	private TipoRazioneDTO tipoRazione;
-	
-	
+	private String tipoDieta;
+	private String tipoRazione;
 }
