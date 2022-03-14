@@ -12,7 +12,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.apache.catalina.valves.CrawlerSessionManagerValve;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,21 +28,21 @@ import it.gesev.mensa.dto.FELocaliDTO;
 import it.gesev.mensa.dto.FEServizioMensaDTO;
 import it.gesev.mensa.dto.FileDTO;
 import it.gesev.mensa.dto.MensaDTO;
+import it.gesev.mensa.dto.ServizioEventoDTO;
 import it.gesev.mensa.dto.TipoFromaVettovagliamentoDTO;
 import it.gesev.mensa.dto.TipoLocaleDTO;
 import it.gesev.mensa.dto.TipoPastoDTO;
-import it.gesev.mensa.entity.AssMensaTipoLocale;
 import it.gesev.mensa.entity.AssTipoPastoMensa;
 import it.gesev.mensa.entity.Ente;
 import it.gesev.mensa.entity.Mensa;
+import it.gesev.mensa.entity.ServizioEvento;
 import it.gesev.mensa.entity.TipoFormaVettovagliamento;
 import it.gesev.mensa.entity.TipoLocale;
 import it.gesev.mensa.entity.TipoPasto;
 import it.gesev.mensa.exc.GesevException;
-import it.gesev.mensa.utils.AssMensaTipoLocaleMapper;
-import it.gesev.mensa.utils.AssTipoPastoMensaMapper;
 import it.gesev.mensa.utils.EnteMapper;
 import it.gesev.mensa.utils.MensaMapper;
+import it.gesev.mensa.utils.ServizioEventoMapper;
 import it.gesev.mensa.utils.TipoFormaVettovagliamentoMapper;
 import it.gesev.mensa.utils.TipoLocaleMapper;
 import it.gesev.mensa.utils.TipoPastoMapper;
@@ -324,6 +323,7 @@ public class MensaServiceImpl implements MensaService
 		return feServizioMensaDTO;
 	}
 
+	/* Get Ente Filtrato per Mensa */
 	@Override
 	public List<EnteDTO> getEntiFiltratiPerMensa(int idMensa) 
 	{
@@ -337,6 +337,22 @@ public class MensaServiceImpl implements MensaService
 		}
 		logger.info("Fine getEntiFiltratiPerMensa, classe MensaServiceImpl");
 		return listaEnteDTO;
+	}
+
+	/* Servizio Evento per mensa */
+	@Override
+	public List<ServizioEventoDTO> getServizioEventoPerMensa(int idMensa) 
+	{
+		logger.info("Accesso a getServizioEventoPerMensa classe MensaServiceImpl");
+		List<ServizioEvento> listaServizioEvento = mensaDAO.getServizioEventoPerMensa(idMensa);
+		List<ServizioEventoDTO> listaServizioEventoDTO = new ArrayList<>();
+		logger.info("Inizio ciclo for in getServizioEventoPerMensa classe MensaServiceImpl");
+		for(ServizioEvento se : listaServizioEvento)
+		{
+			listaServizioEventoDTO.add(ServizioEventoMapper.mapToDTO(se, dateFormat));
+		}
+		logger.info("Fine getServizioEventoPerMensa, classe MensaServiceImpl");
+		return listaServizioEventoDTO;
 	}
 
 

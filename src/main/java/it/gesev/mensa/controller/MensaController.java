@@ -34,6 +34,7 @@ import it.gesev.mensa.dto.FELocaliDTO;
 import it.gesev.mensa.dto.FEServizioMensaDTO;
 import it.gesev.mensa.dto.FileDTO;
 import it.gesev.mensa.dto.MensaDTO;
+import it.gesev.mensa.dto.ServizioEventoDTO;
 import it.gesev.mensa.dto.TipoFromaVettovagliamentoDTO;
 import it.gesev.mensa.dto.TipoLocaleDTO;
 import it.gesev.mensa.dto.TipoPastoDTO;
@@ -94,12 +95,11 @@ public class MensaController
 		EsitoDTO esito = new EsitoDTO();
 		try
 		{
-			//int posizione = LCreaMensaDTO.indexOf("\"creaMensaDTO\":");
-			//String JSON = LCreaMensaDTO.substring(posizione + "\"creaMensaDTO\":".length(), LCreaMensaDTO.length() - 1);
-			//String JSON = LCreaMensaDTO.substring(posizione + "\"creaMensaDTO\":".length());
-			String JSON = LCreaMensaDTO;
+			int posizione = LCreaMensaDTO.indexOf("\"creaMensaDTO\":");
+			String JSON = LCreaMensaDTO.substring(posizione + "\"creaMensaDTO\":".length(), LCreaMensaDTO.length() - 1);
+			//String JSON = LCreaMensaDTO;
 			CreaMensaDTO creaMensaDTO = new Gson().fromJson(JSON, CreaMensaDTO.class);			
-		    mensaService.createMensa(creaMensaDTO, multipartFile);
+			mensaService.createMensa(creaMensaDTO, multipartFile);
 			esito.setStatus(HttpStatus.OK.value());
 			esito.setMessaggio("INSERIMENTO AVVENUTO CON SUCCESSO");
 			esito.setBody(mensaService.getAllMense());
@@ -130,9 +130,9 @@ public class MensaController
 		EsitoDTO esito = new EsitoDTO();
 		try
 		{
-//			int posizione = LCreaMensaDTO.indexOf("\"creaMensaDTO\":");
-//			String JSON = LCreaMensaDTO.substring(posizione + "\"creaMensaDTO\":".length(), LCreaMensaDTO.length() - 1);
-			String JSON = LCreaMensaDTO;
+			int posizione = LCreaMensaDTO.indexOf("\"creaMensaDTO\":");
+			String JSON = LCreaMensaDTO.substring(posizione + "\"creaMensaDTO\":".length(), LCreaMensaDTO.length() - 1);
+			//String JSON = LCreaMensaDTO;
 			CreaMensaDTO creaMensaDTO = new Gson().fromJson(JSON, CreaMensaDTO.class);	
 			mensaService.updateMensa(creaMensaDTO, idMensa, multipartFile);
 			esito.setStatus(HttpStatus.OK.value());
@@ -184,7 +184,7 @@ public class MensaController
 		}
 		return ResponseEntity.status(esito.getStatus()).body(esito);
 	}
-	
+
 	/* Leggi singola mensa */
 	@GetMapping("/getSingolaMensa/{idMensa}")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
@@ -216,28 +216,28 @@ public class MensaController
 		esito.setStatus(status.value());
 		return ResponseEntity.status(status).headers(new HttpHeaders()).body(esito);
 	}
-	
+
 	/* Invio del File */
 	@GetMapping(value = "/downloadFileAutorizzazioneMensa/{idMensa}")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Richiesta download file Autorizzazione Mensa andata a buon fine"),
-	@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
-	@ApiResponse(code = 500, message = "Errore interno") })
+			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
+			@ApiResponse(code = 500, message = "Errore interno") })
 	public ResponseEntity<Resource> downloadFileControdeduzioni(@PathVariable int idMensa)
 	{
-	logger.info("Accesso al servizio downloadFileAutorizzazioneMensa");
-	HttpHeaders headers = new HttpHeaders();
+		logger.info("Accesso al servizio downloadFileAutorizzazioneMensa");
+		HttpHeaders headers = new HttpHeaders();
 
-	/* Invio FIle */
-	FileDTO fileDTO = mensaService.getFile(idMensa);
+		/* Invio FIle */
+		FileDTO fileDTO = mensaService.getFile(idMensa);
 
-	headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileDTO.getNomeFile());
-	headers.add(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION);
+		headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileDTO.getNomeFile());
+		headers.add(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION);
 
-	return ResponseEntity.ok().headers(headers).contentLength(fileDTO.getAutorizzazioneSanitaria().length)
-	.contentType(MediaType.APPLICATION_OCTET_STREAM).body(new ByteArrayResource(fileDTO.getAutorizzazioneSanitaria()));
-	
+		return ResponseEntity.ok().headers(headers).contentLength(fileDTO.getAutorizzazioneSanitaria().length)
+				.contentType(MediaType.APPLICATION_OCTET_STREAM).body(new ByteArrayResource(fileDTO.getAutorizzazioneSanitaria()));
+
 	}
-	
+
 	/* Cerca Mense per Id Ente */
 	@GetMapping("/getMensaPerEnte/{idEnte}")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
@@ -269,7 +269,7 @@ public class MensaController
 		esito.setStatus(status.value());
 		return ResponseEntity.status(status).headers(new HttpHeaders()).body(esito);
 	}
-	
+
 	/* --------------------------------------------------------------------------------- */
 
 	/* leggi Lista Locali */
@@ -303,13 +303,13 @@ public class MensaController
 		esito.setStatus(status.value());
 		return ResponseEntity.status(status).headers(new HttpHeaders()).body(esito);
 	}
-	
+
 	/* Leggi locali per mensa */
 	@GetMapping("/leggiLocaliPerMensa/{idMensa}")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
 			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
 			@ApiResponse(code = 500, message = "Errore interno") })
-	public ResponseEntity<EsitoDTO> getLocaliPerMensa(int idMensa)
+	public ResponseEntity<EsitoDTO> getLocaliPerMensa(@PathVariable int idMensa)
 	{
 		logger.info("Accesso al servizio getLocaliPerMensa");
 		EsitoDTO esito = new EsitoDTO();
@@ -367,7 +367,7 @@ public class MensaController
 		esito.setStatus(status.value());
 		return ResponseEntity.status(status).headers(new HttpHeaders()).body(esito);
 	}
-	
+
 	/* leggi Tipo froma vettovagliamento */
 	@GetMapping("/leggiTipoFormaVettovagliamento")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
@@ -399,7 +399,7 @@ public class MensaController
 		esito.setStatus(status.value());
 		return ResponseEntity.status(status).headers(new HttpHeaders()).body(esito);
 	}
-	
+
 	/* leggi Tipo Pasto */
 	@GetMapping("/leggiTipoPasto")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
@@ -431,7 +431,7 @@ public class MensaController
 		esito.setStatus(status.value());
 		return ResponseEntity.status(status).headers(new HttpHeaders()).body(esito);
 	}
-	
+
 	/* Get Servizi per idMensa */
 	@GetMapping("/getServiziPerMensa/{idMensa}")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
@@ -463,7 +463,7 @@ public class MensaController
 		esito.setStatus(status.value());
 		return ResponseEntity.status(status).headers(new HttpHeaders()).body(esito);
 	}
-	
+
 	/* Lista Ente Filtrato Per Mensa */
 	@GetMapping("/getEntiFiltratiPerMensa/{idMensa}")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
@@ -495,7 +495,37 @@ public class MensaController
 		esito.setStatus(status.value());
 		return ResponseEntity.status(status).headers(new HttpHeaders()).body(esito);
 	}
-	
-	
+
+	/* Servizio Evento per mensa */
+	@GetMapping("/leggiServizioEventoPerMensa/{idMensa}")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
+			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
+			@ApiResponse(code = 500, message = "Errore interno") })
+	public ResponseEntity<EsitoDTO> getServizioEventoPerMensa(@PathVariable int idMensa)
+	{
+		logger.info("Accesso al servizio getServizioEventoPerMensa");
+		EsitoDTO esito = new EsitoDTO();
+		HttpStatus status = null;
+		try
+		{
+			List<ServizioEventoDTO> listaServizioEventoDTO = mensaService.getServizioEventoPerMensa(idMensa);
+			esito.setBody(listaServizioEventoDTO);
+			status = HttpStatus.OK;
+		}
+		catch(GesevException gex)
+		{
+			logger.info("Si e' verificata un'eccezione", gex);
+			esito.setMessaggio(gex.getMessage());
+			status = gex.getStatus();
+		}
+		catch(Exception ex)
+		{
+			logger.info("Si e' verificata un'eccezione interna", ex);
+			esito.setMessaggio(MESSAGGIO_ERRORE_INTERNO);
+			status = HttpStatus.INTERNAL_SERVER_ERROR;	
+		}
+		esito.setStatus(status.value());
+		return ResponseEntity.status(status).headers(new HttpHeaders()).body(esito);
+	}
 
 }

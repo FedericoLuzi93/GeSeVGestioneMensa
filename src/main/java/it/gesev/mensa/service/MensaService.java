@@ -12,6 +12,7 @@ import it.gesev.mensa.dto.FELocaliDTO;
 import it.gesev.mensa.dto.FEServizioMensaDTO;
 import it.gesev.mensa.dto.FileDTO;
 import it.gesev.mensa.dto.MensaDTO;
+import it.gesev.mensa.dto.ServizioEventoDTO;
 import it.gesev.mensa.dto.TipoFromaVettovagliamentoDTO;
 import it.gesev.mensa.dto.TipoLocaleDTO;
 import it.gesev.mensa.dto.TipoPastoDTO;
@@ -39,5 +40,6 @@ public interface MensaService
 	public List<TipoPastoDTO> getAllTipoPasto();
 	
 	public FEServizioMensaDTO getServiziPerMensa(int idMensa);
+	public List<ServizioEventoDTO> getServizioEventoPerMensa(int idMensa);
 
 }

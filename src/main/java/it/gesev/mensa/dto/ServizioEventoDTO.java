@@ -1,6 +1,5 @@
 package it.gesev.mensa.dto;
 
-import it.gesev.mensa.entity.Mensa;
 import lombok.Data;
 
 @Data

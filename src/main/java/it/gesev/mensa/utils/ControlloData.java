@@ -17,7 +17,7 @@ public class ControlloData
 		LocalTime lt = null;
 		Pattern pattern = Pattern.compile(tempo);
 		Matcher matcher = pattern.matcher("^[0-9]{2}:[0-9]{2}$");
-		if(!matcher.matches())
+		if(matcher.matches() == false)
 		{
 			logger.info("Orario " + tempo + " non e' nel formato HH:mm");
 			throw new ParseException("Orario " + tempo + " non e' nel formato HH:mm");

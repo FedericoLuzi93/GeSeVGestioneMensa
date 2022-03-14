@@ -34,6 +34,7 @@ import it.gesev.mensa.repository.AssMensaTipoLocaleRepository;
 import it.gesev.mensa.repository.AssTipoPastoMensaRepository;
 import it.gesev.mensa.repository.EnteRepository;
 import it.gesev.mensa.repository.MensaRepository;
+import it.gesev.mensa.repository.ServizioEventoRepository;
 import it.gesev.mensa.repository.TipoFormaVettovagliamentoRepository;
 import it.gesev.mensa.repository.TipoLocaliRepository;
 import it.gesev.mensa.repository.TipoPastoRepository;
@@ -66,6 +67,9 @@ public class MensaDAOImpl implements MensaDAO
 
 	@Autowired
 	private AssTipoPastoMensaRepository assTipoPastoMensaRepository;
+	
+	@Autowired
+	private ServizioEventoRepository servizioEventoRepository;
 
 	private static final Logger logger = LoggerFactory.getLogger(MensaDAOImpl.class);
 
@@ -105,7 +109,7 @@ public class MensaDAOImpl implements MensaDAO
 		mensa.setTipoFormaVettovagliamento(optionalTipoFormaVett.get());
 
 		//Lista Servzi Festivi
-		if(listaServizioEventoDTO == null || listaServizioEventoDTO.isEmpty())
+		if(listaServizioEventoDTO == null)
 		{
 			logger.info("Impossibile creare la mensa, non ci sono Servizi Eventi validi");
 			throw new GesevException("Impossibile creare la mensa, non ci sono Servizi Eventi validi", HttpStatus.BAD_REQUEST);
@@ -155,11 +159,19 @@ public class MensaDAOImpl implements MensaDAO
 		for(TipoPastoDTO tpDTO : listaTipoPastoDTO)
 		{
 			//Controllo campi
-			if(StringUtils.isBlank(tpDTO.getOraFinePrenotazione()) || StringUtils.isBlank(tpDTO.getOrarioAl()) || StringUtils.isBlank(tpDTO.getOrarioDal()))
-			{
-				logger.info("Impossibile creare la mensa, campi Tipo Pasto non validi");
-				throw new GesevException("Impossibile creare la mensa, campi Tipo Pasto non validi", HttpStatus.BAD_REQUEST);
-			}
+			if(tpDTO.getDescrizione().equalsIgnoreCase("pranzo"))
+				if(StringUtils.isBlank(tpDTO.getOraFinePrenotazione()) || StringUtils.isBlank(tpDTO.getOrarioAl()) || StringUtils.isBlank(tpDTO.getOrarioDal()))
+				{
+					logger.info("Impossibile creare la mensa, campi Tipo Pasto non validi");
+					throw new GesevException("Impossibile creare la mensa, campi Tipo Pasto non validi", HttpStatus.BAD_REQUEST);
+				}
+
+			if(tpDTO.getDescrizione().equalsIgnoreCase("cena") || tpDTO.getDescrizione().equalsIgnoreCase("colazione"))
+				if(StringUtils.isBlank(tpDTO.getOrarioAl()) || StringUtils.isBlank(tpDTO.getOrarioDal()))
+				{
+					logger.info("Impossibile creare la mensa, campi Tipo Pasto non validi");
+					throw new GesevException("Impossibile creare la mensa, campi Tipo Pasto non validi", HttpStatus.BAD_REQUEST);
+				}
 
 			//Controllo esistenza Tipo Pasto
 			Optional<TipoPasto> optionalTipoPasto = tipoPastoRepository.findById(tpDTO.getCodiceTipoPasto());
@@ -172,9 +184,9 @@ public class MensaDAOImpl implements MensaDAO
 			//Controllo Orari 
 			if(optionalTipoPasto.isPresent())
 			{
-				if(optionalTipoPasto.get().getDescrizione().equalsIgnoreCase("pranzo"))
-					if(tpDTO.getOrarioAl() == null || tpDTO.getOrarioDal() == null || tpDTO.getOraFinePrenotazione() == null )
-						throw new GesevException("Impossibile creare la mensa, orario tipo pasto non valido", HttpStatus.BAD_REQUEST);
+
+				if(tpDTO.getOrarioAl() == null || tpDTO.getOrarioDal() == null || tpDTO.getOraFinePrenotazione() == null )
+					throw new GesevException("Impossibile creare la mensa, orario tipo pasto non valido", HttpStatus.BAD_REQUEST);
 
 				if(optionalTipoPasto.get().getDescrizione().equalsIgnoreCase("cena") || optionalTipoPasto.get().getDescrizione().equalsIgnoreCase("colazione"))
 					if(tpDTO.getOrarioAl() == null || tpDTO.getOrarioDal() == null )
@@ -332,10 +344,10 @@ public class MensaDAOImpl implements MensaDAO
 		mensa.setListaServizioEvento(listaServizioEvento);
 		mensaRepository.save(mensa);
 		Mensa mensaMom = mensa;
-		
+
 		assTipoPastoMensaRepository.cancellaPerMensaFK(idMensa);
 		assMensaTipoLocaleRepository.cancellaPerMensaFK(idMensa);
-		
+
 		//Lista Associativa Tipo Pasto Mensa
 		if(listaTipoPastoDTO == null || listaTipoPastoDTO.isEmpty())
 		{
@@ -619,6 +631,16 @@ public class MensaDAOImpl implements MensaDAO
 			listaTipoPasto.add(tipoPasto);	
 		}
 		return listaTipoPasto;
+	}
+
+	/* Servizio Evento per mensa */
+	@Override
+	public List<ServizioEvento> getServizioEventoPerMensa(int idMensa) 
+	{
+		logger.info("Accesso a getServizioEventoPerMensa classe MensaDAOImpl");
+		List<ServizioEvento> listaServizioEvento = servizioEventoRepository.cercaPerMensa(idMensa);
+
+		return listaServizioEvento;
 	}
 
 }

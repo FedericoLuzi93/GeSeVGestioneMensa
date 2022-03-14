@@ -11,6 +11,7 @@ import it.gesev.mensa.entity.AssMensaTipoLocale;
 import it.gesev.mensa.entity.AssTipoPastoMensa;
 import it.gesev.mensa.entity.Ente;
 import it.gesev.mensa.entity.Mensa;
+import it.gesev.mensa.entity.ServizioEvento;
 import it.gesev.mensa.entity.TipoFormaVettovagliamento;
 import it.gesev.mensa.entity.TipoLocale;
 import it.gesev.mensa.entity.TipoPasto;
@@ -38,6 +39,8 @@ public interface MensaDAO
 	
 	public List<Ente> getAllEnti();
 	public List<Ente> getEntiFiltratiPerMensa(int idMensa);
+	
+	public List<ServizioEvento> getServizioEventoPerMensa(int idMensa);
 
 	public List<AssMensaTipoLocale> getAssMensaTipoLocaleByMensa(int idMensa);
 	public List<AssTipoPastoMensa> getServiziPerMensa(int idMensa);
@@ -45,6 +48,7 @@ public interface MensaDAO
 	//Senza Service
 	public Optional<TipoPasto> getTipoPastoPerId(int idTipoPasto);
 	public List<TipoPasto> getTipoPastoPerLista(List<Integer> codiciPasto);
+
 
 
 }
