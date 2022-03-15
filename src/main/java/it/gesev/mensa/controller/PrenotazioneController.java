@@ -79,7 +79,7 @@ public class PrenotazioneController
 		try
 		{
 			esito.setBody(prenotazioneService.getListaPrenotazioni());
-			status = HttpStatus.BAD_REQUEST;
+			status = HttpStatus.OK;
 		}
 		
 		catch(GesevException gex)
