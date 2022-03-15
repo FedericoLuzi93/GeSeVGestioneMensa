@@ -215,7 +215,8 @@ public class MensaServiceImpl implements MensaService
 		String query = "select	tipo_locale.descrizione_tipo_locale,\r\n"
 				+ "		ass_mensa_tipo_locale.superficie,\r\n"
 				+ "		ass_mensa_tipo_locale.numero_locali,\r\n"
-				+ "		ass_mensa_tipo_locale.note\r\n"
+				+ "		ass_mensa_tipo_locale.note,\r\n"
+				+ "		tipo_locale.codice_tipo_locale\r\n"
 				+ "from	tipo_locale INNER join ass_mensa_tipo_locale\r\n"
 				+ "on	codice_mensa_fk = " + idMensa + " and \r\n"
 				+ "	tipo_locale.codice_tipo_locale = ass_mensa_tipo_locale.codice_tipo_locale_fk;";
@@ -233,6 +234,7 @@ public class MensaServiceImpl implements MensaService
 			Integer numeroLocali = (Integer) ob[2];
 			feLocaliDTO.setNumero(numeroLocali);;
 			feLocaliDTO.setNote((String) ob[3]);
+			feLocaliDTO.setCodiceTipoLocale((Integer) ob[4]);
 			listaFeLocaliDTO.add(feLocaliDTO);
 		}
 		return listaFeLocaliDTO;
