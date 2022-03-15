@@ -232,7 +232,7 @@ public class MensaServiceImpl implements MensaService
 			Integer superfice = (Integer) ob[1];
 			feLocaliDTO.setSuperfice(superfice);
 			Integer numeroLocali = (Integer) ob[2];
-			feLocaliDTO.setNumero(numeroLocali);;
+			feLocaliDTO.setNumeroLocali(numeroLocali);;
 			feLocaliDTO.setNote((String) ob[3]);
 			feLocaliDTO.setCodiceTipoLocale((Integer) ob[4]);
 			listaFeLocaliDTO.add(feLocaliDTO);

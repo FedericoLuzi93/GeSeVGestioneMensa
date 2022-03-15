@@ -8,6 +8,6 @@ public class FELocaliDTO
 	private Integer codiceTipoLocale;
 	private String nomeLocale;
 	private String note;
-	private int numero;
+	private int numeroLocali;
 	private int superfice;
 }
