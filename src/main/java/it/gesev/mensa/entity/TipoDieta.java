@@ -32,4 +32,9 @@ public class TipoDieta
 	
 	@OneToMany(mappedBy= "tipoDieta", fetch = FetchType.LAZY)
 	private List<Prenotazione> listaPrenotazioni;
+	
+	@OneToMany(mappedBy = "tipoDieta", fetch = FetchType.LAZY)
+	private List<AssMensaTipoDieta> listaAssMensaTipoDieta;
 }
+
+

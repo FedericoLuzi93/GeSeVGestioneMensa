@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -107,5 +108,8 @@ public class Mensa
 	
 	@OneToMany(mappedBy= "mensa")
 	private List<ServizioEvento> listaServizioEvento;
+	
+	@OneToMany(mappedBy = "mensa", fetch = FetchType.LAZY)
+	private List<AssMensaTipoDieta> listaAssMensaTipoDieta;
 	
 }
