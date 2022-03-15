@@ -61,6 +61,10 @@ public class Ente
 		 	CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
 	List<Mensa> listaMensa;
 	
+	@OneToMany(mappedBy = "ente", cascade={CascadeType.PERSIST, CascadeType.DETACH,
+		 	CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
+	List<Prenotazione> listaPrenotazioni;
+	
 	public Ente()
 	{
 		
