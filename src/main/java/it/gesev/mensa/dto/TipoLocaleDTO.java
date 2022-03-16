@@ -9,6 +9,7 @@ public class TipoLocaleDTO
 {
 	private Integer codiceTipoLocale;
 	private String descrizioneTipoLocale;
+	private String note;
 	
 	private int superfice;
 	private int numeroLocali;

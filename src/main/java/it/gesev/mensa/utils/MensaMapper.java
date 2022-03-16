@@ -8,7 +8,7 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import antlr.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import it.gesev.mensa.dto.CreaMensaDTO;
 import it.gesev.mensa.dto.MensaDTO;
 import it.gesev.mensa.entity.Mensa;
@@ -56,13 +56,64 @@ public class MensaMapper
 		logger.info("Accesso a mapToEntity, classe MensaMapper");
 		ModelMapper mapper = new ModelMapper();	
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
-		Mensa mensa= mapper.map(creaMensaDTO, Mensa.class);
-
-		if(mensa.getDataAutorizzazioneSanitaria() != null)
-		{	String dataString = creaMensaDTO.getDataAutorizzazioneSanitaria();
-		Date date = simpleDateFormat.parse(dataString);
-		mensa.setDataAutorizzazioneSanitaria(date);
+		Mensa mensa = new Mensa();
+		//Mensa mensa= mapper.map(creaMensaDTO, Mensa.class);
+		//CampiBase
+		mensa.setDescrizioneMensa(creaMensaDTO.getDescrizioneMensa());
+		
+		if(!StringUtils.isBlank(creaMensaDTO.getServizioFestivo()))
+			mensa.setServizioFestivo(creaMensaDTO.getServizioFestivo());
+		
+		if(!StringUtils.isBlank(creaMensaDTO.getServizioFestivoSabato()))
+			mensa.setServizioFestivoSabato(creaMensaDTO.getServizioFestivoSabato());
+		
+		if(!StringUtils.isBlank(creaMensaDTO.getServizioFestivoDomenica()))
+			mensa.setServizioFestivoDomenica(creaMensaDTO.getServizioFestivoDomenica());
+		
+		mensa.setDataInizioServizio(simpleDateFormat.parse(creaMensaDTO.getDataInizioServizio()));
+		mensa.setDataFineServizio(simpleDateFormat.parse(creaMensaDTO.getDataFineServizio()));
+		
+		//Contatti
+		if(!StringUtils.isBlank(creaMensaDTO.getCap()))
+			mensa.setCap(creaMensaDTO.getCap());
+		
+		if(!StringUtils.isBlank(creaMensaDTO.getCitta()))
+			mensa.setCitta(creaMensaDTO.getCitta());
+		
+		if(creaMensaDTO.getNumeroCivico() != 0)
+			mensa.setNumeroCivico(creaMensaDTO.getNumeroCivico());
+		
+		if(!StringUtils.isBlank(creaMensaDTO.getVia()))
+			mensa.setVia(creaMensaDTO.getVia());
+		
+		if(!StringUtils.isBlank(creaMensaDTO.getProvincia()))
+			mensa.setProvincia(creaMensaDTO.getProvincia());
+		
+		if(!StringUtils.isBlank(creaMensaDTO.getTelefono()))
+			mensa.setTelefono(creaMensaDTO.getTelefono());
+		
+		if(!StringUtils.isBlank(creaMensaDTO.getFax()))
+			mensa.setFax(creaMensaDTO.getFax());
+		
+		if(!StringUtils.isBlank(creaMensaDTO.getEmail()))
+			mensa.setEmail(creaMensaDTO.getEmail());
+		
+		//Autorizzazione Sanitaria
+		if(!StringUtils.isBlank(creaMensaDTO.getNumeroAutorizzazioneSanitaria()))
+			mensa.setNumeroAutorizzazioneSanitaria(creaMensaDTO.getNumeroAutorizzazioneSanitaria());
+		
+		if(!StringUtils.isBlank(creaMensaDTO.getDataAutorizzazioneSanitaria()))
+		{
+			String dataString = creaMensaDTO.getDataAutorizzazioneSanitaria();
+			Date date = simpleDateFormat.parse(dataString);
+			mensa.setDataAutorizzazioneSanitaria(date);
 		}
+		
+		if(!StringUtils.isBlank(creaMensaDTO.getAutSanitariaRilasciataDa()))
+			mensa.setAutSanitariaRilasciataDa(creaMensaDTO.getAutSanitariaRilasciataDa());
+		
+		
+	
 		return mensa;
 	}
 

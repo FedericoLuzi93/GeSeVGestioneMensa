@@ -35,6 +35,7 @@ import it.gesev.mensa.dto.FEServizioMensaDTO;
 import it.gesev.mensa.dto.FileDTO;
 import it.gesev.mensa.dto.MensaDTO;
 import it.gesev.mensa.dto.ServizioEventoDTO;
+import it.gesev.mensa.dto.TipoDietaDTO;
 import it.gesev.mensa.dto.TipoFromaVettovagliamentoDTO;
 import it.gesev.mensa.dto.TipoLocaleDTO;
 import it.gesev.mensa.dto.TipoPastoDTO;
@@ -130,9 +131,9 @@ public class MensaController
 		EsitoDTO esito = new EsitoDTO();
 		try
 		{
-			int posizione = LCreaMensaDTO.indexOf("\"creaMensaDTO\":");
-			String JSON = LCreaMensaDTO.substring(posizione + "\"creaMensaDTO\":".length(), LCreaMensaDTO.length() - 1);
-			//String JSON = LCreaMensaDTO;
+			//int posizione = LCreaMensaDTO.indexOf("\"creaMensaDTO\":");
+			//String JSON = LCreaMensaDTO.substring(posizione + "\"creaMensaDTO\":".length(), LCreaMensaDTO.length() - 1);
+			String JSON = LCreaMensaDTO;
 			CreaMensaDTO creaMensaDTO = new Gson().fromJson(JSON, CreaMensaDTO.class);	
 			mensaService.updateMensa(creaMensaDTO, idMensa, multipartFile);
 			esito.setStatus(HttpStatus.OK.value());
@@ -527,5 +528,69 @@ public class MensaController
 		esito.setStatus(status.value());
 		return ResponseEntity.status(status).headers(new HttpHeaders()).body(esito);
 	}
-
+	
+	/* leggi Tipo Dieta */
+	@GetMapping("/leggiTuttiTipoDieta")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
+			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
+			@ApiResponse(code = 500, message = "Errore interno") })
+	public ResponseEntity<EsitoDTO> getAllTipoDieta()
+	{
+		logger.info("Accesso al servizio getAllTipoDieta");
+		EsitoDTO esito = new EsitoDTO();
+		HttpStatus status = null;
+		try
+		{
+			List<TipoDietaDTO> listTipoDietaDTO = mensaService.getAllTipoDieta();
+			esito.setBody(listTipoDietaDTO);
+			status = HttpStatus.OK;
+		}
+		catch(GesevException gex)
+		{
+			logger.info("Si e' verificata un'eccezione", gex);
+			esito.setMessaggio(gex.getMessage());
+			status = gex.getStatus();
+		}
+		catch(Exception ex)
+		{
+			logger.info("Si e' verificata un'eccezione interna", ex);
+			esito.setMessaggio(MESSAGGIO_ERRORE_INTERNO);
+			status = HttpStatus.INTERNAL_SERVER_ERROR;	
+		}
+		esito.setStatus(status.value());
+		return ResponseEntity.status(status).headers(new HttpHeaders()).body(esito);
+	}
+	
+	/* leggi Tipo Dieta per idMensa */
+	@GetMapping("/leggiTipoDietaPerMensa{idMensa}")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
+			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
+			@ApiResponse(code = 500, message = "Errore interno") })
+	public ResponseEntity<EsitoDTO> getTipoDietaPerMensa(@PathVariable int idMensa)
+	{
+		logger.info("Accesso al servizio leggiTipoDietaPerMensa");
+		EsitoDTO esito = new EsitoDTO();
+		HttpStatus status = null;
+		try
+		{
+			List<TipoDietaDTO> listTipoDietaDTO = mensaService.getTipoDietaPerMensa(idMensa);
+			esito.setBody(listTipoDietaDTO);
+			status = HttpStatus.OK;
+		}
+		catch(GesevException gex)
+		{
+			logger.info("Si e' verificata un'eccezione", gex);
+			esito.setMessaggio(gex.getMessage());
+			status = gex.getStatus();
+		}
+		catch(Exception ex)
+		{
+			logger.info("Si e' verificata un'eccezione interna", ex);
+			esito.setMessaggio(MESSAGGIO_ERRORE_INTERNO);
+			status = HttpStatus.INTERNAL_SERVER_ERROR;	
+		}
+		esito.setStatus(status.value());
+		return ResponseEntity.status(status).headers(new HttpHeaders()).body(esito);
+	}
+	
 }

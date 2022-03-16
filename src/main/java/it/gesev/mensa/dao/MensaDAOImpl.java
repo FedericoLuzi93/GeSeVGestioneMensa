@@ -19,22 +19,27 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import it.gesev.mensa.dto.ServizioEventoDTO;
+import it.gesev.mensa.dto.TipoDietaDTO;
 import it.gesev.mensa.dto.TipoLocaleDTO;
 import it.gesev.mensa.dto.TipoPastoDTO;
+import it.gesev.mensa.entity.AssMensaTipoDieta;
 import it.gesev.mensa.entity.AssMensaTipoLocale;
 import it.gesev.mensa.entity.AssTipoPastoMensa;
 import it.gesev.mensa.entity.Ente;
 import it.gesev.mensa.entity.Mensa;
 import it.gesev.mensa.entity.ServizioEvento;
+import it.gesev.mensa.entity.TipoDieta;
 import it.gesev.mensa.entity.TipoFormaVettovagliamento;
 import it.gesev.mensa.entity.TipoLocale;
 import it.gesev.mensa.entity.TipoPasto;
 import it.gesev.mensa.exc.GesevException;
+import it.gesev.mensa.repository.AssMensaTipoDietaRepository;
 import it.gesev.mensa.repository.AssMensaTipoLocaleRepository;
 import it.gesev.mensa.repository.AssTipoPastoMensaRepository;
 import it.gesev.mensa.repository.EnteRepository;
 import it.gesev.mensa.repository.MensaRepository;
 import it.gesev.mensa.repository.ServizioEventoRepository;
+import it.gesev.mensa.repository.TipoDietaRepository;
 import it.gesev.mensa.repository.TipoFormaVettovagliamentoRepository;
 import it.gesev.mensa.repository.TipoLocaliRepository;
 import it.gesev.mensa.repository.TipoPastoRepository;
@@ -70,6 +75,12 @@ public class MensaDAOImpl implements MensaDAO
 
 	@Autowired
 	private ServizioEventoRepository servizioEventoRepository;
+	
+	@Autowired
+	private TipoDietaRepository tipoDietaRepository;
+	
+	@Autowired
+	private AssMensaTipoDietaRepository assMensaTipoDietaRepository;
 
 	private static final Logger logger = LoggerFactory.getLogger(MensaDAOImpl.class);
 
@@ -85,7 +96,7 @@ public class MensaDAOImpl implements MensaDAO
 	@Override
 	@Transactional
 	public int createMensa(Mensa mensa, List<TipoLocaleDTO> listaTipoLocaleDTO, List<TipoPastoDTO> listaTipoPastoDTO,
-			List<ServizioEventoDTO> listaServizioEventoDTO, int codiceTipoFormaVettovagliamento, int idEnte) throws ParseException	
+			List<ServizioEventoDTO> listaServizioEventoDTO, List<TipoDietaDTO> listaTipoDietaDTO, int codiceTipoFormaVettovagliamento, int idEnte) throws ParseException	
 	{
 		logger.info("Accesso a createMensa, classe MensaDAOImpl");	
 		logger.info("Inizio controlli in corso...");	
@@ -109,162 +120,193 @@ public class MensaDAOImpl implements MensaDAO
 		mensa.setTipoFormaVettovagliamento(optionalTipoFormaVett.get());
 
 		//Lista Servzi Festivi
-		if(listaServizioEventoDTO == null)
-		{
-			logger.info("Impossibile creare la mensa, non ci sono Servizi Eventi validi");
-			throw new GesevException("Impossibile creare la mensa, non ci sono Servizi Eventi validi", HttpStatus.BAD_REQUEST);
+		if(listaServizioEventoDTO != null || !listaServizioEventoDTO.isEmpty())
+		{	
+			List<ServizioEvento> listaServizioEvento = new ArrayList<>();
+
+			for(ServizioEventoDTO lsDTO : listaServizioEventoDTO)
+			{
+				ServizioEvento evento = new ServizioEvento();
+
+				//Controllo Campi
+				if(StringUtils.isBlank(lsDTO.getDescrizioneServizioEvento()) || StringUtils.isBlank(lsDTO.getDataServizioEvento()))
+				{
+					logger.info("Impossibile creare la mensa, campi Servizi Evento non validi");
+					throw new GesevException("Impossibile creare la mensa, campi Servizi Evento non validi", HttpStatus.BAD_REQUEST);
+				}
+
+				//Conversione
+				try 
+				{
+					evento.setDataServizioEvento(simpleDateFormat.parse(lsDTO.getDataServizioEvento()));
+					evento.setDescrizioneServizioEvento(lsDTO.getDescrizioneServizioEvento());
+				}
+				catch(GesevException exc)
+				{
+					logger.info("Impossibile creare la mensa, conversione campi Servizi Evento fallita" + exc);
+					throw new GesevException("Impossibile creare la mensa, conversione campi Servizi Evento fallita" + exc, HttpStatus.BAD_REQUEST);
+				}
+
+				listaServizioEvento.add(evento);
+			}
+
+			mensa.setListaServizioEvento(listaServizioEvento);
 		}
-
-		List<ServizioEvento> listaServizioEvento = new ArrayList<>();
-
-		for(ServizioEventoDTO lsDTO : listaServizioEventoDTO)
-		{
-			ServizioEvento evento = new ServizioEvento();
-
-			//Controllo Campi
-			if(StringUtils.isBlank(lsDTO.getDescrizioneServizioEvento()) || StringUtils.isBlank(lsDTO.getDataServizioEvento()))
-			{
-				logger.info("Impossibile creare la mensa, campi Servizi Evento non validi");
-				throw new GesevException("Impossibile creare la mensa, campi Servizi Evento non validi", HttpStatus.BAD_REQUEST);
-			}
-
-			//Conversione
-			try 
-			{
-				evento.setDataServizioEvento(simpleDateFormat.parse(lsDTO.getDataServizioEvento()));
-				evento.setDescrizioneServizioEvento(lsDTO.getDescrizioneServizioEvento());
-			}
-			catch(GesevException exc)
-			{
-				logger.info("Impossibile creare la mensa, conversione campi Servizi Evento fallita" + exc);
-				throw new GesevException("Impossibile creare la mensa, conversione campi Servizi Evento fallita" + exc, HttpStatus.BAD_REQUEST);
-			}
-
-			listaServizioEvento.add(evento);
-		}
-
-		mensa.setListaServizioEvento(listaServizioEvento);
-		mensaRepository.save(mensa);
-		Mensa mensaMom = mensa;
+		
+		Mensa mensaMom = mensaRepository.save(mensa);
+		
 
 		//Lista Associativa Tipo Pasto Mensa
-		if(listaTipoPastoDTO == null || listaTipoPastoDTO.isEmpty())
+		if(listaTipoPastoDTO != null || !listaTipoPastoDTO.isEmpty())
 		{
-			logger.info("Impossibile creare la mensa, non ci sono Locali validi");
-			throw new GesevException("Impossibile creare la mensa, non ci sono Locali validi", HttpStatus.BAD_REQUEST);
-		}
+			List<AssTipoPastoMensa> listaAssTipoPastoMensas = new ArrayList<>();
 
-		List<AssTipoPastoMensa> listaAssTipoPastoMensas = new ArrayList<>();
-
-		for(TipoPastoDTO tpDTO : listaTipoPastoDTO)
-		{
-//			//Controllo campi
-//			if(tpDTO.getDescrizione().equalsIgnoreCase("pranzo"))
-//				if(StringUtils.isBlank(tpDTO.getOraFinePrenotazione()) || StringUtils.isBlank(tpDTO.getOrarioAl()) || StringUtils.isBlank(tpDTO.getOrarioDal()))
-//				{
-//					logger.info("Impossibile creare la mensa, campi Tipo Pasto non validi");
-//					throw new GesevException("Impossibile creare la mensa, campi Tipo Pasto non validi", HttpStatus.BAD_REQUEST);
-//				}
-//
-//			if(tpDTO.getDescrizione().equalsIgnoreCase("cena") || tpDTO.getDescrizione().equalsIgnoreCase("colazione"))
-//				if(StringUtils.isBlank(tpDTO.getOrarioAl()) || StringUtils.isBlank(tpDTO.getOrarioDal()))
-//				{
-//					logger.info("Impossibile creare la mensa, campi Tipo Pasto non validi");
-//					throw new GesevException("Impossibile creare la mensa, campi Tipo Pasto non validi", HttpStatus.BAD_REQUEST);
-//				}
-
-			//Controllo esistenza Tipo Pasto
-			Optional<TipoPasto> optionalTipoPasto = tipoPastoRepository.findById(tpDTO.getCodiceTipoPasto());
-			if(!optionalTipoPasto.isPresent())
+			for(TipoPastoDTO tpDTO : listaTipoPastoDTO)
 			{
-				logger.info("Impossibile creare la mensa, Tipo Pasto non presente");
-				throw new GesevException("Impossibile creare la mensa, Tipo Pasto non presente", HttpStatus.BAD_REQUEST);
+				//			//Controllo campi
+				//			if(tpDTO.getDescrizione().equalsIgnoreCase("pranzo"))
+				//				if(StringUtils.isBlank(tpDTO.getOraFinePrenotazione()) || StringUtils.isBlank(tpDTO.getOrarioAl()) || StringUtils.isBlank(tpDTO.getOrarioDal()))
+				//				{
+				//					logger.info("Impossibile creare la mensa, campi Tipo Pasto non validi");
+				//					throw new GesevException("Impossibile creare la mensa, campi Tipo Pasto non validi", HttpStatus.BAD_REQUEST);
+				//				}
+				//
+				//			if(tpDTO.getDescrizione().equalsIgnoreCase("cena") || tpDTO.getDescrizione().equalsIgnoreCase("colazione"))
+				//				if(StringUtils.isBlank(tpDTO.getOrarioAl()) || StringUtils.isBlank(tpDTO.getOrarioDal()))
+				//				{
+				//					logger.info("Impossibile creare la mensa, campi Tipo Pasto non validi");
+				//					throw new GesevException("Impossibile creare la mensa, campi Tipo Pasto non validi", HttpStatus.BAD_REQUEST);
+				//				}
+
+				//Controllo esistenza Tipo Pasto
+				Optional<TipoPasto> optionalTipoPasto = tipoPastoRepository.findById(tpDTO.getCodiceTipoPasto());
+				if(!optionalTipoPasto.isPresent())
+				{
+					logger.info("Impossibile creare la mensa, Tipo Pasto non presente");
+					throw new GesevException("Impossibile creare la mensa, Tipo Pasto non presente", HttpStatus.BAD_REQUEST);
+				}
+
+				//Controllo Orari 
+				if(optionalTipoPasto.isPresent())
+				{
+					if(optionalTipoPasto.get().getDescrizione().equalsIgnoreCase("pranzo"))
+						if(tpDTO.getOrarioAl() == null || tpDTO.getOrarioDal() == null || tpDTO.getOraFinePrenotazione() == null )
+							throw new GesevException("Impossibile creare la mensa, orario tipo pasto non valido", HttpStatus.BAD_REQUEST);
+
+					if(optionalTipoPasto.get().getDescrizione().equalsIgnoreCase("cena") || optionalTipoPasto.get().getDescrizione().equalsIgnoreCase("colazione"))
+						if(tpDTO.getOrarioAl() == null || tpDTO.getOrarioDal() == null )
+							throw new GesevException("Impossibile creare la mensa, orario tipo pasto non valido", HttpStatus.BAD_REQUEST);
+				}
+
+				TipoPasto tipoPastoMom = optionalTipoPasto.get();
+
+				//Assegnazione
+				AssTipoPastoMensa assTipoPastoMensa = new AssTipoPastoMensa();
+
+				assTipoPastoMensa.setMensa(mensaMom);
+				assTipoPastoMensa.setTipoPasto(tipoPastoMom);
+
+				//Conversione Orari
+				try
+				{
+					assTipoPastoMensa.setOrarioDal(ControlloData.controlloTempo(tpDTO.getOrarioDal()));
+					assTipoPastoMensa.setOrarioAl(ControlloData.controlloTempo(tpDTO.getOrarioAl()));
+					if(optionalTipoPasto.get().getDescrizione().equalsIgnoreCase("pranzo"))
+						assTipoPastoMensa.setOraFinePrenotazione(ControlloData.controlloTempo(tpDTO.getOraFinePrenotazione()));
+				}
+				catch(Exception exc)
+				{
+					logger.info("Impossibile creare la mensa, conversione campi Tipo Pasto fallita" + exc);
+					throw new GesevException("Impossibile creare la mensa, conversione campi Tipo Pasto fallita" + exc, HttpStatus.BAD_REQUEST);
+				}
+
+				listaAssTipoPastoMensas.add(assTipoPastoMensa);
 			}
 
-			//Controllo Orari 
-			if(optionalTipoPasto.isPresent())
+
+			//Salvataggio ASS_TIPO_PASTO_MENSA su DB
+			for(AssTipoPastoMensa aTPM : listaAssTipoPastoMensas)
 			{
-				if(optionalTipoPasto.get().getDescrizione().equalsIgnoreCase("pranzo"))
-					if(tpDTO.getOrarioAl() == null || tpDTO.getOrarioDal() == null || tpDTO.getOraFinePrenotazione() == null )
-						throw new GesevException("Impossibile creare la mensa, orario tipo pasto non valido", HttpStatus.BAD_REQUEST);
-
-				if(optionalTipoPasto.get().getDescrizione().equalsIgnoreCase("cena") || optionalTipoPasto.get().getDescrizione().equalsIgnoreCase("colazione"))
-					if(tpDTO.getOrarioAl() == null || tpDTO.getOrarioDal() == null )
-						throw new GesevException("Impossibile creare la mensa, orario tipo pasto non valido", HttpStatus.BAD_REQUEST);
+				assTipoPastoMensaRepository.save(aTPM);
 			}
-
-			TipoPasto tipoPastoMom = optionalTipoPasto.get();
-
-			//Assegnazione
-			AssTipoPastoMensa assTipoPastoMensa = new AssTipoPastoMensa();
-
-			assTipoPastoMensa.setMensa(mensaMom);
-			assTipoPastoMensa.setTipoPasto(tipoPastoMom);
-
-			//Conversione Orari
-			try
-			{
-				assTipoPastoMensa.setOrarioDal(ControlloData.controlloTempo(tpDTO.getOrarioDal()));
-				assTipoPastoMensa.setOrarioAl(ControlloData.controlloTempo(tpDTO.getOrarioAl()));
-				if(optionalTipoPasto.get().getDescrizione().equalsIgnoreCase("pranzo"))
-					assTipoPastoMensa.setOraFinePrenotazione(ControlloData.controlloTempo(tpDTO.getOraFinePrenotazione()));
-			}
-			catch(Exception exc)
-			{
-				logger.info("Impossibile creare la mensa, conversione campi Tipo Pasto fallita" + exc);
-				throw new GesevException("Impossibile creare la mensa, conversione campi Tipo Pasto fallita" + exc, HttpStatus.BAD_REQUEST);
-			}
-
-			listaAssTipoPastoMensas.add(assTipoPastoMensa);
-		}
-
-		//Salvataggio ASS_TIPO_PASTO_MENSA su DB
-		for(AssTipoPastoMensa aTPM : listaAssTipoPastoMensas)
-		{
-			assTipoPastoMensaRepository.save(aTPM);
 		}
 
 		//Lista Associativa Mensa Tipo Locale
-		List<AssMensaTipoLocale> listaAssMensaTipoLocale = new ArrayList<>();
-
-		for(TipoLocaleDTO tpDTO : listaTipoLocaleDTO)
+		if(listaTipoLocaleDTO != null || !listaTipoLocaleDTO.isEmpty())
 		{
-			//Controllo campi
-			if(tpDTO.getNumeroLocali() < 0 || tpDTO.getSuperfice() <= 0 )
+
+			List<AssMensaTipoLocale> listaAssMensaTipoLocale = new ArrayList<>();
+
+			for(TipoLocaleDTO tpDTO : listaTipoLocaleDTO)
 			{
-				logger.info("Impossibile creare la mensa, campi Tipo Locale non validi");
-				throw new GesevException("Impossibile creare la mensa, campi Tipo Locale non validi", HttpStatus.BAD_REQUEST);
+				//Controllo campi
+				if(tpDTO.getNumeroLocali() < 0 || tpDTO.getSuperfice() <= 0 )
+				{
+					logger.info("Impossibile creare la mensa, campi Tipo Locale non validi");
+					throw new GesevException("Impossibile creare la mensa, campi Tipo Locale non validi", HttpStatus.BAD_REQUEST);
+				}
+
+				//Controllo Esistenza
+				Optional<TipoLocale> optionalTipoLocale = tipoLocaliRepository.findById(tpDTO.getCodiceTipoLocale());
+				if(!optionalTipoLocale.isPresent())
+				{
+					logger.info("Impossibile creare la mensa, Tipo Locale non presente");
+					throw new GesevException("Impossibile creare la mensa, Tipo Locale non presente", HttpStatus.BAD_REQUEST);
+				}
+
+				AssMensaTipoLocale assMensaTipoLocale = new AssMensaTipoLocale();
+
+				//Associazione
+				assMensaTipoLocale.setMensa(mensaMom);
+				assMensaTipoLocale.setTipoLocale(optionalTipoLocale.get());
+				String dataFine = "9999-01-01";
+				assMensaTipoLocale.setDataFine(simpleDateFormat.parse(dataFine));
+				Date today = new Date();
+				assMensaTipoLocale.setDataInizio(today);
+				assMensaTipoLocale.setSuperficie(tpDTO.getSuperfice());
+				assMensaTipoLocale.setNumeroLocali(tpDTO.getNumeroLocali());
+				assMensaTipoLocale.setNote(tpDTO.getNote());
+
+				listaAssMensaTipoLocale.add(assMensaTipoLocale);
 			}
 
-			//Controllo Esistenza
-			Optional<TipoLocale> optionalTipoLocale = tipoLocaliRepository.findById(tpDTO.getCodiceTipoLocale());
-			if(!optionalTipoLocale.isPresent())
+			for(AssMensaTipoLocale aMTL : listaAssMensaTipoLocale)
 			{
-				logger.info("Impossibile creare la mensa, Tipo Locale non presente");
-				throw new GesevException("Impossibile creare la mensa, Tipo Locale non presente", HttpStatus.BAD_REQUEST);
+				assMensaTipoLocaleRepository.save(aMTL);
 			}
-
-			AssMensaTipoLocale assMensaTipoLocale = new AssMensaTipoLocale();
-
-			//Associazione
-			assMensaTipoLocale.setMensa(mensaMom);
-			assMensaTipoLocale.setTipoLocale(optionalTipoLocale.get());
-			String dataFine = "9999-01-01";
-			assMensaTipoLocale.setDataFine(simpleDateFormat.parse(dataFine));
-			Date today = new Date();
-			assMensaTipoLocale.setDataInizio(today);
-			assMensaTipoLocale.setSuperficie(tpDTO.getSuperfice());
-			assMensaTipoLocale.setNumeroLocali(tpDTO.getNumeroLocali());
-			assMensaTipoLocale.setNote(tpDTO.getDescrizioneTipoLocale());
-
-			listaAssMensaTipoLocale.add(assMensaTipoLocale);
 		}
-
-		for(AssMensaTipoLocale aMTL : listaAssMensaTipoLocale)
+		
+		//Lista Associativa Mensa Tipo Dieta
+		if(listaTipoDietaDTO != null || !listaTipoDietaDTO.isEmpty())
 		{
-			assMensaTipoLocaleRepository.save(aMTL);
+			List<AssMensaTipoDieta> listaAssMensaTipoDieta = new ArrayList<>();
+			
+			for(TipoDietaDTO tdDTO : listaTipoDietaDTO)
+			{
+				
+				//Controllo Esistenza
+				Optional<TipoDieta> optionalTipoDieta = tipoDietaRepository.findById(tdDTO.getIdTipoDieta());
+				if(!optionalTipoDieta.isPresent())
+				{
+					logger.info("Impossibile creare la mensa, Tipo Dieta non presente");
+					throw new GesevException("Impossibile creare la mensa, Tipo Dieta non presente", HttpStatus.BAD_REQUEST);
+				}
+				
+				AssMensaTipoDieta assMensaTipoDieta = new AssMensaTipoDieta();
+				
+				//Associazione
+				assMensaTipoDieta.setMensa(mensaMom);
+				assMensaTipoDieta.setTipoDieta(optionalTipoDieta.get());
+				
+				listaAssMensaTipoDieta.add(assMensaTipoDieta);
+			}
+			
+			for(AssMensaTipoDieta aMTD : listaAssMensaTipoDieta)
+			{
+				assMensaTipoDietaRepository.save(aMTD);
+			}
 		}
-
+		
 		return mensa.getCodiceMensa();
 	}
 
@@ -272,7 +314,7 @@ public class MensaDAOImpl implements MensaDAO
 	@Override
 	@Transactional
 	public int updateMensa(int idMensa, Mensa mensa, List<TipoLocaleDTO> listaTipoLocaleDTO,
-			List<TipoPastoDTO> listaTipoPastoDTO, List<ServizioEventoDTO> listaServizioEventoDTO,
+			List<TipoPastoDTO> listaTipoPastoDTO, List<ServizioEventoDTO> listaServizioEventoDTO, List<TipoDietaDTO> listaTipoDietaDTO,
 			int codiceTipoFormaVettovagliamento, int idEnte) throws ParseException 
 	{
 		logger.info("Accesso a updateMensa, classe MensaDAOImpl");	
@@ -343,11 +385,13 @@ public class MensaDAOImpl implements MensaDAO
 		}
 
 		mensa.setListaServizioEvento(listaServizioEvento);
-		mensaRepository.save(mensa);
-		Mensa mensaMom = mensa;
+		Mensa mensaMom = mensaRepository.save(mensa);
+	
+		
 
 		assTipoPastoMensaRepository.cancellaPerMensaFK(idMensa);
 		assMensaTipoLocaleRepository.cancellaPerMensaFK(idMensa);
+		assMensaTipoDietaRepository.cancellaPerMensaFK(idMensa);
 
 		//Lista Associativa Tipo Pasto Mensa
 		if(listaTipoPastoDTO == null || listaTipoPastoDTO.isEmpty())
@@ -360,12 +404,12 @@ public class MensaDAOImpl implements MensaDAO
 
 		for(TipoPastoDTO tpDTO : listaTipoPastoDTO)
 		{
-//			//Controllo campi
-//			if(StringUtils.isBlank(tpDTO.getOraFinePrenotazione()) || StringUtils.isBlank(tpDTO.getOrarioAl()) || StringUtils.isBlank(tpDTO.getOrarioDal()))
-//			{
-//				logger.info("Impossibile creare la mensa, campi Tipo Pasto non validi");
-//				throw new GesevException("Impossibile creare la mensa, campi Tipo Pasto non validi", HttpStatus.BAD_REQUEST);
-//			}
+			//			//Controllo campi
+			//			if(StringUtils.isBlank(tpDTO.getOraFinePrenotazione()) || StringUtils.isBlank(tpDTO.getOrarioAl()) || StringUtils.isBlank(tpDTO.getOrarioDal()))
+			//			{
+			//				logger.info("Impossibile creare la mensa, campi Tipo Pasto non validi");
+			//				throw new GesevException("Impossibile creare la mensa, campi Tipo Pasto non validi", HttpStatus.BAD_REQUEST);
+			//			}
 
 			//Controllo esistenza Tipo Pasto
 			Optional<TipoPasto> optionalTipoPasto = tipoPastoRepository.findById(tpDTO.getCodiceTipoPasto());
@@ -458,6 +502,38 @@ public class MensaDAOImpl implements MensaDAO
 		{
 			assMensaTipoLocaleRepository.save(aMTL);
 		}
+		
+		//Lista Associativa Mensa Tipo Dieta
+		if(listaTipoDietaDTO != null || !listaTipoDietaDTO.isEmpty())
+		{
+			List<AssMensaTipoDieta> listaAssMensaTipoDieta = new ArrayList<>();
+			
+			for(TipoDietaDTO tdDTO : listaTipoDietaDTO)
+			{
+				
+				//Controllo Esistenza
+				Optional<TipoDieta> optionalTipoDieta = tipoDietaRepository.findById(tdDTO.getIdTipoDieta());
+				if(!optionalTipoDieta.isPresent())
+				{
+					logger.info("Impossibile creare la mensa, Tipo Dieta non presente");
+					throw new GesevException("Impossibile creare la mensa, Tipo Dieta non presente", HttpStatus.BAD_REQUEST);
+				}
+				
+				AssMensaTipoDieta assMensaTipoDieta = new AssMensaTipoDieta();
+				
+				//Associazione
+				assMensaTipoDieta.setMensa(mensaMom);
+				assMensaTipoDieta.setTipoDieta(optionalTipoDieta.get());
+				
+				listaAssMensaTipoDieta.add(assMensaTipoDieta);
+			}
+			
+			for(AssMensaTipoDieta aMTD : listaAssMensaTipoDieta)
+			{
+				assMensaTipoDietaRepository.save(aMTD);
+			}
+		}
+		
 
 		return mensa.getCodiceMensa();
 	}
@@ -643,6 +719,31 @@ public class MensaDAOImpl implements MensaDAO
 		List<ServizioEvento> listaServizioEvento = servizioEventoRepository.cercaPerMensa(idMensa);
 
 		return listaServizioEvento;
+	}
+
+	/* leggi Tipo Dieta */
+	@Override
+	public List<TipoDieta> getAllTipoDieta() 
+	{
+		logger.info("Accesso a getAllTipoDieta classe MensaDAOImpl");
+		List<TipoDieta> listaTipoDieta = tipoDietaRepository.findAll();
+		return listaTipoDieta;
+	}
+
+	@Override
+	public List<TipoDieta> getTipoDietaPerMensa(int idMensa) 
+	{
+		List<AssMensaTipoDieta> listaAssMensaTipoDieta = assMensaTipoDietaRepository.cercaPerMensa(idMensa);
+		List<TipoDieta> listaTipoDieta = new ArrayList<>();
+		for(AssMensaTipoDieta aMTP : listaAssMensaTipoDieta)
+		{
+			TipoDieta tipoDieta = new TipoDieta();
+			int codiceTipoDieta = aMTP.getTipoDieta().getIdTipoDieta();
+			Optional<TipoDieta> optionalTipoDieta = tipoDietaRepository.findById(codiceTipoDieta);
+			tipoDieta = optionalTipoDieta.get();
+			listaTipoDieta.add(tipoDieta);
+		}
+		return listaTipoDieta;
 	}
 
 }

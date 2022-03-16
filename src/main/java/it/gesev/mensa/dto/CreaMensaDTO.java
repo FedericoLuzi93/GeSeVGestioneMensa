@@ -33,25 +33,29 @@ public class CreaMensaDTO
 	private String fax;
 	private String email;
 	
-	//Liste Enti, AssMensaTipoLocale, AssTipoPastoMensa e descrizioneTipoFormaVettovagliamento
+	//codiceVett, TipoLocale, TipoPasto, ServizioEvento, TipoMensa
 	private int codiceTipoFormaVettovagliamento;
 	private List<TipoLocaleDTO> listaTipoLocaleDTO;
 	private List<TipoPastoDTO> listaTipoPastoDTO;	
 	private List<ServizioEventoDTO> listaServizioEventoDTO;
+	private List<TipoDietaDTO> listaTipoDietaDTO;
 	
 	@Override
 	public String toString() {
-		return "CreaMensaDTO [idEnte=" + idEnte + ", descrizioneMensa=" + descrizioneMensa + ", servizioFestivo="
-				+ servizioFestivo + ", servizioFestivoSabato=" + servizioFestivoSabato + ", servizioFestivoDomenica="
-				+ servizioFestivoDomenica + ", dataAutorizzazioneSanitaria=" + dataAutorizzazioneSanitaria
-				+ ", numeroAutorizzazioneSanitaria=" + numeroAutorizzazioneSanitaria + ", autSanitariaRilasciataDa="
-				+ autSanitariaRilasciataDa + ", dataInizioServizio=" + dataInizioServizio + ", dataFineServizio="
-				+ dataFineServizio + ", via=" + via + ", numeroCivico=" + numeroCivico + ", cap=" + cap + ", citta="
-				+ citta + ", provincia=" + provincia + ", telefono=" + telefono + ", fax=" + fax + ", email=" + email
+		return "CreaMensaDTO [idEnte=" + idEnte + ", codiceMensa=" + codiceMensa + ", descrizioneMensa="
+				+ descrizioneMensa + ", servizioFestivo=" + servizioFestivo + ", servizioFestivoSabato="
+				+ servizioFestivoSabato + ", servizioFestivoDomenica=" + servizioFestivoDomenica
+				+ ", dataAutorizzazioneSanitaria=" + dataAutorizzazioneSanitaria + ", numeroAutorizzazioneSanitaria="
+				+ numeroAutorizzazioneSanitaria + ", autSanitariaRilasciataDa=" + autSanitariaRilasciataDa
+				+ ", dataInizioServizio=" + dataInizioServizio + ", dataFineServizio=" + dataFineServizio + ", via="
+				+ via + ", numeroCivico=" + numeroCivico + ", cap=" + cap + ", citta=" + citta + ", provincia="
+				+ provincia + ", telefono=" + telefono + ", fax=" + fax + ", email=" + email
 				+ ", codiceTipoFormaVettovagliamento=" + codiceTipoFormaVettovagliamento + ", listaTipoLocaleDTO="
 				+ listaTipoLocaleDTO + ", listaTipoPastoDTO=" + listaTipoPastoDTO + ", listaServizioEventoDTO="
-				+ listaServizioEventoDTO + "]";
+				+ listaServizioEventoDTO + ", listaTipoDietaDTO=" + listaTipoDietaDTO + "]";
 	}
+	
+
 	
 	
 

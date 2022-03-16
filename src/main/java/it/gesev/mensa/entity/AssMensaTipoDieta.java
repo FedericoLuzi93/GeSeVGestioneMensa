@@ -15,7 +15,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "ASS_MENSA_TIPO_LOCALE")
+@Table(name = "ASS_MENSA_TIPO_DIETA")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

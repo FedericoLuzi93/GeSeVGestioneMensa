@@ -29,6 +29,7 @@ import it.gesev.mensa.dto.FEServizioMensaDTO;
 import it.gesev.mensa.dto.FileDTO;
 import it.gesev.mensa.dto.MensaDTO;
 import it.gesev.mensa.dto.ServizioEventoDTO;
+import it.gesev.mensa.dto.TipoDietaDTO;
 import it.gesev.mensa.dto.TipoFromaVettovagliamentoDTO;
 import it.gesev.mensa.dto.TipoLocaleDTO;
 import it.gesev.mensa.dto.TipoPastoDTO;
@@ -36,6 +37,7 @@ import it.gesev.mensa.entity.AssTipoPastoMensa;
 import it.gesev.mensa.entity.Ente;
 import it.gesev.mensa.entity.Mensa;
 import it.gesev.mensa.entity.ServizioEvento;
+import it.gesev.mensa.entity.TipoDieta;
 import it.gesev.mensa.entity.TipoFormaVettovagliamento;
 import it.gesev.mensa.entity.TipoLocale;
 import it.gesev.mensa.entity.TipoPasto;
@@ -43,6 +45,7 @@ import it.gesev.mensa.exc.GesevException;
 import it.gesev.mensa.utils.EnteMapper;
 import it.gesev.mensa.utils.MensaMapper;
 import it.gesev.mensa.utils.ServizioEventoMapper;
+import it.gesev.mensa.utils.TipoDietaMapper;
 import it.gesev.mensa.utils.TipoFormaVettovagliamentoMapper;
 import it.gesev.mensa.utils.TipoLocaleMapper;
 import it.gesev.mensa.utils.TipoPastoMapper;
@@ -98,11 +101,11 @@ public class MensaServiceImpl implements MensaService
 			logger.info("Eccezione nel servizio updateMensa" + exc);
 			throw new GesevException("Non è stato possibile modificare la Mensa " + exc, HttpStatus.BAD_REQUEST);
 		}
-		
+
 		logger.info("Accesso a createMensa, classe MensaServiceImpl");
 		logger.info("Crezione mensa in corso...");
 		return mensaDAO.createMensa(mensa, creaMensaDTO.getListaTipoLocaleDTO(), creaMensaDTO.getListaTipoPastoDTO() ,
-				creaMensaDTO.getListaServizioEventoDTO(), creaMensaDTO.getCodiceTipoFormaVettovagliamento(), creaMensaDTO.getIdEnte());
+				creaMensaDTO.getListaServizioEventoDTO(), creaMensaDTO.getListaTipoDietaDTO(), creaMensaDTO.getCodiceTipoFormaVettovagliamento(), creaMensaDTO.getIdEnte());
 	}
 
 	/* Aggiorna una Mensa */
@@ -125,7 +128,7 @@ public class MensaServiceImpl implements MensaService
 		}
 		logger.info("Modifica mensa in corso...");
 		return mensaDAO.updateMensa(idMensa, mensa, creaMensaDTO.getListaTipoLocaleDTO(), creaMensaDTO.getListaTipoPastoDTO() ,
-				creaMensaDTO.getListaServizioEventoDTO(), creaMensaDTO.getCodiceTipoFormaVettovagliamento(), creaMensaDTO.getIdEnte());
+				creaMensaDTO.getListaServizioEventoDTO(), creaMensaDTO.getListaTipoDietaDTO(), creaMensaDTO.getCodiceTipoFormaVettovagliamento(), creaMensaDTO.getIdEnte());
 	}
 
 	/* Disabilita una Mensa */
@@ -357,7 +360,36 @@ public class MensaServiceImpl implements MensaService
 		return listaServizioEventoDTO;
 	}
 
+	/* leggi Tipo Dieta */
+	@Override
+	public List<TipoDietaDTO> getAllTipoDieta()
+	{
+		logger.info("Accesso a getAllTipoDieta classe MensaServiceImpl");
+		List<TipoDieta> listaTipoDieta = mensaDAO.getAllTipoDieta();
+		List<TipoDietaDTO> listaTipoDietaDTO = new ArrayList<>();
+		logger.info("Inizio ciclo for in getAllTipoDieta classe MensaServiceImpl");
+		for(TipoDieta td: listaTipoDieta)
+		{
+			listaTipoDietaDTO.add(TipoDietaMapper.mapToDTO(td));
+		}
+		logger.info("Fine getAllTipoDieta classe MensaServiceImpl");
+		return listaTipoDietaDTO;
+	}
 
-
+	/* leggi Tipo Dieta per idMensa */
+	@Override
+	public List<TipoDietaDTO> getTipoDietaPerMensa(int idMensa) 
+	{
+		logger.info("Accesso a getTipoDietaPerMensa classe MensaServiceImpl");
+		List<TipoDieta> listaTipoDieta = mensaDAO.getTipoDietaPerMensa(idMensa);
+		List<TipoDietaDTO> listaTipoDietaDTO = new ArrayList<>();
+		logger.info("Inizio ciclo for in getTipoDietaPerMensa classe MensaServiceImpl");
+		for(TipoDieta td: listaTipoDieta)
+		{
+			listaTipoDietaDTO.add(TipoDietaMapper.mapToDTO(td));
+		}
+		logger.info("Fine getAllTipoDieta classe MensaServiceImpl");
+		return listaTipoDietaDTO;
+	}
 
 }
