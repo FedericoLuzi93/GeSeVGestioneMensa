@@ -146,8 +146,10 @@ public class MensaDAOImpl implements MensaDAO
 					logger.info("Impossibile creare la mensa, conversione campi Servizi Evento fallita" + exc);
 					throw new GesevException("Impossibile creare la mensa, conversione campi Servizi Evento fallita" + exc, HttpStatus.BAD_REQUEST);
 				}
-
-				listaServizioEvento.add(evento);
+				evento.setMensa(mensa);
+				listaServizioEvento.add(servizioEventoRepository.save(evento));
+				
+				
 			}
 
 			mensa.setListaServizioEvento(listaServizioEvento);
@@ -349,6 +351,8 @@ public class MensaDAOImpl implements MensaDAO
 		}
 		mensa.setTipoFormaVettovagliamento(optionalTipoFormaVett.get());
 
+		servizioEventoRepository.cancellaPerMensaFK(idMensa);
+		
 		//Lista Servzi Festivi
 		if(listaServizioEventoDTO == null || listaServizioEventoDTO.isEmpty())
 		{
@@ -381,7 +385,8 @@ public class MensaDAOImpl implements MensaDAO
 				throw new GesevException("Impossibile creare la mensa, conversione campi Servizi Evento fallita" + exc, HttpStatus.BAD_REQUEST);
 			}
 
-			listaServizioEvento.add(evento);
+			evento.setMensa(mensa);
+			listaServizioEvento.add(servizioEventoRepository.save(evento));
 		}
 
 		mensa.setListaServizioEvento(listaServizioEvento);

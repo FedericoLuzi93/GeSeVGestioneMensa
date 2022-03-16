@@ -25,6 +25,7 @@ import it.gesev.mensa.dao.MensaDAO;
 import it.gesev.mensa.dto.CreaMensaDTO;
 import it.gesev.mensa.dto.EnteDTO;
 import it.gesev.mensa.dto.FELocaliDTO;
+import it.gesev.mensa.dto.FEMensaCompletaDTO;
 import it.gesev.mensa.dto.FEServizioMensaDTO;
 import it.gesev.mensa.dto.FileDTO;
 import it.gesev.mensa.dto.MensaDTO;
@@ -293,7 +294,7 @@ public class MensaServiceImpl implements MensaService
 
 	/* Get Servizi per idMensa */
 	@Override
-	public FEServizioMensaDTO getServiziPerMensa(int idMensa) 
+	public  FEServizioMensaDTO getServiziPerMensa(int idMensa) 
 	{
 		logger.info("Accesso a getServiziPerMensa  classe MensaServiceImpl");
 		FEServizioMensaDTO feServizioMensaDTO = new FEServizioMensaDTO();
@@ -390,6 +391,102 @@ public class MensaServiceImpl implements MensaService
 		}
 		logger.info("Fine getAllTipoDieta classe MensaServiceImpl");
 		return listaTipoDietaDTO;
+	}
+
+	
+	@Override
+	public FEMensaCompletaDTO getSingolaMensaCompleta(int idMensa) 
+	{
+		FEMensaCompletaDTO feMensaCompletaDTO = new FEMensaCompletaDTO();
+		
+		logger.info("Accesso a getSingolaMensa classe MensaServiceImpl");
+		//Servizi Evento
+		List<ServizioEvento> listaServizioEvento = mensaDAO.getServizioEventoPerMensa(idMensa);
+		List<ServizioEventoDTO> listaServizioEventoDTO = new ArrayList<>();
+		for(ServizioEvento se : listaServizioEvento)
+		{
+			listaServizioEventoDTO.add(ServizioEventoMapper.mapToDTO(se, dateFormat));
+		}
+		feMensaCompletaDTO.setListaServizioEventoDTO(listaServizioEventoDTO);
+		
+		//Tipo Dieta
+		List<TipoDieta> listaTipoDieta = mensaDAO.getTipoDietaPerMensa(idMensa);
+		List<TipoDietaDTO> listaTipoDietaDTO = new ArrayList<>();
+		feMensaCompletaDTO.setListaTipoDietaDTO(listaTipoDietaDTO);
+		for(TipoDieta td: listaTipoDieta)
+		{
+			listaTipoDietaDTO.add(TipoDietaMapper.mapToDTO(td));
+		}
+		//Tipo Pasto
+		FEServizioMensaDTO feServizioMensaDTO = new FEServizioMensaDTO();
+		List<AssTipoPastoMensa> listaAssTipoPastoMensa = mensaDAO.getServiziPerMensa(idMensa);
+
+		if(listaAssTipoPastoMensa.size()>0)
+		{
+			ModelMapper mapper = new ModelMapper();
+			List<TipoPastoDTO> listaTipoPastoDTO = new ArrayList<>();
+			Mensa mensa = null;
+			DateTimeFormatter dateTime = DateTimeFormatter.ofPattern("HH:mm");
+
+			for(AssTipoPastoMensa ass : listaAssTipoPastoMensa)
+			{
+				if(mensa == null)
+					mensa = ass.getMensa();
+
+				TipoPastoDTO tipoPastoDTO = (mapper.map(ass.getTipoPasto(), TipoPastoDTO.class));
+				tipoPastoDTO.setOraFinePrenotazione(ass.getOraFinePrenotazione() != null ? ass.getOraFinePrenotazione().format(dateTime) : null);
+				tipoPastoDTO.setOrarioAl(ass.getOrarioAl() != null ? ass.getOrarioAl().format(dateTime) : null);
+				tipoPastoDTO.setOrarioDal(ass.getOrarioDal() != null ? ass.getOrarioDal().format(dateTime) : null);
+				listaTipoPastoDTO.add(tipoPastoDTO);
+			}
+
+			feServizioMensaDTO.setListaTipoPastoDTO(listaTipoPastoDTO);
+			SimpleDateFormat formatter = new SimpleDateFormat(this.dateFormat);
+
+			feServizioMensaDTO.setDataFineServizio(mensa.getDataFineServizio() != null ? formatter.format(mensa.getDataFineServizio()) : null);
+			feServizioMensaDTO.setDataInizioServizio(mensa.getDataInizioServizio() != null ? formatter.format(mensa.getDataInizioServizio()) : null);	
+			
+			feMensaCompletaDTO.setListaTipoPastoDTO(listaTipoPastoDTO);
+		}
+		
+		//Tipo Locali
+		List<FELocaliDTO> listaFeLocaliDTO = new ArrayList<>();	
+		String query = "select	tipo_locale.descrizione_tipo_locale,\r\n"
+				+ "		ass_mensa_tipo_locale.superficie,\r\n"
+				+ "		ass_mensa_tipo_locale.numero_locali,\r\n"
+				+ "		ass_mensa_tipo_locale.note,\r\n"
+				+ "		tipo_locale.codice_tipo_locale\r\n"
+				+ "from	tipo_locale INNER join ass_mensa_tipo_locale\r\n"
+				+ "on	codice_mensa_fk = " + idMensa + " and \r\n"
+				+ "	tipo_locale.codice_tipo_locale = ass_mensa_tipo_locale.codice_tipo_locale_fk;";
+
+		logger.info("Esecuzione query: " + query); 
+		Query sumQuery = entityManager.createNativeQuery(query);
+		List<Object[]> listOfResults = sumQuery.getResultList();
+
+		for(Object[] ob : listOfResults)
+		{
+			FELocaliDTO feLocaliDTO = new FELocaliDTO();
+			feLocaliDTO.setNomeLocale((String) ob[0]);
+			Integer superfice = (Integer) ob[1];
+			feLocaliDTO.setSuperfice(superfice);
+			Integer numeroLocali = (Integer) ob[2];
+			feLocaliDTO.setNumeroLocali(numeroLocali);;
+			feLocaliDTO.setNote((String) ob[3]);
+			feLocaliDTO.setCodiceTipoLocale((Integer) ob[4]);
+			listaFeLocaliDTO.add(feLocaliDTO);
+		}
+		
+		feMensaCompletaDTO.setListaTipoLocaleDTO(listaFeLocaliDTO);
+		
+		//Mensa
+		Mensa mensa = mensaDAO.getSingolaMensa(idMensa);
+		MensaDTO mensaDTO = MensaMapper.mapToDTO(mensa, dateFormat);
+		feMensaCompletaDTO.setMensaDTO(mensaDTO);
+
+		
+		logger.info("Fine getSingolaMensa classe MensaServiceImpl");
+		return feMensaCompletaDTO;
 	}
 
 }
