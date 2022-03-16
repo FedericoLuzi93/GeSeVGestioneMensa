@@ -13,6 +13,7 @@ import it.gesev.mensa.dto.FEMensaCompletaDTO;
 import it.gesev.mensa.dto.FEServizioMensaDTO;
 import it.gesev.mensa.dto.FileDTO;
 import it.gesev.mensa.dto.MensaDTO;
+import it.gesev.mensa.dto.RicercaColonnaDTO;
 import it.gesev.mensa.dto.ServizioEventoDTO;
 import it.gesev.mensa.dto.TipoDietaDTO;
 import it.gesev.mensa.dto.TipoFromaVettovagliamentoDTO;
@@ -48,6 +49,7 @@ public interface MensaService
 	public List<TipoDietaDTO> getAllTipoDieta();
 	public List<TipoDietaDTO> getTipoDietaPerMensa(int idMensa);
 
+	public List<MensaDTO> ricercaMense(int idEnte, List<RicercaColonnaDTO> colonne);
 
 
 }

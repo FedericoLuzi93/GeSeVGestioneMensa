@@ -7,6 +7,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
@@ -18,6 +26,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
+import it.gesev.mensa.dto.RicercaColonnaDTO;
 import it.gesev.mensa.dto.ServizioEventoDTO;
 import it.gesev.mensa.dto.TipoDietaDTO;
 import it.gesev.mensa.dto.TipoLocaleDTO;
@@ -32,6 +41,7 @@ import it.gesev.mensa.entity.TipoDieta;
 import it.gesev.mensa.entity.TipoFormaVettovagliamento;
 import it.gesev.mensa.entity.TipoLocale;
 import it.gesev.mensa.entity.TipoPasto;
+import it.gesev.mensa.enums.ColonneMensaEnum;
 import it.gesev.mensa.exc.GesevException;
 import it.gesev.mensa.repository.AssMensaTipoDietaRepository;
 import it.gesev.mensa.repository.AssMensaTipoLocaleRepository;
@@ -75,12 +85,15 @@ public class MensaDAOImpl implements MensaDAO
 
 	@Autowired
 	private ServizioEventoRepository servizioEventoRepository;
-	
+
 	@Autowired
 	private TipoDietaRepository tipoDietaRepository;
-	
+
 	@Autowired
 	private AssMensaTipoDietaRepository assMensaTipoDietaRepository;
+
+	@PersistenceContext
+	EntityManager entityManager;
 
 	private static final Logger logger = LoggerFactory.getLogger(MensaDAOImpl.class);
 
@@ -148,15 +161,15 @@ public class MensaDAOImpl implements MensaDAO
 				}
 				evento.setMensa(mensa);
 				listaServizioEvento.add(servizioEventoRepository.save(evento));
-				
-				
+
+
 			}
 
 			mensa.setListaServizioEvento(listaServizioEvento);
 		}
-		
+
 		Mensa mensaMom = mensaRepository.save(mensa);
-		
+
 
 		//Lista Associativa Tipo Pasto Mensa
 		if(listaTipoPastoDTO != null || !listaTipoPastoDTO.isEmpty())
@@ -277,15 +290,15 @@ public class MensaDAOImpl implements MensaDAO
 				assMensaTipoLocaleRepository.save(aMTL);
 			}
 		}
-		
+
 		//Lista Associativa Mensa Tipo Dieta
 		if(listaTipoDietaDTO != null || !listaTipoDietaDTO.isEmpty())
 		{
 			List<AssMensaTipoDieta> listaAssMensaTipoDieta = new ArrayList<>();
-			
+
 			for(TipoDietaDTO tdDTO : listaTipoDietaDTO)
 			{
-				
+
 				//Controllo Esistenza
 				Optional<TipoDieta> optionalTipoDieta = tipoDietaRepository.findById(tdDTO.getIdTipoDieta());
 				if(!optionalTipoDieta.isPresent())
@@ -293,22 +306,22 @@ public class MensaDAOImpl implements MensaDAO
 					logger.info("Impossibile creare la mensa, Tipo Dieta non presente");
 					throw new GesevException("Impossibile creare la mensa, Tipo Dieta non presente", HttpStatus.BAD_REQUEST);
 				}
-				
+
 				AssMensaTipoDieta assMensaTipoDieta = new AssMensaTipoDieta();
-				
+
 				//Associazione
 				assMensaTipoDieta.setMensa(mensaMom);
 				assMensaTipoDieta.setTipoDieta(optionalTipoDieta.get());
-				
+
 				listaAssMensaTipoDieta.add(assMensaTipoDieta);
 			}
-			
+
 			for(AssMensaTipoDieta aMTD : listaAssMensaTipoDieta)
 			{
 				assMensaTipoDietaRepository.save(aMTD);
 			}
 		}
-		
+
 		return mensa.getCodiceMensa();
 	}
 
@@ -352,7 +365,7 @@ public class MensaDAOImpl implements MensaDAO
 		mensa.setTipoFormaVettovagliamento(optionalTipoFormaVett.get());
 
 		servizioEventoRepository.cancellaPerMensaFK(idMensa);
-		
+
 		//Lista Servzi Festivi
 		if(listaServizioEventoDTO == null || listaServizioEventoDTO.isEmpty())
 		{
@@ -391,8 +404,8 @@ public class MensaDAOImpl implements MensaDAO
 
 		mensa.setListaServizioEvento(listaServizioEvento);
 		Mensa mensaMom = mensaRepository.save(mensa);
-	
-		
+
+
 
 		assTipoPastoMensaRepository.cancellaPerMensaFK(idMensa);
 		assMensaTipoLocaleRepository.cancellaPerMensaFK(idMensa);
@@ -507,15 +520,15 @@ public class MensaDAOImpl implements MensaDAO
 		{
 			assMensaTipoLocaleRepository.save(aMTL);
 		}
-		
+
 		//Lista Associativa Mensa Tipo Dieta
 		if(listaTipoDietaDTO != null || !listaTipoDietaDTO.isEmpty())
 		{
 			List<AssMensaTipoDieta> listaAssMensaTipoDieta = new ArrayList<>();
-			
+
 			for(TipoDietaDTO tdDTO : listaTipoDietaDTO)
 			{
-				
+
 				//Controllo Esistenza
 				Optional<TipoDieta> optionalTipoDieta = tipoDietaRepository.findById(tdDTO.getIdTipoDieta());
 				if(!optionalTipoDieta.isPresent())
@@ -523,22 +536,22 @@ public class MensaDAOImpl implements MensaDAO
 					logger.info("Impossibile creare la mensa, Tipo Dieta non presente");
 					throw new GesevException("Impossibile creare la mensa, Tipo Dieta non presente", HttpStatus.BAD_REQUEST);
 				}
-				
+
 				AssMensaTipoDieta assMensaTipoDieta = new AssMensaTipoDieta();
-				
+
 				//Associazione
 				assMensaTipoDieta.setMensa(mensaMom);
 				assMensaTipoDieta.setTipoDieta(optionalTipoDieta.get());
-				
+
 				listaAssMensaTipoDieta.add(assMensaTipoDieta);
 			}
-			
+
 			for(AssMensaTipoDieta aMTD : listaAssMensaTipoDieta)
 			{
 				assMensaTipoDietaRepository.save(aMTD);
 			}
 		}
-		
+
 
 		return mensa.getCodiceMensa();
 	}
@@ -735,6 +748,7 @@ public class MensaDAOImpl implements MensaDAO
 		return listaTipoDieta;
 	}
 
+	/* Tipo Dieta per Mensa */
 	@Override
 	public List<TipoDieta> getTipoDietaPerMensa(int idMensa) 
 	{
@@ -749,6 +763,63 @@ public class MensaDAOImpl implements MensaDAO
 			listaTipoDieta.add(tipoDieta);
 		}
 		return listaTipoDieta;
+	}
+
+	/* Ricerca Colonne*/
+	@Override
+	public List<Mensa> ricercaMense(int idEnte, List<RicercaColonnaDTO> colonne) 
+	{
+		logger.info("Accesso al servizio ricercaMense in MensaDAOImpl");
+		//L'obj che crea le istruzioni and or etc
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		//Query 
+		CriteriaQuery<Mensa> criteriaQuery = criteriaBuilder.createQuery(Mensa.class);
+		//From
+		Root<Mensa> mensaRoot = criteriaQuery.from(Mensa.class);
+		//Join, metto nel join il campo dell'entità 
+		Join<Mensa, Ente> enteJoin = mensaRoot.join("ente");
+		Join<Mensa, TipoFormaVettovagliamento> vettovagliamentoJoin = mensaRoot.join("tipoFormaVettovagliamento");
+
+		//Where, condizioni che possono o non possono esserci, in questo caso per forza
+		Predicate finalPredicate = criteriaBuilder.equal(enteJoin.get("idEnte"), idEnte);
+
+		for(RicercaColonnaDTO rcd : colonne)
+		{
+			try
+			{
+				if(StringUtils.isBlank(rcd.getColonna()) || StringUtils.isBlank(rcd.getValue())	)
+					throw new Exception("Colonna o valore non validi");
+
+				//Controllo che la colonna sia presente nella enumerazione e se non va entra nel catch
+				ColonneMensaEnum enumerazione = ColonneMensaEnum.valueOf(rcd.getColonna().toUpperCase());
+
+				switch(enumerazione)
+				{
+					case DESCRIZIONE:
+							//Faccio l'upper case del valore che sta nella colonna della mensa
+							Expression<String> espressioneDescrizione = criteriaBuilder.upper(mensaRoot.get(enumerazione.getColonna()));
+							finalPredicate = criteriaBuilder.and(finalPredicate, criteriaBuilder.like(espressioneDescrizione, rcd.getValue().toUpperCase() + "%"));
+						break;
+					case ENTE:
+							Expression<String> espressioneDescrizioneEnte = criteriaBuilder.upper(enteJoin.get(enumerazione.getColonna()));
+							finalPredicate = criteriaBuilder.and(finalPredicate, criteriaBuilder.like(espressioneDescrizioneEnte, rcd.getValue().toUpperCase() + "%"));
+						break;
+					case TIPO_VETTOVAGLIAMENTO:
+							finalPredicate = criteriaBuilder.and(finalPredicate, criteriaBuilder.equal(vettovagliamentoJoin.get(enumerazione.getColonna()), 
+									Integer.valueOf(rcd.getValue())));
+						break;
+					default:
+						break;
+				}
+			}
+			
+			catch(Exception ex)
+			{
+				throw new GesevException("Nome colonna o valore non validi", HttpStatus.BAD_REQUEST);
+			}
+		}
+		
+		return entityManager.createQuery(criteriaQuery.where(finalPredicate)).getResultList();
 	}
 
 }

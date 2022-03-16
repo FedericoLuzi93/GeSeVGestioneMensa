@@ -35,6 +35,7 @@ import it.gesev.mensa.dto.FEMensaCompletaDTO;
 import it.gesev.mensa.dto.FEServizioMensaDTO;
 import it.gesev.mensa.dto.FileDTO;
 import it.gesev.mensa.dto.MensaDTO;
+import it.gesev.mensa.dto.RicercaColonnaDTO;
 import it.gesev.mensa.dto.ServizioEventoDTO;
 import it.gesev.mensa.dto.TipoDietaDTO;
 import it.gesev.mensa.dto.TipoFromaVettovagliamentoDTO;
@@ -608,6 +609,38 @@ public class MensaController
 		{
 			FEMensaCompletaDTO feMensaCompletaDTO = mensaService.getSingolaMensaCompleta(idMensa);
 			esito.setBody(feMensaCompletaDTO);
+			status = HttpStatus.OK;
+		}
+		catch(GesevException gex)
+		{
+			logger.info("Si e' verificata un'eccezione", gex);
+			esito.setMessaggio(gex.getMessage());
+			status = gex.getStatus();
+		}
+		catch(Exception ex)
+		{
+			logger.info("Si e' verificata un'eccezione interna", ex);
+			esito.setMessaggio(MESSAGGIO_ERRORE_INTERNO);
+			status = HttpStatus.INTERNAL_SERVER_ERROR;	
+		}
+		esito.setStatus(status.value());
+		return ResponseEntity.status(status).headers(new HttpHeaders()).body(esito);
+	}
+	
+	/* Ricerca Mense */
+	@PostMapping("/ricercaMensa{IdEnte}")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
+			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
+			@ApiResponse(code = 500, message = "Errore interno") })
+	public ResponseEntity<EsitoDTO> ricercaMense(@PathVariable int IdEnte, @RequestBody List<RicercaColonnaDTO> colonne)
+	{
+		logger.info("Accesso al servizio getAllMensa");
+		EsitoDTO esito = new EsitoDTO();
+		HttpStatus status = null;
+		try
+		{
+			List<MensaDTO> listaMensaDTO = mensaService.ricercaMense(IdEnte, colonne);
+			esito.setBody(listaMensaDTO);
 			status = HttpStatus.OK;
 		}
 		catch(GesevException gex)

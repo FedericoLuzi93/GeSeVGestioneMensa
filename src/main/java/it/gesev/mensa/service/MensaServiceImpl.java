@@ -29,6 +29,7 @@ import it.gesev.mensa.dto.FEMensaCompletaDTO;
 import it.gesev.mensa.dto.FEServizioMensaDTO;
 import it.gesev.mensa.dto.FileDTO;
 import it.gesev.mensa.dto.MensaDTO;
+import it.gesev.mensa.dto.RicercaColonnaDTO;
 import it.gesev.mensa.dto.ServizioEventoDTO;
 import it.gesev.mensa.dto.TipoDietaDTO;
 import it.gesev.mensa.dto.TipoFromaVettovagliamentoDTO;
@@ -487,6 +488,26 @@ public class MensaServiceImpl implements MensaService
 		
 		logger.info("Fine getSingolaMensa classe MensaServiceImpl");
 		return feMensaCompletaDTO;
+	}
+
+	
+	@Override
+	public List<MensaDTO> ricercaMense(int idEnte, List<RicercaColonnaDTO> colonne) 
+	{
+		logger.info("Accesso a ricercaMense, classe MensaServiceImpl");
+		List<Mensa> listaMensa = mensaDAO.ricercaMense(idEnte, colonne);
+		List<MensaDTO> listaMensaDTO = new ArrayList<>();
+		logger.info("Inizio ciclo For in getAllMense, classe MensaServiceImpl");
+		for(Mensa m : listaMensa)
+		{
+			MensaDTO mensaDTO = null;
+			mensaDTO = MensaMapper.mapToDTO(m, dateFormat);
+			if(m.getEnte() != null)
+				mensaDTO.setDescrizioneEnte(m.getEnte().getDescrizioneEnte());
+			listaMensaDTO.add(mensaDTO);
+		}
+		logger.info("Fine getAllMense, classe MensaServiceImpl");
+		return listaMensaDTO;
 	}
 
 }

@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.Optional;
 
+import it.gesev.mensa.dto.RicercaColonnaDTO;
 import it.gesev.mensa.dto.ServizioEventoDTO;
 import it.gesev.mensa.dto.TipoDietaDTO;
 import it.gesev.mensa.dto.TipoLocaleDTO;
@@ -49,6 +50,8 @@ public interface MensaDAO
 	
 	public List<TipoDieta> getAllTipoDieta();
 	public List<TipoDieta> getTipoDietaPerMensa(int idMensa);
+	
+	public List<Mensa> ricercaMense(int idEnte, List<RicercaColonnaDTO> colonne);
 	
 	//Senza Service
 	public Optional<TipoPasto> getTipoPastoPerId(int idTipoPasto);
