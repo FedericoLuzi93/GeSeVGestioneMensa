@@ -105,7 +105,7 @@ public class MensaController
 			mensaService.createMensa(creaMensaDTO, multipartFile);
 			esito.setStatus(HttpStatus.OK.value());
 			esito.setMessaggio("INSERIMENTO AVVENUTO CON SUCCESSO");
-			esito.setBody(mensaService.getAllMense());
+			esito.setBody(mensaService.getMensaPerEnte(creaMensaDTO.getIdEnte()));
 		}
 		catch(GesevException gex)   
 		{
@@ -140,7 +140,7 @@ public class MensaController
 			mensaService.updateMensa(creaMensaDTO, idMensa, multipartFile);
 			esito.setStatus(HttpStatus.OK.value());
 			esito.setMessaggio("AGGIORNAMENTO AVVENUTO CON SUCCESSO");
-			esito.setBody(mensaService.getAllMense());
+			esito.setBody(mensaService.getMensaPerEnte(creaMensaDTO.getIdEnte()));
 		}
 		catch(GesevException gex)   
 		{
