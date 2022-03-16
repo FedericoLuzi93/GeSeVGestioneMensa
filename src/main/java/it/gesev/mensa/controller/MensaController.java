@@ -131,9 +131,9 @@ public class MensaController
 		EsitoDTO esito = new EsitoDTO();
 		try
 		{
-			//int posizione = LCreaMensaDTO.indexOf("\"creaMensaDTO\":");
-			//String JSON = LCreaMensaDTO.substring(posizione + "\"creaMensaDTO\":".length(), LCreaMensaDTO.length() - 1);
-			String JSON = LCreaMensaDTO;
+			int posizione = LCreaMensaDTO.indexOf("\"creaMensaDTO\":");
+			String JSON = LCreaMensaDTO.substring(posizione + "\"creaMensaDTO\":".length(), LCreaMensaDTO.length() - 1);
+			//String JSON = LCreaMensaDTO;
 			CreaMensaDTO creaMensaDTO = new Gson().fromJson(JSON, CreaMensaDTO.class);	
 			mensaService.updateMensa(creaMensaDTO, idMensa, multipartFile);
 			esito.setStatus(HttpStatus.OK.value());
