@@ -12,6 +12,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -394,12 +395,12 @@ public class MensaServiceImpl implements MensaService
 		return listaTipoDietaDTO;
 	}
 
-	
+
 	@Override
 	public FEMensaCompletaDTO getSingolaMensaCompleta(int idMensa) 
 	{
 		FEMensaCompletaDTO feMensaCompletaDTO = new FEMensaCompletaDTO();
-		
+
 		logger.info("Accesso a getSingolaMensa classe MensaServiceImpl");
 		//Servizi Evento
 		List<ServizioEvento> listaServizioEvento = mensaDAO.getServizioEventoPerMensa(idMensa);
@@ -409,7 +410,7 @@ public class MensaServiceImpl implements MensaService
 			listaServizioEventoDTO.add(ServizioEventoMapper.mapToDTO(se, dateFormat));
 		}
 		feMensaCompletaDTO.setListaServizioEventoDTO(listaServizioEventoDTO);
-		
+
 		//Tipo Dieta
 		List<TipoDieta> listaTipoDieta = mensaDAO.getTipoDietaPerMensa(idMensa);
 		List<TipoDietaDTO> listaTipoDietaDTO = new ArrayList<>();
@@ -446,10 +447,10 @@ public class MensaServiceImpl implements MensaService
 
 			feServizioMensaDTO.setDataFineServizio(mensa.getDataFineServizio() != null ? formatter.format(mensa.getDataFineServizio()) : null);
 			feServizioMensaDTO.setDataInizioServizio(mensa.getDataInizioServizio() != null ? formatter.format(mensa.getDataInizioServizio()) : null);	
-			
+
 			feMensaCompletaDTO.setListaTipoPastoDTO(listaTipoPastoDTO);
 		}
-		
+
 		//Tipo Locali
 		List<FELocaliDTO> listaFeLocaliDTO = new ArrayList<>();	
 		String query = "select	tipo_locale.descrizione_tipo_locale,\r\n"
@@ -477,20 +478,74 @@ public class MensaServiceImpl implements MensaService
 			feLocaliDTO.setCodiceTipoLocale((Integer) ob[4]);
 			listaFeLocaliDTO.add(feLocaliDTO);
 		}
-		
+
 		feMensaCompletaDTO.setListaTipoLocaleDTO(listaFeLocaliDTO);
-		
+
 		//Mensa
 		Mensa mensa = mensaDAO.getSingolaMensa(idMensa);
 		MensaDTO mensaDTO = MensaMapper.mapToDTO(mensa, dateFormat);
-		feMensaCompletaDTO.setMensaDTO(mensaDTO);
 
-		
+		//Mensa base
+		if(mensaDTO.getCodiceMensa() != 0)
+			feMensaCompletaDTO.setCodiceMensa(mensaDTO.getCodiceMensa());	
+		if(StringUtils.isBlank(mensaDTO.getDescrizioneMensa()))
+			feMensaCompletaDTO.setDescrizioneMensa(mensaDTO.getDescrizioneMensa());
+		if(StringUtils.isBlank(mensaDTO.getNumeroAutorizzazioneSanitaria()))
+			feMensaCompletaDTO.setNumeroAutorizzazioneSanitaria(mensaDTO.getNumeroAutorizzazioneSanitaria());
+		if(StringUtils.isBlank(mensaDTO.getDataAutorizzazioneSanitaria()))	
+			feMensaCompletaDTO.setDataAutorizzazioneSanitaria(mensaDTO.getDataAutorizzazioneSanitaria());
+		if(StringUtils.isBlank(mensaDTO.getAutSanitariaRilasciataDa()))
+			feMensaCompletaDTO.setAutSanitariaRilasciataDa(mensaDTO.getAutSanitariaRilasciataDa());
+		if(StringUtils.isBlank(mensaDTO.getDataInizioServizio()))
+			feMensaCompletaDTO.setDataInizioServizio(mensaDTO.getDataInizioServizio());
+		if(StringUtils.isBlank(mensaDTO.getDataFineServizio()))
+			feMensaCompletaDTO.setDataFineServizio(mensaDTO.getDataFineServizio());
+		if(StringUtils.isBlank(mensaDTO.getDescrizioneTipoFormaVettovagliamento()))
+			feMensaCompletaDTO.setDescrizioneTipoFormaVettovagliamento(mensaDTO.getDescrizioneTipoFormaVettovagliamento());
+		if(mensaDTO.getCodiceTipoFormaVettovagliamento() != 0)
+			feMensaCompletaDTO.setCodiceTipoFormaVettovagliamento(mensaDTO.getCodiceTipoFormaVettovagliamento());
+		if(StringUtils.isBlank(mensaDTO.getTipoDieta()))
+			feMensaCompletaDTO.setTipoDieta(mensaDTO.getTipoDieta());
+
+		//Contatti
+		if(StringUtils.isBlank(mensaDTO.getTipoDieta()))
+			feMensaCompletaDTO.setVia(mensaDTO.getVia());
+		if(mensaDTO.getNumeroCivico() != 0)
+			feMensaCompletaDTO.setNumeroCivico(mensaDTO.getNumeroCivico());
+		if(StringUtils.isBlank(mensaDTO.getCap()))
+			feMensaCompletaDTO.setCap(mensaDTO.getCap());
+		if(StringUtils.isBlank(mensaDTO.getCitta()))
+			feMensaCompletaDTO.setCitta(mensaDTO.getCitta());
+		if(StringUtils.isBlank(mensaDTO.getProvincia()))
+			feMensaCompletaDTO.setProvincia(mensaDTO.getProvincia());
+		if(StringUtils.isBlank(mensaDTO.getTelefono()))
+			feMensaCompletaDTO.setTelefono(mensaDTO.getTelefono());
+		if(StringUtils.isBlank(mensaDTO.getFax()))
+			feMensaCompletaDTO.setFax(mensaDTO.getFax());
+		if(StringUtils.isBlank(mensaDTO.getEmail()))
+			feMensaCompletaDTO.setEmail(mensaDTO.getEmail());
+
+
+		//Servizi Festivi
+		if(StringUtils.isBlank(mensaDTO.getServizioFestivo()))
+			feMensaCompletaDTO.setServizioFestivo(mensaDTO.getServizioFestivo());
+		if(StringUtils.isBlank(mensaDTO.getServizioFestivoSabato()))
+			feMensaCompletaDTO.setServizioFestivoSabato(mensaDTO.getServizioFestivoSabato());
+		if(StringUtils.isBlank(mensaDTO.getServizioFestivoDomenica()))
+			feMensaCompletaDTO.setServizioFestivoDomenica(mensaDTO.getServizioFestivoDomenica());
+
+		//Controlli Aggiuntivi
+		feMensaCompletaDTO.setPresenzaFile(mensaDTO.isPresenzaFile());
+		if(StringUtils.isBlank(mensaDTO.getDescrizioneEnte()))
+			feMensaCompletaDTO.setDescrizioneEnte(mensaDTO.getDescrizioneEnte());
+		if(mensaDTO.getIdEnte() != 0)
+			feMensaCompletaDTO.setIdEnte(mensaDTO.getIdEnte());
+
 		logger.info("Fine getSingolaMensa classe MensaServiceImpl");
 		return feMensaCompletaDTO;
 	}
 
-	
+
 	@Override
 	public List<MensaDTO> ricercaMense(int idEnte, List<RicercaColonnaDTO> colonne) 
 	{

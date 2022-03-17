@@ -700,6 +700,14 @@ public class MensaDAOImpl implements MensaDAO
 	@Override
 	public List<Ente> getEntiFiltratiPerMensa(int idMensa) 
 	{
+		logger.info("Controllo presenza mensa in corso...");
+		Optional<Mensa> optionalMensa = mensaRepository.findById(idMensa);
+		if(!optionalMensa.isPresent())
+		{
+			logger.info("Errore mensa non presente");
+			throw new GesevException("Errore mensa non presente", HttpStatus.BAD_REQUEST);
+		}
+		
 		logger.info("Accesso a getEntiFiltratiPerMensa classe MensaDAOImpl");
 		return null;
 	}
@@ -733,6 +741,14 @@ public class MensaDAOImpl implements MensaDAO
 	@Override
 	public List<ServizioEvento> getServizioEventoPerMensa(int idMensa) 
 	{
+		logger.info("Controllo presenza mensa in corso...");
+		Optional<Mensa> optionalMensa = mensaRepository.findById(idMensa);
+		if(!optionalMensa.isPresent())
+		{
+			logger.info("Errore mensa non presente");
+			throw new GesevException("Errore mensa non presente", HttpStatus.BAD_REQUEST);
+		}
+		
 		logger.info("Accesso a getServizioEventoPerMensa classe MensaDAOImpl");
 		List<ServizioEvento> listaServizioEvento = servizioEventoRepository.cercaPerMensa(idMensa);
 
@@ -752,6 +768,14 @@ public class MensaDAOImpl implements MensaDAO
 	@Override
 	public List<TipoDieta> getTipoDietaPerMensa(int idMensa) 
 	{
+		logger.info("Controllo presenza mensa in corso...");
+		Optional<Mensa> optionalMensa = mensaRepository.findById(idMensa);
+		if(!optionalMensa.isPresent())
+		{
+			logger.info("Errore mensa non presente");
+			throw new GesevException("Errore mensa non presente", HttpStatus.BAD_REQUEST);
+		}
+		
 		List<AssMensaTipoDieta> listaAssMensaTipoDieta = assMensaTipoDietaRepository.cercaPerMensa(idMensa);
 		List<TipoDieta> listaTipoDieta = new ArrayList<>();
 		for(AssMensaTipoDieta aMTP : listaAssMensaTipoDieta)
