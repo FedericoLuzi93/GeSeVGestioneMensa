@@ -486,7 +486,7 @@ public class MensaServiceImpl implements MensaService
 		MensaDTO mensaDTO = MensaMapper.mapToDTO(mensa, dateFormat);
 
 		//Mensa base
-		if(mensaDTO.getCodiceMensa() != 0)
+		if(mensaDTO.getCodiceMensa() != null)
 			feMensaCompletaDTO.setCodiceMensa(mensaDTO.getCodiceMensa());	
 		if(!StringUtils.isBlank(mensaDTO.getDescrizioneMensa()))
 			feMensaCompletaDTO.setDescrizioneMensa(mensaDTO.getDescrizioneMensa());
@@ -502,7 +502,7 @@ public class MensaServiceImpl implements MensaService
 			feMensaCompletaDTO.setDataFineServizio(mensaDTO.getDataFineServizio());
 		if(!StringUtils.isBlank(mensaDTO.getDescrizioneTipoFormaVettovagliamento()))
 			feMensaCompletaDTO.setDescrizioneTipoFormaVettovagliamento(mensaDTO.getDescrizioneTipoFormaVettovagliamento());
-		if(mensaDTO.getCodiceTipoFormaVettovagliamento() != 0)
+		if(mensaDTO.getCodiceTipoFormaVettovagliamento() != null)
 			feMensaCompletaDTO.setCodiceTipoFormaVettovagliamento(mensaDTO.getCodiceTipoFormaVettovagliamento());
 		if(!StringUtils.isBlank(mensaDTO.getTipoDieta()))
 			feMensaCompletaDTO.setTipoDieta(mensaDTO.getTipoDieta());
@@ -510,7 +510,7 @@ public class MensaServiceImpl implements MensaService
 		//Contatti
 		if(!StringUtils.isBlank(mensaDTO.getTipoDieta()))
 			feMensaCompletaDTO.setVia(mensaDTO.getVia());
-		if(mensaDTO.getNumeroCivico() != 0)
+		if(mensaDTO.getNumeroCivico() != null)
 			feMensaCompletaDTO.setNumeroCivico(mensaDTO.getNumeroCivico());
 		if(!StringUtils.isBlank(mensaDTO.getCap()))
 			feMensaCompletaDTO.setCap(mensaDTO.getCap());

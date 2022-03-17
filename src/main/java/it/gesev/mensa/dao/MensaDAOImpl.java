@@ -375,42 +375,39 @@ public class MensaDAOImpl implements MensaDAO
 		servizioEventoRepository.cancellaPerMensaFK(idMensa);
 
 		//Lista Servzi Festivi
-		if(listaServizioEventoDTO == null || listaServizioEventoDTO.isEmpty())
+		if(listaServizioEventoDTO != null || !listaServizioEventoDTO.isEmpty())
 		{
-			logger.info("Impossibile creare la mensa, non ci sono Servizi Eventi validi");
-			throw new GesevException("Impossibile creare la mensa, non ci sono Servizi Eventi validi", HttpStatus.BAD_REQUEST);
+			List<ServizioEvento> listaServizioEvento = new ArrayList<>();
+
+			for(ServizioEventoDTO lsDTO : listaServizioEventoDTO)
+			{
+				ServizioEvento evento = new ServizioEvento();
+
+				//Controllo Campi
+				if(StringUtils.isBlank(lsDTO.getDescrizioneServizioEvento()) || StringUtils.isBlank(lsDTO.getDataServizioEvento()))
+				{
+					logger.info("Impossibile creare la mensa, campi Servizi Evento non validi");
+					throw new GesevException("Impossibile creare la mensa, campi Servizi Evento non validi", HttpStatus.BAD_REQUEST);
+				}
+
+				//Conversione
+				try 
+				{
+					evento.setDataServizioEvento(simpleDateFormat.parse(lsDTO.getDataServizioEvento()));
+					evento.setDescrizioneServizioEvento(lsDTO.getDescrizioneServizioEvento());
+				}
+				catch(GesevException exc)
+				{
+					logger.info("Impossibile creare la mensa, conversione campi Servizi Evento fallita" + exc);
+					throw new GesevException("Impossibile creare la mensa, conversione campi Servizi Evento fallita" + exc, HttpStatus.BAD_REQUEST);
+				}
+
+				evento.setMensa(mensa);
+				listaServizioEvento.add(servizioEventoRepository.save(evento));
+			}
+			mensa.setListaServizioEvento(listaServizioEvento);
 		}
 
-		List<ServizioEvento> listaServizioEvento = new ArrayList<>();
-
-		for(ServizioEventoDTO lsDTO : listaServizioEventoDTO)
-		{
-			ServizioEvento evento = new ServizioEvento();
-
-			//Controllo Campi
-			if(StringUtils.isBlank(lsDTO.getDescrizioneServizioEvento()) || StringUtils.isBlank(lsDTO.getDataServizioEvento()))
-			{
-				logger.info("Impossibile creare la mensa, campi Servizi Evento non validi");
-				throw new GesevException("Impossibile creare la mensa, campi Servizi Evento non validi", HttpStatus.BAD_REQUEST);
-			}
-
-			//Conversione
-			try 
-			{
-				evento.setDataServizioEvento(simpleDateFormat.parse(lsDTO.getDataServizioEvento()));
-				evento.setDescrizioneServizioEvento(lsDTO.getDescrizioneServizioEvento());
-			}
-			catch(GesevException exc)
-			{
-				logger.info("Impossibile creare la mensa, conversione campi Servizi Evento fallita" + exc);
-				throw new GesevException("Impossibile creare la mensa, conversione campi Servizi Evento fallita" + exc, HttpStatus.BAD_REQUEST);
-			}
-
-			evento.setMensa(mensa);
-			listaServizioEvento.add(servizioEventoRepository.save(evento));
-		}
-
-		mensa.setListaServizioEvento(listaServizioEvento);
 		Mensa mensaMom = mensaRepository.save(mensa);
 
 
@@ -422,8 +419,8 @@ public class MensaDAOImpl implements MensaDAO
 		//Lista Associativa Tipo Pasto Mensa
 		if(listaTipoPastoDTO == null || listaTipoPastoDTO.isEmpty())
 		{
-			logger.info("Impossibile creare la mensa, non ci sono Locali validi");
-			throw new GesevException("Impossibile creare la mensa, non ci sono Locali validi", HttpStatus.BAD_REQUEST);
+			logger.info("Impossibile creare la mensa, non ci sono Tipi Pasto validi");
+			throw new GesevException("Impossibile creare la mensa, non ci sono Tipi Pasto", HttpStatus.BAD_REQUEST);
 		}
 
 		List<AssTipoPastoMensa> listaAssTipoPastoMensas = new ArrayList<>();
