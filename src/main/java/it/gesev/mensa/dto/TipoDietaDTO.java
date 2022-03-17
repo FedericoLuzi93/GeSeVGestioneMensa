@@ -11,5 +11,6 @@ public class TipoDietaDTO
 {
 	private Integer idTipoDieta;
 	private String descrizioneTipoDieta;
+	private boolean flagNormale;
 }
 

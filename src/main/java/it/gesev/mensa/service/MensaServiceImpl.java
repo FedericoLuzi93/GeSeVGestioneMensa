@@ -527,8 +527,8 @@ public class MensaServiceImpl implements MensaService
 
 
 		//Servizi Festivi
-		if(!StringUtils.isBlank(mensaDTO.getServizioFestivo()))
-			feMensaCompletaDTO.setServizioFestivo(mensaDTO.getServizioFestivo());
+//		if(!StringUtils.isBlank(mensaDTO.getServizioFestivo()))
+//			feMensaCompletaDTO.setServizioFestivo(mensaDTO.getServizioFestivo());
 		if(!StringUtils.isBlank(mensaDTO.getServizioFestivoSabato()))
 			feMensaCompletaDTO.setServizioFestivoSabato(mensaDTO.getServizioFestivoSabato());
 		if(!StringUtils.isBlank(mensaDTO.getServizioFestivoDomenica()))

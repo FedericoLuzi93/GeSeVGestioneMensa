@@ -14,7 +14,7 @@ public class CreaMensaDTO
 	
 	private Integer codiceMensa;
 	private String descrizioneMensa;
-	private String servizioFestivo;
+//	private String servizioFestivo;
 	private String servizioFestivoSabato;
 	private String servizioFestivoDomenica;
 	private String dataAutorizzazioneSanitaria;
@@ -43,18 +43,18 @@ public class CreaMensaDTO
 	@Override
 	public String toString() {
 		return "CreaMensaDTO [idEnte=" + idEnte + ", codiceMensa=" + codiceMensa + ", descrizioneMensa="
-				+ descrizioneMensa + ", servizioFestivo=" + servizioFestivo + ", servizioFestivoSabato="
-				+ servizioFestivoSabato + ", servizioFestivoDomenica=" + servizioFestivoDomenica
-				+ ", dataAutorizzazioneSanitaria=" + dataAutorizzazioneSanitaria + ", numeroAutorizzazioneSanitaria="
-				+ numeroAutorizzazioneSanitaria + ", autSanitariaRilasciataDa=" + autSanitariaRilasciataDa
-				+ ", dataInizioServizio=" + dataInizioServizio + ", dataFineServizio=" + dataFineServizio + ", via="
-				+ via + ", numeroCivico=" + numeroCivico + ", cap=" + cap + ", citta=" + citta + ", provincia="
-				+ provincia + ", telefono=" + telefono + ", fax=" + fax + ", email=" + email
+				+ descrizioneMensa + ", servizioFestivoSabato=" + servizioFestivoSabato + ", servizioFestivoDomenica="
+				+ servizioFestivoDomenica + ", dataAutorizzazioneSanitaria=" + dataAutorizzazioneSanitaria
+				+ ", numeroAutorizzazioneSanitaria=" + numeroAutorizzazioneSanitaria + ", autSanitariaRilasciataDa="
+				+ autSanitariaRilasciataDa + ", dataInizioServizio=" + dataInizioServizio + ", dataFineServizio="
+				+ dataFineServizio + ", via=" + via + ", numeroCivico=" + numeroCivico + ", cap=" + cap + ", citta="
+				+ citta + ", provincia=" + provincia + ", telefono=" + telefono + ", fax=" + fax + ", email=" + email
 				+ ", codiceTipoFormaVettovagliamento=" + codiceTipoFormaVettovagliamento + ", listaTipoLocaleDTO="
 				+ listaTipoLocaleDTO + ", listaTipoPastoDTO=" + listaTipoPastoDTO + ", listaServizioEventoDTO="
 				+ listaServizioEventoDTO + ", listaTipoDietaDTO=" + listaTipoDietaDTO + "]";
 	}
 	
+
 
 	
 	

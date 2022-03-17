@@ -226,8 +226,16 @@ public class MensaDAOImpl implements MensaDAO
 				{
 					assTipoPastoMensa.setOrarioDal(ControlloData.controlloTempo(tpDTO.getOrarioDal()));
 					assTipoPastoMensa.setOrarioAl(ControlloData.controlloTempo(tpDTO.getOrarioAl()));
+
+					if(assTipoPastoMensa.getOrarioDal().isAfter(assTipoPastoMensa.getOrarioAl()))
+						throw new GesevException("Impossibile creare la mensa, orari non validi", HttpStatus.BAD_REQUEST);
+
 					if(optionalTipoPasto.get().getDescrizione().equalsIgnoreCase("pranzo"))
+					{				
 						assTipoPastoMensa.setOraFinePrenotazione(ControlloData.controlloTempo(tpDTO.getOraFinePrenotazione()));
+						if(assTipoPastoMensa.getOrarioAl().isBefore(assTipoPastoMensa.getOraFinePrenotazione()))
+							throw new GesevException("Impossibile creare la mensa, orari non validi", HttpStatus.BAD_REQUEST);
+					}
 				}
 				catch(Exception exc)
 				{
@@ -462,8 +470,16 @@ public class MensaDAOImpl implements MensaDAO
 			{
 				assTipoPastoMensa.setOrarioDal(ControlloData.controlloTempo(tpDTO.getOrarioDal()));
 				assTipoPastoMensa.setOrarioAl(ControlloData.controlloTempo(tpDTO.getOrarioAl()));
+
+				if(assTipoPastoMensa.getOrarioDal().isAfter(assTipoPastoMensa.getOrarioAl()))
+					throw new GesevException("Impossibile creare la mensa, orari non validi", HttpStatus.BAD_REQUEST);
+
 				if(optionalTipoPasto.get().getDescrizione().equalsIgnoreCase("pranzo"))
+				{				
 					assTipoPastoMensa.setOraFinePrenotazione(ControlloData.controlloTempo(tpDTO.getOraFinePrenotazione()));
+					if(assTipoPastoMensa.getOrarioAl().isBefore(assTipoPastoMensa.getOraFinePrenotazione()))
+						throw new GesevException("Impossibile creare la mensa, orari non validi", HttpStatus.BAD_REQUEST);
+				}
 			}
 			catch(Exception exc)
 			{
@@ -586,7 +602,7 @@ public class MensaDAOImpl implements MensaDAO
 				throw new GesevException("Impossibile disabilitare la mensa, Data Fine Servizio non valida", HttpStatus.BAD_REQUEST);
 
 			//Controllo Campi mensa
-			if(StringUtils.isBlank(mensa.getDescrizioneMensa()) || StringUtils.isBlank(mensa.getServizioFestivo()))
+			if(StringUtils.isBlank(mensa.getDescrizioneMensa()))
 			{
 				logger.info("Impossibile modificare la mensa, campi mensa non validi");
 				throw new GesevException("Impossibile modificare la mensa, campi mensa non validi", HttpStatus.BAD_REQUEST);
@@ -707,7 +723,7 @@ public class MensaDAOImpl implements MensaDAO
 			logger.info("Errore mensa non presente");
 			throw new GesevException("Errore mensa non presente", HttpStatus.BAD_REQUEST);
 		}
-		
+
 		logger.info("Accesso a getEntiFiltratiPerMensa classe MensaDAOImpl");
 		return null;
 	}
@@ -748,7 +764,7 @@ public class MensaDAOImpl implements MensaDAO
 			logger.info("Errore mensa non presente");
 			throw new GesevException("Errore mensa non presente", HttpStatus.BAD_REQUEST);
 		}
-		
+
 		logger.info("Accesso a getServizioEventoPerMensa classe MensaDAOImpl");
 		List<ServizioEvento> listaServizioEvento = servizioEventoRepository.cercaPerMensa(idMensa);
 
@@ -775,7 +791,7 @@ public class MensaDAOImpl implements MensaDAO
 			logger.info("Errore mensa non presente");
 			throw new GesevException("Errore mensa non presente", HttpStatus.BAD_REQUEST);
 		}
-		
+
 		List<AssMensaTipoDieta> listaAssMensaTipoDieta = assMensaTipoDietaRepository.cercaPerMensa(idMensa);
 		List<TipoDieta> listaTipoDieta = new ArrayList<>();
 		for(AssMensaTipoDieta aMTP : listaAssMensaTipoDieta)
@@ -783,6 +799,9 @@ public class MensaDAOImpl implements MensaDAO
 			TipoDieta tipoDieta = new TipoDieta();
 			int codiceTipoDieta = aMTP.getTipoDieta().getIdTipoDieta();
 			Optional<TipoDieta> optionalTipoDieta = tipoDietaRepository.findById(codiceTipoDieta);
+			if(!optionalTipoDieta.isPresent())
+				throw new GesevException("Errore codice tipo dieta non presente", HttpStatus.BAD_REQUEST);
+
 			tipoDieta = optionalTipoDieta.get();
 			listaTipoDieta.add(tipoDieta);
 		}
@@ -819,30 +838,30 @@ public class MensaDAOImpl implements MensaDAO
 
 				switch(enumerazione)
 				{
-					case DESCRIZIONE:
-							//Faccio l'upper case del valore che sta nella colonna della mensa
-							Expression<String> espressioneDescrizione = criteriaBuilder.upper(mensaRoot.get(enumerazione.getColonna()));
-							finalPredicate = criteriaBuilder.and(finalPredicate, criteriaBuilder.like(espressioneDescrizione, rcd.getValue().toUpperCase() + "%"));
-						break;
-					case ENTE:
-							Expression<String> espressioneDescrizioneEnte = criteriaBuilder.upper(enteJoin.get(enumerazione.getColonna()));
-							finalPredicate = criteriaBuilder.and(finalPredicate, criteriaBuilder.like(espressioneDescrizioneEnte, rcd.getValue().toUpperCase() + "%"));
-						break;
-					case TIPO_VETTOVAGLIAMENTO:
-							finalPredicate = criteriaBuilder.and(finalPredicate, criteriaBuilder.equal(vettovagliamentoJoin.get(enumerazione.getColonna()), 
-									Integer.valueOf(rcd.getValue())));
-						break;
-					default:
-						break;
+				case DESCRIZIONE:
+					//Faccio l'upper case del valore che sta nella colonna della mensa
+					Expression<String> espressioneDescrizione = criteriaBuilder.upper(mensaRoot.get(enumerazione.getColonna()));
+					finalPredicate = criteriaBuilder.and(finalPredicate, criteriaBuilder.like(espressioneDescrizione, rcd.getValue().toUpperCase() + "%"));
+					break;
+				case ENTE:
+					Expression<String> espressioneDescrizioneEnte = criteriaBuilder.upper(enteJoin.get(enumerazione.getColonna()));
+					finalPredicate = criteriaBuilder.and(finalPredicate, criteriaBuilder.like(espressioneDescrizioneEnte, rcd.getValue().toUpperCase() + "%"));
+					break;
+				case TIPO_VETTOVAGLIAMENTO:
+					finalPredicate = criteriaBuilder.and(finalPredicate, criteriaBuilder.equal(vettovagliamentoJoin.get(enumerazione.getColonna()), 
+							Integer.valueOf(rcd.getValue())));
+					break;
+				default:
+					break;
 				}
 			}
-			
+
 			catch(Exception ex)
 			{
 				throw new GesevException("Nome colonna o valore non validi", HttpStatus.BAD_REQUEST);
 			}
 		}
-		
+
 		return entityManager.createQuery(criteriaQuery.where(finalPredicate)).getResultList();
 	}
 

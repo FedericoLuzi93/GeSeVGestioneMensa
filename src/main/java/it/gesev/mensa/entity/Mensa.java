@@ -38,8 +38,8 @@ public class Mensa
 	@Column(name="TIPO_DIETA")
 	private String tipoDieta = "Normale";
 
-	@Column(name="SERVIZIO_FESTIVO")
-	private String servizioFestivo;
+//	@Column(name="SERVIZIO_FESTIVO")
+//	private String servizioFestivo;
 	
 	@Column(name="SERVIZIO_FESTIVO_SABATO")
 	private String servizioFestivoSabato;

@@ -30,7 +30,7 @@ public class MensaDTO
 	private String email;
 	
 	//Servizii Festivi
-	private String servizioFestivo;
+//	private String servizioFestivo;
 	private String servizioFestivoSabato;
 	private String servizioFestivoDomenica;
 	

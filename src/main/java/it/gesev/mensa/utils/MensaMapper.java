@@ -61,8 +61,8 @@ public class MensaMapper
 		//CampiBase
 		mensa.setDescrizioneMensa(creaMensaDTO.getDescrizioneMensa());
 		
-		if(!StringUtils.isBlank(creaMensaDTO.getServizioFestivo()))
-			mensa.setServizioFestivo(creaMensaDTO.getServizioFestivo());
+//		if(!StringUtils.isBlank(creaMensaDTO.getServizioFestivo()))
+//			mensa.setServizioFestivo(creaMensaDTO.getServizioFestivo());
 		
 		if(!StringUtils.isBlank(creaMensaDTO.getServizioFestivoSabato()))
 			mensa.setServizioFestivoSabato(creaMensaDTO.getServizioFestivoSabato());

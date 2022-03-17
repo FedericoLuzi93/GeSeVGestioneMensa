@@ -10,21 +10,27 @@ import it.gesev.mensa.entity.TipoDieta;
 public class TipoDietaMapper 
 {
 	private static final Logger logger = LoggerFactory.getLogger(TipoDietaMapper.class);
-	
+
 	//Entity to DTO
 	public static TipoDietaDTO mapToDTO(TipoDieta tipoDieta)
 	{
 		logger.info("Accesso a mapToDTO, classe TipoDietaMapper");
 		ModelMapper mapper = new ModelMapper();
 		TipoDietaDTO tipoDietaDTO = mapper.map(tipoDieta, TipoDietaDTO.class);
+
+		if(tipoDieta.getDescrizioneTipoDieta().equalsIgnoreCase("normale"))
+			tipoDietaDTO.setFlagNormale(true);
+		else
+			tipoDietaDTO.setFlagNormale(false);
+
 		return tipoDietaDTO;
 	}
-	
+
 	//DTO to Entity
 	public static TipoDieta mapToEntity(TipoDietaDTO tipoDietaDTO)
 	{
 		logger.info("Accesso a mapToDTO, classe TipoDietaMapper");
-		
+
 		ModelMapper mapper = new ModelMapper();
 		TipoDieta tipoDieta = mapper.map(tipoDietaDTO, TipoDieta.class);
 		return tipoDieta;
