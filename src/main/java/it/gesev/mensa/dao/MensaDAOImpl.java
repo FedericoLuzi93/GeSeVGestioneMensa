@@ -172,7 +172,7 @@ public class MensaDAOImpl implements MensaDAO
 
 
 		//Lista Associativa Tipo Pasto Mensa
-		if(listaTipoPastoDTO != null || !listaTipoPastoDTO.isEmpty())
+		if(listaTipoPastoDTO != null && !listaTipoPastoDTO.isEmpty())
 		{
 			
 			List<AssTipoPastoMensa> listaAssTipoPastoMensas = new ArrayList<>();
