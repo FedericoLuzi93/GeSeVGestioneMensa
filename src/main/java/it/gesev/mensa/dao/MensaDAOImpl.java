@@ -174,6 +174,7 @@ public class MensaDAOImpl implements MensaDAO
 		//Lista Associativa Tipo Pasto Mensa
 		if(listaTipoPastoDTO != null || !listaTipoPastoDTO.isEmpty())
 		{
+			
 			List<AssTipoPastoMensa> listaAssTipoPastoMensas = new ArrayList<>();
 
 			for(TipoPastoDTO tpDTO : listaTipoPastoDTO)
@@ -252,6 +253,11 @@ public class MensaDAOImpl implements MensaDAO
 			{
 				assTipoPastoMensaRepository.save(aTPM);
 			}
+		}
+		else
+		{
+			logger.info("Impossibile creare la mensa, la lista tipo pasto è vuota");
+			throw new GesevException("Impossibile creare la mensa, la lista tipo pasto è vuota", HttpStatus.BAD_REQUEST);
 		}
 
 		//Lista Associativa Mensa Tipo Locale
