@@ -524,7 +524,7 @@ public class MensaDAOImpl implements MensaDAO
 			assMensaTipoLocale.setDataInizio(today);
 			assMensaTipoLocale.setSuperficie(tpDTO.getSuperfice());
 			assMensaTipoLocale.setNumeroLocali(tpDTO.getNumeroLocali());
-			assMensaTipoLocale.setNote(tpDTO.getDescrizioneTipoLocale());
+			assMensaTipoLocale.setNote(tpDTO.getNote());
 
 			listaAssMensaTipoLocale.add(assMensaTipoLocale);
 		}
