@@ -488,55 +488,55 @@ public class MensaServiceImpl implements MensaService
 		//Mensa base
 		if(mensaDTO.getCodiceMensa() != 0)
 			feMensaCompletaDTO.setCodiceMensa(mensaDTO.getCodiceMensa());	
-		if(StringUtils.isBlank(mensaDTO.getDescrizioneMensa()))
+		if(!StringUtils.isBlank(mensaDTO.getDescrizioneMensa()))
 			feMensaCompletaDTO.setDescrizioneMensa(mensaDTO.getDescrizioneMensa());
-		if(StringUtils.isBlank(mensaDTO.getNumeroAutorizzazioneSanitaria()))
+		if(!StringUtils.isBlank(mensaDTO.getNumeroAutorizzazioneSanitaria()))
 			feMensaCompletaDTO.setNumeroAutorizzazioneSanitaria(mensaDTO.getNumeroAutorizzazioneSanitaria());
-		if(StringUtils.isBlank(mensaDTO.getDataAutorizzazioneSanitaria()))	
+		if(!StringUtils.isBlank(mensaDTO.getDataAutorizzazioneSanitaria()))	
 			feMensaCompletaDTO.setDataAutorizzazioneSanitaria(mensaDTO.getDataAutorizzazioneSanitaria());
-		if(StringUtils.isBlank(mensaDTO.getAutSanitariaRilasciataDa()))
+		if(!StringUtils.isBlank(mensaDTO.getAutSanitariaRilasciataDa()))
 			feMensaCompletaDTO.setAutSanitariaRilasciataDa(mensaDTO.getAutSanitariaRilasciataDa());
-		if(StringUtils.isBlank(mensaDTO.getDataInizioServizio()))
+		if(!StringUtils.isBlank(mensaDTO.getDataInizioServizio()))
 			feMensaCompletaDTO.setDataInizioServizio(mensaDTO.getDataInizioServizio());
-		if(StringUtils.isBlank(mensaDTO.getDataFineServizio()))
+		if(!StringUtils.isBlank(mensaDTO.getDataFineServizio()))
 			feMensaCompletaDTO.setDataFineServizio(mensaDTO.getDataFineServizio());
-		if(StringUtils.isBlank(mensaDTO.getDescrizioneTipoFormaVettovagliamento()))
+		if(!StringUtils.isBlank(mensaDTO.getDescrizioneTipoFormaVettovagliamento()))
 			feMensaCompletaDTO.setDescrizioneTipoFormaVettovagliamento(mensaDTO.getDescrizioneTipoFormaVettovagliamento());
 		if(mensaDTO.getCodiceTipoFormaVettovagliamento() != 0)
 			feMensaCompletaDTO.setCodiceTipoFormaVettovagliamento(mensaDTO.getCodiceTipoFormaVettovagliamento());
-		if(StringUtils.isBlank(mensaDTO.getTipoDieta()))
+		if(!StringUtils.isBlank(mensaDTO.getTipoDieta()))
 			feMensaCompletaDTO.setTipoDieta(mensaDTO.getTipoDieta());
 
 		//Contatti
-		if(StringUtils.isBlank(mensaDTO.getTipoDieta()))
+		if(!StringUtils.isBlank(mensaDTO.getTipoDieta()))
 			feMensaCompletaDTO.setVia(mensaDTO.getVia());
 		if(mensaDTO.getNumeroCivico() != 0)
 			feMensaCompletaDTO.setNumeroCivico(mensaDTO.getNumeroCivico());
-		if(StringUtils.isBlank(mensaDTO.getCap()))
+		if(!StringUtils.isBlank(mensaDTO.getCap()))
 			feMensaCompletaDTO.setCap(mensaDTO.getCap());
-		if(StringUtils.isBlank(mensaDTO.getCitta()))
+		if(!StringUtils.isBlank(mensaDTO.getCitta()))
 			feMensaCompletaDTO.setCitta(mensaDTO.getCitta());
-		if(StringUtils.isBlank(mensaDTO.getProvincia()))
+		if(!StringUtils.isBlank(mensaDTO.getProvincia()))
 			feMensaCompletaDTO.setProvincia(mensaDTO.getProvincia());
-		if(StringUtils.isBlank(mensaDTO.getTelefono()))
+		if(!StringUtils.isBlank(mensaDTO.getTelefono()))
 			feMensaCompletaDTO.setTelefono(mensaDTO.getTelefono());
-		if(StringUtils.isBlank(mensaDTO.getFax()))
+		if(!StringUtils.isBlank(mensaDTO.getFax()))
 			feMensaCompletaDTO.setFax(mensaDTO.getFax());
-		if(StringUtils.isBlank(mensaDTO.getEmail()))
+		if(!StringUtils.isBlank(mensaDTO.getEmail()))
 			feMensaCompletaDTO.setEmail(mensaDTO.getEmail());
 
 
 		//Servizi Festivi
-		if(StringUtils.isBlank(mensaDTO.getServizioFestivo()))
+		if(!StringUtils.isBlank(mensaDTO.getServizioFestivo()))
 			feMensaCompletaDTO.setServizioFestivo(mensaDTO.getServizioFestivo());
-		if(StringUtils.isBlank(mensaDTO.getServizioFestivoSabato()))
+		if(!StringUtils.isBlank(mensaDTO.getServizioFestivoSabato()))
 			feMensaCompletaDTO.setServizioFestivoSabato(mensaDTO.getServizioFestivoSabato());
-		if(StringUtils.isBlank(mensaDTO.getServizioFestivoDomenica()))
+		if(!StringUtils.isBlank(mensaDTO.getServizioFestivoDomenica()))
 			feMensaCompletaDTO.setServizioFestivoDomenica(mensaDTO.getServizioFestivoDomenica());
 
 		//Controlli Aggiuntivi
 		feMensaCompletaDTO.setPresenzaFile(mensaDTO.isPresenzaFile());
-		if(StringUtils.isBlank(mensaDTO.getDescrizioneEnte()))
+		if(!StringUtils.isBlank(mensaDTO.getDescrizioneEnte()))
 			feMensaCompletaDTO.setDescrizioneEnte(mensaDTO.getDescrizioneEnte());
 		if(mensaDTO.getIdEnte() != 0)
 			feMensaCompletaDTO.setIdEnte(mensaDTO.getIdEnte());
