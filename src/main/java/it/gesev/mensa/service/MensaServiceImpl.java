@@ -101,8 +101,8 @@ public class MensaServiceImpl implements MensaService
 		}
 		catch(Exception exc)
 		{
-			logger.info("Eccezione nel servizio updateMensa" + exc);
-			throw new GesevException("Non è stato possibile modificare la Mensa " + exc, HttpStatus.BAD_REQUEST);
+			logger.info("Eccezione nel servizio updateMensa", exc);
+			throw new GesevException("Non è stato possibile modificare la Mensa", HttpStatus.BAD_REQUEST);
 		}
 
 		logger.info("Accesso a createMensa, classe MensaServiceImpl");
@@ -126,8 +126,8 @@ public class MensaServiceImpl implements MensaService
 		}
 		catch(Exception exc)
 		{
-			logger.info("Eccezione nel servizio updateMensa" + exc);
-			throw new GesevException("Non è stato possibile modificare la Mensa " + exc, HttpStatus.BAD_REQUEST);
+			logger.info("Eccezione nel servizio updateMensa", exc);
+			throw new GesevException("Non è stato possibile modificare la Mensa", HttpStatus.BAD_REQUEST);
 		}
 		logger.info("Modifica mensa in corso...");
 		return mensaDAO.updateMensa(idMensa, mensa, creaMensaDTO.getListaTipoLocaleDTO(), creaMensaDTO.getListaTipoPastoDTO() ,
@@ -148,8 +148,8 @@ public class MensaServiceImpl implements MensaService
 		}
 		catch(Exception exc)
 		{
-			logger.info("Eccezione nel servizio disableMensa" + exc);
-			throw new GesevException("Non è stato possibile disabilitare la Mensa " + exc, HttpStatus.BAD_REQUEST);
+			logger.info("Eccezione nel servizio disableMensa", exc);
+			throw new GesevException("Non è stato possibile disabilitare la Mensa", HttpStatus.BAD_REQUEST);
 		}
 		logger.info("disabilitazione mensa in corso...");
 		return mensaDAO.disableMensa(mensa, idMensa);

@@ -230,8 +230,8 @@ public class RuoliServiceImpl implements RuoliService
 		}
 		catch(GesevException exc)
 		{
-			logger.info("Eccezione nel servizio creaNuovoOrganoDirettivo" + exc);
-			throw new GesevException("Non è stato possibile inserire il nuovo organo direttivo" + exc, HttpStatus.BAD_REQUEST);
+			logger.info("Eccezione nel servizio creaNuovoOrganoDirettivo", exc);
+			throw new GesevException("Non è stato possibile inserire il nuovo organo direttivo", HttpStatus.BAD_REQUEST);
 		}
 		logger.info("Creazione nuovo organo direttivo corso...");
 		ruoliDAO.creaOrganoDirettivo(organoDirettivo);
@@ -250,8 +250,8 @@ public class RuoliServiceImpl implements RuoliService
 		}
 		catch(GesevException exc)
 		{
-			logger.info("Eccezione nel servizio modificaOrganoDirettivo" + exc);
-			throw new GesevException("Non è stato possibile modificare organo direttivo" + exc, HttpStatus.BAD_REQUEST);
+			logger.info("Eccezione nel servizio modificaOrganoDirettivo", exc);
+			throw new GesevException("Non è stato possibile modificare organo direttivo", HttpStatus.BAD_REQUEST);
 		}
 		logger.info("Modifica organo direttivo corso...");
 		ruoliDAO.modificaOrganoDirettivo(organoDirettivo, idOrganoDirettivo);
