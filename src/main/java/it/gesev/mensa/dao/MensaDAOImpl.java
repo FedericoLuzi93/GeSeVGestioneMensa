@@ -156,8 +156,8 @@ public class MensaDAOImpl implements MensaDAO
 				}
 				catch(GesevException exc)
 				{
-					logger.info("Impossibile creare la mensa, conversione campi Servizi Evento fallita" + exc);
-					throw new GesevException("Impossibile creare la mensa, conversione campi Servizi Evento fallita" + exc, HttpStatus.BAD_REQUEST);
+					logger.info("Impossibile creare la mensa, conversione campi Servizi Evento fallita", exc);
+					throw new GesevException("Impossibile creare la mensa, conversione campi Servizi Evento fallita", HttpStatus.BAD_REQUEST);
 				}
 				evento.setMensa(mensa);
 				listaServizioEvento.add(servizioEventoRepository.save(evento));
@@ -241,8 +241,8 @@ public class MensaDAOImpl implements MensaDAO
 				}
 				catch(Exception exc)
 				{
-					logger.info("Impossibile creare la mensa, conversione campi Tipo Pasto fallita" + exc);
-					throw new GesevException("Impossibile creare la mensa, conversione campi Tipo Pasto fallita" + exc, HttpStatus.BAD_REQUEST);
+					logger.info("Impossibile creare la mensa, conversione campi Tipo Pasto fallita", exc);
+					throw new GesevException("Impossibile creare la mensa, conversione campi Tipo Pasto fallita", HttpStatus.BAD_REQUEST);
 				}
 
 				listaAssTipoPastoMensas.add(assTipoPastoMensa);
@@ -405,8 +405,8 @@ public class MensaDAOImpl implements MensaDAO
 				}
 				catch(GesevException exc)
 				{
-					logger.info("Impossibile creare la mensa, conversione campi Servizi Evento fallita" + exc);
-					throw new GesevException("Impossibile creare la mensa, conversione campi Servizi Evento fallita" + exc, HttpStatus.BAD_REQUEST);
+					logger.info("Impossibile creare la mensa, conversione campi Servizi Evento fallita", exc);
+					throw new GesevException("Impossibile creare la mensa, conversione campi Servizi Evento fallita", HttpStatus.BAD_REQUEST);
 				}
 
 				evento.setMensa(mensa);
@@ -488,7 +488,7 @@ public class MensaDAOImpl implements MensaDAO
 			}
 			catch(Exception exc)
 			{
-				logger.info("Impossibile creare la mensa, orari non validi" + exc);
+				logger.info("Impossibile creare la mensa, orari non validi", exc);
 				throw new GesevException("Impossibile creare la mensa, orari non validi", HttpStatus.BAD_REQUEST);
 			}
 
