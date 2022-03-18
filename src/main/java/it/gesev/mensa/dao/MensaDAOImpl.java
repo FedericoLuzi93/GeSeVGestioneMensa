@@ -174,7 +174,7 @@ public class MensaDAOImpl implements MensaDAO
 		//Lista Associativa Tipo Pasto Mensa
 		if(listaTipoPastoDTO != null && !listaTipoPastoDTO.isEmpty())
 		{
-			
+
 			List<AssTipoPastoMensa> listaAssTipoPastoMensas = new ArrayList<>();
 
 			for(TipoPastoDTO tpDTO : listaTipoPastoDTO)
@@ -234,7 +234,8 @@ public class MensaDAOImpl implements MensaDAO
 					if(optionalTipoPasto.get().getDescrizione().equalsIgnoreCase("pranzo"))
 					{				
 						assTipoPastoMensa.setOraFinePrenotazione(ControlloData.controlloTempo(tpDTO.getOraFinePrenotazione()));
-						if(assTipoPastoMensa.getOrarioAl().isBefore(assTipoPastoMensa.getOraFinePrenotazione()))
+						if(assTipoPastoMensa.getOrarioAl().isBefore(assTipoPastoMensa.getOraFinePrenotazione()) ||
+								assTipoPastoMensa.getOraFinePrenotazione().isAfter(assTipoPastoMensa.getOrarioDal()))
 							throw new GesevException("Impossibile creare la mensa, orari non validi", HttpStatus.BAD_REQUEST);
 					}
 				}
@@ -480,7 +481,8 @@ public class MensaDAOImpl implements MensaDAO
 				if(optionalTipoPasto.get().getDescrizione().equalsIgnoreCase("pranzo"))
 				{				
 					assTipoPastoMensa.setOraFinePrenotazione(ControlloData.controlloTempo(tpDTO.getOraFinePrenotazione()));
-					if(assTipoPastoMensa.getOrarioAl().isBefore(assTipoPastoMensa.getOraFinePrenotazione()))
+					if(assTipoPastoMensa.getOrarioAl().isBefore(assTipoPastoMensa.getOraFinePrenotazione()) ||
+							assTipoPastoMensa.getOraFinePrenotazione().isAfter(assTipoPastoMensa.getOrarioDal()))
 						throw new GesevException("Impossibile creare la mensa, orari non validi", HttpStatus.BAD_REQUEST);
 				}
 			}
