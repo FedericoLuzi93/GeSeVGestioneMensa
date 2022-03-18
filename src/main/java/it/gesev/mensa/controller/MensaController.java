@@ -49,7 +49,6 @@ import it.gesev.mensa.service.MensaService;
 @RequestMapping("/mensa")
 public class MensaController 
 {
-	//Test Portatile
 	@Autowired
 	private MensaService mensaService;
 
