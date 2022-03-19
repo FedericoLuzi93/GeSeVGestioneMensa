@@ -176,23 +176,10 @@ public class MensaDAOImpl implements MensaDAO
 		{
 
 			List<AssTipoPastoMensa> listaAssTipoPastoMensas = new ArrayList<>();
-
+			boolean controlloPranzo = false;
+						
 			for(TipoPastoDTO tpDTO : listaTipoPastoDTO)
-			{
-				//			//Controllo campi
-				//			if(tpDTO.getDescrizione().equalsIgnoreCase("pranzo"))
-				//				if(StringUtils.isBlank(tpDTO.getOraFinePrenotazione()) || StringUtils.isBlank(tpDTO.getOrarioAl()) || StringUtils.isBlank(tpDTO.getOrarioDal()))
-				//				{
-				//					logger.info("Impossibile creare la mensa, campi Tipo Pasto non validi");
-				//					throw new GesevException("Impossibile creare la mensa, campi Tipo Pasto non validi", HttpStatus.BAD_REQUEST);
-				//				}
-				//
-				//			if(tpDTO.getDescrizione().equalsIgnoreCase("cena") || tpDTO.getDescrizione().equalsIgnoreCase("colazione"))
-				//				if(StringUtils.isBlank(tpDTO.getOrarioAl()) || StringUtils.isBlank(tpDTO.getOrarioDal()))
-				//				{
-				//					logger.info("Impossibile creare la mensa, campi Tipo Pasto non validi");
-				//					throw new GesevException("Impossibile creare la mensa, campi Tipo Pasto non validi", HttpStatus.BAD_REQUEST);
-				//				}
+			{		
 
 				//Controllo esistenza Tipo Pasto
 				Optional<TipoPasto> optionalTipoPasto = tipoPastoRepository.findById(tpDTO.getCodiceTipoPasto());
@@ -201,6 +188,9 @@ public class MensaDAOImpl implements MensaDAO
 					logger.info("Impossibile creare la mensa, Tipo Pasto non presente");
 					throw new GesevException("Impossibile creare la mensa, Tipo Pasto non presente", HttpStatus.BAD_REQUEST);
 				}
+				
+				if(optionalTipoPasto.get().getDescrizione().equalsIgnoreCase("pranzo") && controlloPranzo == false)		
+					controlloPranzo = true;
 
 				//Controllo Orari 
 				if(optionalTipoPasto.isPresent())
@@ -241,15 +231,19 @@ public class MensaDAOImpl implements MensaDAO
 				}
 				catch(Exception exc)
 				{
-					logger.info("Impossibile creare la mensa, conversione campi Tipo Pasto fallita", exc);
-					throw new GesevException("Impossibile creare la mensa, conversione campi Tipo Pasto fallita", HttpStatus.BAD_REQUEST);
+					logger.info("Impossibile creare la mensa, orari Tipo Pasto non validi", exc);
+					throw new GesevException("Impossibile creare la mensa, orari Tipo Pasto non validi", HttpStatus.BAD_REQUEST);
 				}
 
 				listaAssTipoPastoMensas.add(assTipoPastoMensa);
-			}
 
+			}
+			
+			if(controlloPranzo == false)
+				throw new GesevException("Impossibile creare la mensa, tipo pasto pranzo non presente");
 
 			//Salvataggio ASS_TIPO_PASTO_MENSA su DB
+
 			for(AssTipoPastoMensa aTPM : listaAssTipoPastoMensas)
 			{
 				assTipoPastoMensaRepository.save(aTPM);

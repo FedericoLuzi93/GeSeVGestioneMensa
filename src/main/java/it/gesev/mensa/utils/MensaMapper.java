@@ -3,6 +3,8 @@ package it.gesev.mensa.utils;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -12,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import it.gesev.mensa.dto.CreaMensaDTO;
 import it.gesev.mensa.dto.MensaDTO;
 import it.gesev.mensa.entity.Mensa;
+import it.gesev.mensa.exc.GesevException;
 
 public class MensaMapper 
 {
@@ -60,60 +63,88 @@ public class MensaMapper
 		//Mensa mensa= mapper.map(creaMensaDTO, Mensa.class);
 		//CampiBase
 		mensa.setDescrizioneMensa(creaMensaDTO.getDescrizioneMensa());
-		
-//		if(!StringUtils.isBlank(creaMensaDTO.getServizioFestivo()))
-//			mensa.setServizioFestivo(creaMensaDTO.getServizioFestivo());
-		
+
+		//		if(!StringUtils.isBlank(creaMensaDTO.getServizioFestivo()))
+		//			mensa.setServizioFestivo(creaMensaDTO.getServizioFestivo());
+
 		if(!StringUtils.isBlank(creaMensaDTO.getServizioFestivoSabato()))
 			mensa.setServizioFestivoSabato(creaMensaDTO.getServizioFestivoSabato());
-		
+
 		if(!StringUtils.isBlank(creaMensaDTO.getServizioFestivoDomenica()))
 			mensa.setServizioFestivoDomenica(creaMensaDTO.getServizioFestivoDomenica());
-		
+
 		mensa.setDataInizioServizio(simpleDateFormat.parse(creaMensaDTO.getDataInizioServizio()));
 		mensa.setDataFineServizio(simpleDateFormat.parse(creaMensaDTO.getDataFineServizio()));
-		
+
+		if(mensa.getDataInizioServizio().after(mensa.getDataFineServizio()))
+			throw new GesevException("Errore nelle date della mansa, data inizio servizio o data fine servizio non valida");
+
 		//Contatti
+
 		if(!StringUtils.isBlank(creaMensaDTO.getCap()))
-			mensa.setCap(creaMensaDTO.getCap());
-		
+		{
+			Pattern pattern = Pattern.compile("^\\d{5}$");
+			Matcher matcher = pattern.matcher(creaMensaDTO.getCap());
+			if(matcher.matches())
+				mensa.setCap(creaMensaDTO.getCap());
+			else
+				throw new GesevException("Errore nel controllo del CAP, inserire un CAP valido");
+		}
+
+
+
 		if(!StringUtils.isBlank(creaMensaDTO.getCitta()))
 			mensa.setCitta(creaMensaDTO.getCitta());
-		
+
 		if(creaMensaDTO.getNumeroCivico() != null && creaMensaDTO.getNumeroCivico() != 0)
 			mensa.setNumeroCivico(creaMensaDTO.getNumeroCivico());
-		
+
 		if(!StringUtils.isBlank(creaMensaDTO.getVia()))
 			mensa.setVia(creaMensaDTO.getVia());
-		
+
 		if(!StringUtils.isBlank(creaMensaDTO.getProvincia()))
 			mensa.setProvincia(creaMensaDTO.getProvincia());
+
 		
 		if(!StringUtils.isBlank(creaMensaDTO.getTelefono()))
-			mensa.setTelefono(creaMensaDTO.getTelefono());
-		
+		{
+			Pattern pattern = Pattern.compile("^\\d{5,}$");
+			Matcher matcher = pattern.matcher(creaMensaDTO.getTelefono());
+			if(matcher.matches())
+				mensa.setTelefono(creaMensaDTO.getTelefono());
+			else
+				throw new GesevException("Errore nel controllo del Telefono, inserire un Telefono valido");
+		}
+			
 		if(!StringUtils.isBlank(creaMensaDTO.getFax()))
-			mensa.setFax(creaMensaDTO.getFax());
-		
+		{
+			Pattern pattern = Pattern.compile("^\\d{5,}$");
+			Matcher matcher = pattern.matcher(creaMensaDTO.getFax());
+			if(matcher.matches())
+				mensa.setFax(creaMensaDTO.getFax());
+			else
+				throw new GesevException("Errore nel controllo del Fax, inserire un Fax valido");
+		}
+
 		if(!StringUtils.isBlank(creaMensaDTO.getEmail()))
 			mensa.setEmail(creaMensaDTO.getEmail());
-		
+
 		//Autorizzazione Sanitaria
 		if(!StringUtils.isBlank(creaMensaDTO.getNumeroAutorizzazioneSanitaria()))
 			mensa.setNumeroAutorizzazioneSanitaria(creaMensaDTO.getNumeroAutorizzazioneSanitaria());
-		
+
 		if(!StringUtils.isBlank(creaMensaDTO.getDataAutorizzazioneSanitaria()))
 		{
 			String dataString = creaMensaDTO.getDataAutorizzazioneSanitaria();
 			Date date = simpleDateFormat.parse(dataString);
 			mensa.setDataAutorizzazioneSanitaria(date);
 		}
-		
+
 		if(!StringUtils.isBlank(creaMensaDTO.getAutSanitariaRilasciataDa()))
 			mensa.setAutSanitariaRilasciataDa(creaMensaDTO.getAutSanitariaRilasciataDa());
-		
-		
-	
+
+
+
 		return mensa;
 	}
 
