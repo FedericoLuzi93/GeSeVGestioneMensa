@@ -78,6 +78,9 @@ public class MensaMapper
 
 		if(mensa.getDataInizioServizio().after(mensa.getDataFineServizio()))
 			throw new GesevException("Errore nelle date della mansa, data inizio servizio o data fine servizio non valida");
+		
+		if(mensa.getDataInizioServizio().equals(mensa.getDataFineServizio()))
+			throw new GesevException("Errore nelle date della mansa, la data inizio servizio e la data fine servizio non possono essere uguali");
 
 		//Contatti
 

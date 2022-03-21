@@ -101,8 +101,8 @@ public class MensaServiceImpl implements MensaService
 		}
 		catch(Exception exc)
 		{
-			logger.info("Eccezione nel servizio updateMensa", exc);
-			throw new GesevException("Non è stato possibile modificare la Mensa", HttpStatus.BAD_REQUEST);
+			logger.info("Eccezione nel servizio creaMensa", exc);
+			throw new GesevException("Non è stato possibile creare la Mensa", HttpStatus.BAD_REQUEST);
 		}
 
 		logger.info("Accesso a createMensa, classe MensaServiceImpl");

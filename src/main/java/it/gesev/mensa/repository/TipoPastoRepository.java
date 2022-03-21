@@ -10,7 +10,9 @@ import it.gesev.mensa.entity.TipoPasto;
 
 public interface TipoPastoRepository extends JpaRepository<TipoPasto, Integer> 
 {
-	@Query("select s from ServizioEvento s where s.mensa.codiceMensa = :idMensa")
-	public List<ServizioEvento> cercaPerMensa(int idMensa);
+//	@Query("select t from TipoPasto t where t.mensa.codiceMensa = :idMensa")
+//	public List<ServizioEvento> cercaPerMensa(int idMensa);
+	
+	public List<TipoPasto> findByCodiceTipoPastoIn(List<Integer> listaCodiciTipoPasti);
 
 }
