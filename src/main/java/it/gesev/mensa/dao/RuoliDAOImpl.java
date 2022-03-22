@@ -117,7 +117,7 @@ public class RuoliDAOImpl implements RuoliDAO
 	{
 		logger.info("Ricerca dei ruoli...");
 //		List<RuoloMensa> listaRuoli = ruoloMensaRepository.getRuoliByIdOrdineDirettivo(idOrganoDirettivo);
-		List<RuoloMensa> listaRuoli = ruoloMensaRepository.findAll();
+		List<RuoloMensa> listaRuoli = ruoloMensaRepository.findAllByOrderByDescrizioneRuoloMensaAsc();
 		logger.info("Trovati " + listaRuoli.size() + " elementi.");
 		
 		return listaRuoli;
