@@ -99,7 +99,7 @@ public class MensaMapper
 		if(!StringUtils.isBlank(creaMensaDTO.getCitta()))
 			mensa.setCitta(creaMensaDTO.getCitta());
 
-		if(creaMensaDTO.getNumeroCivico() != null && creaMensaDTO.getNumeroCivico() != 0)
+		if(creaMensaDTO.getNumeroCivico() != null && creaMensaDTO.getNumeroCivico() >= 0)
 			mensa.setNumeroCivico(creaMensaDTO.getNumeroCivico());
 
 		if(!StringUtils.isBlank(creaMensaDTO.getVia()))

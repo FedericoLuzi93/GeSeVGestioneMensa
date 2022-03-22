@@ -102,7 +102,11 @@ public class MensaServiceImpl implements MensaService
 		catch(Exception exc)
 		{
 			logger.info("Eccezione nel servizio creaMensa", exc);
-			throw new GesevException("Non è stato possibile creare la Mensa", HttpStatus.BAD_REQUEST);
+			if(exc instanceof GesevException)
+				throw new GesevException(exc.getMessage(), HttpStatus.BAD_REQUEST);
+			
+			else
+				throw exc;
 		}
 
 		logger.info("Accesso a createMensa, classe MensaServiceImpl");
@@ -152,8 +156,12 @@ public class MensaServiceImpl implements MensaService
 		}
 		catch(Exception exc)
 		{
-			logger.info("Eccezione nel servizio disableMensa", exc);
-			throw new GesevException("Non è stato possibile disabilitare la Mensa", HttpStatus.BAD_REQUEST);
+			logger.info("Eccezione nel servizio disabilita mensa", exc);
+			if(exc instanceof GesevException)
+				throw new GesevException(exc.getMessage(), HttpStatus.BAD_REQUEST);
+			
+			else
+				throw exc;
 		}
 		logger.info("disabilitazione mensa in corso...");
 		return mensaDAO.disableMensa(mensa, idMensa);

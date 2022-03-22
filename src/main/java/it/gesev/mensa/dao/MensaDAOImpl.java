@@ -3,6 +3,7 @@ package it.gesev.mensa.dao;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -152,12 +153,20 @@ public class MensaDAOImpl implements MensaDAO
 				try 
 				{
 					evento.setDataServizioEvento(simpleDateFormat.parse(lsDTO.getDataServizioEvento()));
+					Date today = Calendar.getInstance().getTime();
+					if(!evento.getDataServizioEvento().after(today))
+						throw new GesevException("Impossibile creare la mensa, data servizio evento non valida", HttpStatus.BAD_REQUEST);
+					
 					evento.setDescrizioneServizioEvento(lsDTO.getDescrizioneServizioEvento());
 				}
 				catch(GesevException exc)
 				{
-					logger.info("Impossibile creare la mensa, conversione campi Servizi Evento fallita", exc);
-					throw new GesevException("Impossibile creare la mensa, conversione campi Servizi Evento fallita", HttpStatus.BAD_REQUEST);
+					logger.info("Errore nella creazione della mensa, servizio festivo non valido", exc);
+					if(exc instanceof GesevException)
+						throw new GesevException(exc.getMessage(), HttpStatus.BAD_REQUEST);
+					
+					else
+						throw exc;
 				}
 				evento.setMensa(mensa);
 				listaServizioEvento.add(servizioEventoRepository.save(evento));
@@ -284,10 +293,10 @@ public class MensaDAOImpl implements MensaDAO
 			for(TipoLocaleDTO tpDTO : listaTipoLocaleDTO)
 			{
 				//Controllo campi
-				if(tpDTO.getNumeroLocali() < 0 || tpDTO.getSuperfice() <= 0 )
+				if(tpDTO.getNumeroLocali() < 0 && tpDTO.getSuperfice() <= 0 )
 				{
-					logger.info("Impossibile creare la mensa, campi Tipo Locale non validi");
-					throw new GesevException("Impossibile creare la mensa, campi Tipo Locale non validi", HttpStatus.BAD_REQUEST);
+					logger.info("Impossibile creare la mensa, valori di superficie o numero locali non validi");
+					throw new GesevException("Impossibile creare la mensa, valori di superficie o numero locali non validi", HttpStatus.BAD_REQUEST);
 				}
 
 				//Controllo Esistenza
@@ -388,8 +397,8 @@ public class MensaDAOImpl implements MensaDAO
 		Optional<TipoFormaVettovagliamento> optionalTipoFormaVett = tipoFormaVettovagliamentoRepository.findById(codiceTipoFormaVettovagliamento);
 		if(!optionalTipoFormaVett.isPresent())
 		{
-			logger.info("Impossibile creare la mensa, Tipo Vettovagliamento non valido");
-			throw new GesevException("Impossibile creare la mensa, Tipo Vettovagliamento non valido", HttpStatus.BAD_REQUEST);
+			logger.info("Impossibile modificare la mensa, Tipo Vettovagliamento non valido");
+			throw new GesevException("Impossibile modificare la mensa, Tipo Vettovagliamento non valido", HttpStatus.BAD_REQUEST);
 		}
 		mensa.setTipoFormaVettovagliamento(optionalTipoFormaVett.get());
 
@@ -407,20 +416,28 @@ public class MensaDAOImpl implements MensaDAO
 				//Controllo Campi
 				if(StringUtils.isBlank(lsDTO.getDescrizioneServizioEvento()) || StringUtils.isBlank(lsDTO.getDataServizioEvento()))
 				{
-					logger.info("Impossibile creare la mensa, campi Servizi Evento non validi");
-					throw new GesevException("Impossibile creare la mensa, campi Servizi Evento non validi", HttpStatus.BAD_REQUEST);
+					logger.info("Impossibile modificare la mensa, campi Servizi Evento non validi");
+					throw new GesevException("Impossibile modificare la mensa, campi Servizi Evento non validi", HttpStatus.BAD_REQUEST);
 				}
 
 				//Conversione
 				try 
 				{
 					evento.setDataServizioEvento(simpleDateFormat.parse(lsDTO.getDataServizioEvento()));
+					Date today = Calendar.getInstance().getTime();
+					if(!evento.getDataServizioEvento().after(today))
+						throw new GesevException("Impossibile creare la mensa, data servizio evento non valida", HttpStatus.BAD_REQUEST);
+					
 					evento.setDescrizioneServizioEvento(lsDTO.getDescrizioneServizioEvento());
 				}
 				catch(GesevException exc)
 				{
-					logger.info("Impossibile creare la mensa, conversione campi Servizi Evento fallita", exc);
-					throw new GesevException("Impossibile creare la mensa, conversione campi Servizi Evento fallita", HttpStatus.BAD_REQUEST);
+					logger.info("Errore nella modifica della mensa, servizio festivo non valido", exc);
+					if(exc instanceof GesevException)
+						throw new GesevException(exc.getMessage(), HttpStatus.BAD_REQUEST);
+					
+					else
+						throw exc;
 				}
 
 				evento.setMensa(mensa);
@@ -454,12 +471,12 @@ public class MensaDAOImpl implements MensaDAO
 			
 			//Controlli
 			if(controlloPranzo == false)
-				throw new GesevException("Impossibile creare la mensa, i dati del pranzo sono obbligatori");
+				throw new GesevException("Impossibile modificare la mensa, i dati del pranzo sono obbligatori");
 
 			List<TipoPasto> listaTipoPasto = tipoPastoRepository.findByCodiceTipoPastoIn(listaCodiciTipoPasti);
 
 			if(listaTipoPasto.size() != listaTipoPastoDTO.size())
-				throw new GesevException("Impossibile creare la mensa, errore nella creazione del Tipo Pasto", HttpStatus.BAD_REQUEST);
+				throw new GesevException("Impossibile modificare la mensa, errore nella creazione del Tipo Pasto", HttpStatus.BAD_REQUEST);
 
 			//Ciclo listaTipoPastoDTO 
 			for(TipoPastoDTO tpDTO : listaTipoPastoDTO)
@@ -477,11 +494,11 @@ public class MensaDAOImpl implements MensaDAO
 				//Controllo Orari 
 				if(tpDTO.getDescrizione().equalsIgnoreCase("pranzo"))
 					if(tpDTO.getOrarioAl() == null || tpDTO.getOrarioDal() == null || tpDTO.getOraFinePrenotazione() == null )
-						throw new GesevException("Impossibile creare la mensa, orario tipo pasto non valido", HttpStatus.BAD_REQUEST);
+						throw new GesevException("Impossibile modificare la mensa, orario tipo pasto non valido", HttpStatus.BAD_REQUEST);
 
 				if(tpDTO.getDescrizione().equalsIgnoreCase("cena") || tpDTO.getDescrizione().equalsIgnoreCase("colazione"))
 					if(tpDTO.getOrarioAl() == null || tpDTO.getOrarioDal() == null )
-						throw new GesevException("Impossibile creare la mensa, orario tipo pasto non valido", HttpStatus.BAD_REQUEST);
+						throw new GesevException("Impossibile modificare la mensa, orario tipo pasto non valido", HttpStatus.BAD_REQUEST);
 
 				//Assegnazione
 				AssTipoPastoMensa assTipoPastoMensa = new AssTipoPastoMensa();
@@ -504,20 +521,20 @@ public class MensaDAOImpl implements MensaDAO
 
 					if(assTipoPastoMensa.getOrarioDal().isAfter(assTipoPastoMensa.getOrarioAl()) || 
 							assTipoPastoMensa.getOrarioDal().equals(assTipoPastoMensa.getOrarioAl()))
-						throw new GesevException("Impossibile creare la mensa, orari non validi", HttpStatus.BAD_REQUEST);
+						throw new GesevException("Impossibile modificare la mensa, orari non validi", HttpStatus.BAD_REQUEST);
 
 					if(tpDTO.getDescrizione().equalsIgnoreCase("pranzo"))
 					{				
 						assTipoPastoMensa.setOraFinePrenotazione(ControlloData.controlloTempo(tpDTO.getOraFinePrenotazione()));
 						if(assTipoPastoMensa.getOrarioAl().isBefore(assTipoPastoMensa.getOraFinePrenotazione()) ||
 								assTipoPastoMensa.getOraFinePrenotazione().isAfter(assTipoPastoMensa.getOrarioDal()))
-							throw new GesevException("Impossibile creare la mensa, orari non validi", HttpStatus.BAD_REQUEST);
+							throw new GesevException("Impossibile modificare la mensa, orari non validi", HttpStatus.BAD_REQUEST);
 					}
 				}
 				catch(Exception exc)
 				{
-					logger.info("Impossibile creare la mensa, orari Tipo Pasto non validi", exc);
-					throw new GesevException("Impossibile creare la mensa, orari Tipo Pasto non validi", HttpStatus.BAD_REQUEST);
+					logger.info("Impossibile modificare la mensa, orari Tipo Pasto non validi", exc);
+					throw new GesevException("Impossibile modificare la mensa, orari Tipo Pasto non validi", HttpStatus.BAD_REQUEST);
 				}
 
 				listaAssTipoPastoMensas.add(assTipoPastoMensa);
@@ -531,8 +548,8 @@ public class MensaDAOImpl implements MensaDAO
 		}
 		else
 		{
-			logger.info("Impossibile creare la mensa, la lista tipo pasto è vuota");
-			throw new GesevException("Impossibile creare la mensa, la lista tipo pasto è vuota", HttpStatus.BAD_REQUEST);
+			logger.info("Impossibile modificare la mensa, la lista tipo pasto è vuota");
+			throw new GesevException("Impossibile modificare la mensa, la lista tipo pasto è vuota", HttpStatus.BAD_REQUEST);
 		}
 
 		//Lista Associativa Mensa Tipo Locale
@@ -543,16 +560,16 @@ public class MensaDAOImpl implements MensaDAO
 			//Controllo campi
 			if(tpDTO.getNumeroLocali() < 0 || tpDTO.getSuperfice() <= 0 )
 			{
-				logger.info("Impossibile creare la mensa, campi Tipo Locale non validi");
-				throw new GesevException("Impossibile creare la mensa, campi Tipo Locale non validi", HttpStatus.BAD_REQUEST);
+				logger.info("Impossibile modificare la mensa, valori di superficie o numero locali non validi");
+				throw new GesevException("Impossibile modificare la mensa, valori di superficie o numero locali non validi", HttpStatus.BAD_REQUEST);
 			}
 
 			//Controllo Esistenza
 			Optional<TipoLocale> optionalTipoLocale = tipoLocaliRepository.findById(tpDTO.getCodiceTipoLocale());
 			if(!optionalTipoLocale.isPresent())
 			{
-				logger.info("Impossibile creare la mensa, Tipo Locale non presente");
-				throw new GesevException("Impossibile creare la mensa, Tipo Locale non presente", HttpStatus.BAD_REQUEST);
+				logger.info("Impossibile modificare la mensa, Tipo Locale non presente");
+				throw new GesevException("Impossibile modificare la mensa, Tipo Locale non presente", HttpStatus.BAD_REQUEST);
 			}
 
 			AssMensaTipoLocale assMensaTipoLocale = new AssMensaTipoLocale();
@@ -588,8 +605,8 @@ public class MensaDAOImpl implements MensaDAO
 				Optional<TipoDieta> optionalTipoDieta = tipoDietaRepository.findById(tdDTO.getIdTipoDieta());
 				if(!optionalTipoDieta.isPresent())
 				{
-					logger.info("Impossibile creare la mensa, Tipo Dieta non presente");
-					throw new GesevException("Impossibile creare la mensa, Tipo Dieta non presente", HttpStatus.BAD_REQUEST);
+					logger.info("Impossibile modificare la mensa, Tipo Dieta non presente");
+					throw new GesevException("Impossibile modificare la mensa, Tipo Dieta non presente", HttpStatus.BAD_REQUEST);
 				}
 
 				AssMensaTipoDieta assMensaTipoDieta = new AssMensaTipoDieta();
@@ -642,16 +659,16 @@ public class MensaDAOImpl implements MensaDAO
 			//Controllo Campi mensa
 			if(StringUtils.isBlank(mensa.getDescrizioneMensa()))
 			{
-				logger.info("Impossibile modificare la mensa, campi mensa non validi");
-				throw new GesevException("Impossibile modificare la mensa, campi mensa non validi", HttpStatus.BAD_REQUEST);
+				logger.info("Impossibile disabilitare la mensa, campi mensa non validi");
+				throw new GesevException("Impossibile disabilitare la mensa, campi mensa non validi", HttpStatus.BAD_REQUEST);
 			}
 
 			//Controllo Campi Contatto
 			if(StringUtils.isBlank(mensa.getVia()) || mensa.getNumeroCivico() == null || StringUtils.isBlank(mensa.getCap()) || 
 					StringUtils.isBlank(mensa.getCitta()) || StringUtils.isBlank(mensa.getProvincia()) || StringUtils.isBlank(mensa.getTelefono()))
 			{
-				logger.info("Impossibile modificare la mensa, campi contatto non validi");
-				throw new GesevException("Impossibile modificare la mensa, campi contatto non validi", HttpStatus.BAD_REQUEST);
+				logger.info("Impossibile disabilitare la mensa, campi contatto non validi");
+				throw new GesevException("Impossibile disabilitare la mensa, campi contatto non validi", HttpStatus.BAD_REQUEST);
 			}
 
 			// Aggiornamento 
