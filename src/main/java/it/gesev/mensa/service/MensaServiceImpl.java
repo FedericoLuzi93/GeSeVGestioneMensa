@@ -127,7 +127,11 @@ public class MensaServiceImpl implements MensaService
 		catch(Exception exc)
 		{
 			logger.info("Eccezione nel servizio updateMensa", exc);
-			throw new GesevException("Non è stato possibile modificare la Mensa", HttpStatus.BAD_REQUEST);
+			if(exc instanceof GesevException)
+				throw new GesevException(exc.getMessage(), HttpStatus.BAD_REQUEST);
+			
+			else
+				throw exc;
 		}
 		logger.info("Modifica mensa in corso...");
 		return mensaDAO.updateMensa(idMensa, mensa, creaMensaDTO.getListaTipoLocaleDTO(), creaMensaDTO.getListaTipoPastoDTO() ,

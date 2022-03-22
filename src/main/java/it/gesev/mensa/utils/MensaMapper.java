@@ -77,10 +77,10 @@ public class MensaMapper
 		mensa.setDataFineServizio(simpleDateFormat.parse(creaMensaDTO.getDataFineServizio()));
 
 		if(mensa.getDataInizioServizio().after(mensa.getDataFineServizio()))
-			throw new GesevException("Errore nelle date della mansa, data inizio servizio o data fine servizio non valida");
+			throw new GesevException("Errore nelle date della mensa, data inizio servizio o data fine servizio non valida");
 		
 		if(mensa.getDataInizioServizio().equals(mensa.getDataFineServizio()))
-			throw new GesevException("Errore nelle date della mansa, la data inizio servizio e la data fine servizio non possono essere uguali");
+			throw new GesevException("Errore nelle date della mensa, la data inizio servizio e la data fine servizio non possono essere uguali");
 
 		//Contatti
 

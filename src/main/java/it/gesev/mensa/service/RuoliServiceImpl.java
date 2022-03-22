@@ -285,13 +285,13 @@ public class RuoliServiceImpl implements RuoliService
 		
 		ModelMapper mapper = new ModelMapper();
 		
-		if(listaDipendenti.size() > 0)
+		if(listaDipendenti != null && listaDipendenti.size() > 0)
 		{
 			for(Dipendente dipendente : listaDipendenti)
 				listaDTO.add(mapper.map(dipendente, DipendenteDTO.class));
 		}
 		
-		if(listaAss.size() > 0)
+		if(listaAss != null && listaAss.size() > 0)
 		{
 			for(AssDipendenteRuolo ass : listaAss)
 				listaAssDTO.add(mapper.map(ass, AssDipendenteRuoloDTO.class));
