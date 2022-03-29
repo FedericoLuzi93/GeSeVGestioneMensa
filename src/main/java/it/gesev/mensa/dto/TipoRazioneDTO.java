@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class TipoRazioneDTO 
 {
-	private Integer idTipoRazione;
+	private String idTipoRazione;
 	private String descrizioneTipoRazione;
 }

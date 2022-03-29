@@ -108,7 +108,7 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO
 			if(prenotazione.getTipoRazione() == null || prenotazione.getTipoRazione().getIdTipoRazione() == null)
 				throw new GesevException("Nessun tipo razione trovato con l'ID " + prenotazione.getTipoRazione().getIdTipoRazione(), HttpStatus.BAD_REQUEST);
 			
-			Optional<TipoRazione> optTipoRazione = tipoRazioneRepository.findById(prenotazione.getTipoRazione().getIdTipoRazione());
+			Optional<TipoRazione> optTipoRazione = tipoRazioneRepository.findByIdTipoRazione(prenotazione.getTipoRazione().getIdTipoRazione());
 			if(!optTipoRazione.isPresent())
 				throw new GesevException("Nessun tipo razione trovato con l'ID " + prenotazione.getTipoRazione().getIdTipoRazione(), HttpStatus.BAD_REQUEST);
 			

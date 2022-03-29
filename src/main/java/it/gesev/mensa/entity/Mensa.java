@@ -35,8 +35,8 @@ public class Mensa
 	@Column(name="DESCRIZIONE_MENSA")
 	private String descrizioneMensa;
 	
-	@Column(name="TIPO_DIETA")
-	private String tipoDieta = "Normale";
+//	@Column(name="TIPO_DIETA")
+//	private String tipoDieta = "Normale";
 
 //	@Column(name="SERVIZIO_FESTIVO")
 //	private String servizioFestivo;

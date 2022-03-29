@@ -73,7 +73,7 @@ public class PrenotazioneServiceImpl implements PrenotazioneService {
 			prenotazione.setTipoDieta(tipoDieta);
 			
 			TipoRazioneDTO tipoRazione = new TipoRazioneDTO();
-			tipoRazione.setIdTipoRazione(Double.valueOf(row.getCell(7).getNumericCellValue()).intValue());
+			tipoRazione.setIdTipoRazione(row.getCell(7).getStringCellValue());
 			prenotazione.setTipoRazione(tipoRazione);
 			
 			listaPrenotazioni.add(prenotazione);				

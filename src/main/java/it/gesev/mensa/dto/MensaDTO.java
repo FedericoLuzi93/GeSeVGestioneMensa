@@ -17,7 +17,7 @@ public class MensaDTO
 	private String dataFineServizio;
 	private String descrizioneTipoFormaVettovagliamento;
 	private Integer codiceTipoFormaVettovagliamento;
-	private String tipoDieta;
+//	private String tipoDieta;
 	
 	//Contatti
 	private String via;
