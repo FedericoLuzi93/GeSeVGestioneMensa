@@ -516,11 +516,11 @@ public class MensaServiceImpl implements MensaService
 			feMensaCompletaDTO.setDescrizioneTipoFormaVettovagliamento(mensaDTO.getDescrizioneTipoFormaVettovagliamento());
 		if(mensaDTO.getCodiceTipoFormaVettovagliamento() != null)
 			feMensaCompletaDTO.setCodiceTipoFormaVettovagliamento(mensaDTO.getCodiceTipoFormaVettovagliamento());
-		if(!StringUtils.isBlank(mensaDTO.getTipoDieta()))
-			feMensaCompletaDTO.setTipoDieta(mensaDTO.getTipoDieta());
+//		if(!StringUtils.isBlank(mensaDTO.getTipoDieta()))
+//			feMensaCompletaDTO.setTipoDieta(mensaDTO.getTipoDieta());
 
 		//Contatti
-		if(!StringUtils.isBlank(mensaDTO.getTipoDieta()))
+		if(!StringUtils.isBlank(mensaDTO.getVia()))
 			feMensaCompletaDTO.setVia(mensaDTO.getVia());
 		if(mensaDTO.getNumeroCivico() != null)
 			feMensaCompletaDTO.setNumeroCivico(mensaDTO.getNumeroCivico());
