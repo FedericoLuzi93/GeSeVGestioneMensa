@@ -37,5 +37,8 @@ public class TipoPasto
 	
 	@OneToMany(mappedBy= "tipoPasto", fetch = FetchType.LAZY)
 	private List<Prenotazione> listaPrenotazioni;
+	
+	@OneToMany(mappedBy= "tipoPasto")
+	private List<PastiConsumati> listaPastiConsumati;
 
 }
