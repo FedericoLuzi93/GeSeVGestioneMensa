@@ -28,5 +28,8 @@ public class TipoPagamento
 	
 	@OneToMany(mappedBy= "tipoPagamento")
 	private List<PastiConsumati> listaPastiConsumati;
+	
+	@OneToMany(mappedBy = "tipoPagamento")
+	private List<Prenotazione> listaPrenotazioni;
 
 }

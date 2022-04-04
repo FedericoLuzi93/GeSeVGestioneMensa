@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -27,26 +28,57 @@ public class Prenotazione
 	@Column(name="id_prenotazione")
 	private Integer idPrenotazione;
 	
+	@ManyToOne
+	@JoinColumn(name = "identificativo_sistema_fk")
+	private IdentificativoSistema identificativoSistema;
+	
+	@ManyToOne
+	@JoinColumn(name = "identificativo_mensa_fk")
+	private Mensa mensa;
+	
 	@Column(name = "data_prenotazione")
 	private Date dataPrenotazione;
 	
 	@Column(name = "codice_fiscale")
 	private String codiceFiscale;
 	
-	@Column(name = "flag_cestino")
-	private String flagCestino;
+	@Column(name = "nome")
+	private String nome;
+	
+	@Column(name = "cognome")
+	private String cognome;
+	
+	@Column(name = "tipo_personale")
+	private String tipoPersonale;
 	
 	@ManyToOne
-	@JoinColumn(name = "identificativo_sistema_fk")
-	private IdentificativoSistema identificativoSistema;
+	@JoinColumn(name = "grado_fk")
+	private Grado grado;
 	
 	@ManyToOne
-	@JoinColumn(name = "ente_fk")
-	private Ente ente;
+	@JoinColumn(name = "tipo_grado_fk")
+	private TipoGrado tipoGrado;
+	
+	@ManyToOne
+	@JoinColumn(name = "struttura_organizzativa_fk")
+	private StrutturaOrganizzativa strutturaOrganizzativa;
+	
+	@Column(name = "denominazione_unita_funzionale")
+	private String denominazioneUnitaFunzionale;
+	
+	@Column(name = "commensale_esterno")
+	private String commensaleEsterno;
+	
+	@ManyToOne
+	@JoinColumn(name = "tipo_pagamento_fk")
+	private TipoPagamento tipoPagamento;
 	
 	@ManyToOne
 	@JoinColumn(name = "tipo_pasto_fk")
 	private TipoPasto tipoPasto;
+	
+	@Column(name = "flag_cestino")
+	private String flagCestino;
 	
 	@ManyToOne
 	@JoinColumn(name = "tipo_dieta_fk")

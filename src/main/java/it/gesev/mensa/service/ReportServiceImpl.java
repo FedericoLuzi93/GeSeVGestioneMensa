@@ -43,7 +43,7 @@ public class ReportServiceImpl implements ReportService
        
         reportDAO.caricaPastiConsumati(listaPastiConsumatiCSV);
 
-       logger.info(listaPastiConsumatiCSV + "");
+       //logger.info(listaPastiConsumatiCSV + "");
 		
 	}
 

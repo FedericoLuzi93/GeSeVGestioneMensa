@@ -115,4 +115,7 @@ public class Mensa
 	@OneToMany(mappedBy= "mensa")
 	private List<PastiConsumati> listaPastiConsumati;
 	
+	@OneToMany(mappedBy= "mensa")
+	private List<Prenotazione> listaPrenotazioni;
+	
 }

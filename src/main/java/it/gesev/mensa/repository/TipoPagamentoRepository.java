@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import it.gesev.mensa.entity.TipoPagamento;
 
-public interface TipoPagamentoRepository extends JpaRepository<TipoPagamento, Integer>  
+public interface TipoPagamentoRepository extends JpaRepository<TipoPagamento, String>  
 {
 
 	Optional<TipoPagamento> findByIdTipoPagamento(String tipoPagamento);

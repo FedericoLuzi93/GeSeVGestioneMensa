@@ -16,7 +16,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.springframework.util.ResourceUtils;
 
-public class SQLGeenerator {
+public class SQLGenerator {
 
 	public static void main(String[] args) throws IOException, ParseException 
 	{
