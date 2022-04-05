@@ -124,7 +124,7 @@ public class RuoliDAOImpl implements RuoliDAO
 	}
 
 	@Override
-	public void aggiungiRuoloDipendente(Integer idDipendente, Integer idRuolo, Integer idOrganoDirettivo) throws ParseException 
+	public void aggiungiRuoloDipendente(Integer idDipendente, Integer idRuolo, Integer idOrganoDirettivo, Integer idMensa) throws ParseException 
 	{
 		logger.info("Aggiunta nuovo ruolo...");
 		
@@ -135,6 +135,7 @@ public class RuoliDAOImpl implements RuoliDAO
 		Optional<Dipendente> optionalDipendente = dipendenteRepository.findById(idDipendente);
 		Optional<RuoloMensa> optionalRuolo = ruoloMensaRepository.findById(idRuolo);
 		Optional<OrganoDirettivo> optionalOrganoDirettivo = null;
+		Optional<Mensa> optionalMensa = null;
 		
 		if(idOrganoDirettivo != null)
 		{
@@ -142,6 +143,15 @@ public class RuoliDAOImpl implements RuoliDAO
 			optionalOrganoDirettivo = organoDirettivoRepository.findById(idOrganoDirettivo);
 			if(!optionalOrganoDirettivo.isPresent())
 				throw new GesevException("L'identificativo dell'organo direttivo non e' valido", HttpStatus.BAD_REQUEST);
+		}
+		
+		if(idMensa != null)
+		{
+			logger.info("Controllo mensa...");
+			optionalMensa = mensaRepository.findById(idMensa);
+			if(!optionalMensa.isPresent())
+				throw new GesevException("L'ideenficativo della mensa non e' valido", HttpStatus.BAD_REQUEST);
+			
 		}
 		
 		if(!optionalDipendente.isPresent() || !optionalRuolo.isPresent())
@@ -160,6 +170,7 @@ public class RuoliDAOImpl implements RuoliDAO
 		associazione.setOrganoDirettivo(optionalOrganoDirettivo != null && optionalOrganoDirettivo.isPresent() ? optionalOrganoDirettivo.get() : null);
 		associazione.setDataInizioRuolo(new Date());
 		associazione.setDataFineRuolo(formatter.parse("9999-12-31"));
+		associazione.setMensa(optionalMensa.get());
 		
 		assRuoloDipendenteRepository.save(associazione);
 		
@@ -216,7 +227,7 @@ public class RuoliDAOImpl implements RuoliDAO
 	}
 
 	@Override
-	public void updateRuoloDipendente(Integer idRuoloDipendente, Integer idRuolo, Integer idDipendente, Integer idOrganoDirettivo) {
+	public void updateRuoloDipendente(Integer idRuoloDipendente, Integer idRuolo, Integer idDipendente, Integer idOrganoDirettivo, Integer idMensa) {
 		logger.info(String.format("Aggiornamento del ruolo dipendente con ID %d con (ID ruolo, ID dipendente) = (%d, %d)", idRuoloDipendente, idRuolo, idDipendente));
 		
 		logger.info("Controllo esistenza assoociazione...");
@@ -244,6 +255,17 @@ public class RuoliDAOImpl implements RuoliDAO
 				throw new GesevException("Impossibile trovare un organo direttivo con l'ID specificato", HttpStatus.BAD_REQUEST);
 		}
 		
+		logger.info("Coontrollo mensa...");
+		Optional<Mensa> optionalMensa = null;
+		if(idMensa != null)
+		{
+			logger.info("Controllo mensa...");
+			optionalMensa = mensaRepository.findById(idMensa);
+			if(!optionalMensa.isPresent())
+				throw new GesevException("L'ideenficativo della mensa non e' valido", HttpStatus.BAD_REQUEST);
+			
+		}
+		
 		logger.info("Aggiornamento in corso...");
 		AssDipendenteRuolo associazione = associazioneOpt.get();
 		associazione.setRuolo(ruolo.get());
@@ -253,6 +275,9 @@ public class RuoliDAOImpl implements RuoliDAO
 		
 		else
 			associazione.setOrganoDirettivo(null);
+		
+		if(optionalMensa != null && optionalMensa.isPresent())
+			associazione.setMensa(optionalMensa.get());
 		
 		assRuoloDipendenteRepository.save(associazione);
 		

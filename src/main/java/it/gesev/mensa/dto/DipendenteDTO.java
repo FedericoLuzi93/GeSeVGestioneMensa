@@ -20,4 +20,5 @@ public class DipendenteDTO implements Serializable
 	private String codiceFiscale;
 	private String tipoPersonale;
 	private String grado;
+	private String email;
 }

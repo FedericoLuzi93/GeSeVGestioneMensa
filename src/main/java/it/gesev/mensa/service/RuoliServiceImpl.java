@@ -72,6 +72,9 @@ public class RuoliServiceImpl implements RuoliService
 				ruoloDTO.setAssDipendenteRuoloId(ruolo.getAssDipendenteRuoloId());
 				ruoloDTO.setOrganoDirettivo(ruolo.getOrganoDirettivo() != null ? mapper.map(ruolo.getOrganoDirettivo(), OrganoDirettivoDTO.class) : null);
 				
+				if(ruolo.getRuolo().getDescrizioneRuoloMensa().equalsIgnoreCase("Operatore mensa"))
+					ruoloDTO.setEmailDipendente(ruolo.getDipendente().getEmail());
+				
 				listaRuoliDTO.add(ruoloDTO);
 			}
 			
@@ -126,7 +129,8 @@ public class RuoliServiceImpl implements RuoliService
 		if(associazione.getIdMensa() == null)
 			throw new GesevException("Impossibile trovare una mensa con l'ID specificato", HttpStatus.BAD_REQUEST);
 		
-		ruoliDAO.aggiungiRuoloDipendente(associazione.getDipendente().getCodiceDipendente(), associazione.getRuolo().getCodiceRuoloMensa(), associazione.getOrganoDirettivo().getCodiceOrganoDirettivo());
+		ruoliDAO.aggiungiRuoloDipendente(associazione.getDipendente().getCodiceDipendente(), associazione.getRuolo().getCodiceRuoloMensa(), 
+				                         associazione.getOrganoDirettivo().getCodiceOrganoDirettivo(), associazione.getIdMensa());
 		
 	}
 
@@ -176,6 +180,9 @@ public class RuoliServiceImpl implements RuoliService
 				ruoloDTO.setAssDipendenteRuoloId(ruolo.getAssDipendenteRuoloId());
 				ruoloDTO.setOrganoDirettivo(ruolo.getOrganoDirettivo() != null ? mapper.map(ruolo.getOrganoDirettivo(), OrganoDirettivoDTO.class) : null);
 				
+				if(ruolo.getRuolo().getDescrizioneRuoloMensa().equalsIgnoreCase("Operatore mensa"))
+					ruoloDTO.setEmailDipendente(ruolo.getDipendente().getEmail());
+				
 				listaRuoliDTO.add(ruoloDTO);
 			}
 			
@@ -202,7 +209,8 @@ public class RuoliServiceImpl implements RuoliService
 		
 		ruoliDAO.updateRuoloDipendente(associazione.getAssDipendenteRuoloId(), associazione.getRuolo().getCodiceRuoloMensa(), 
 				                       associazione.getDipendente().getCodiceDipendente(), 
-				                       associazione.getOrganoDirettivo() != null ? associazione.getOrganoDirettivo().getCodiceOrganoDirettivo() : null);
+				                       associazione.getOrganoDirettivo() != null ? associazione.getOrganoDirettivo().getCodiceOrganoDirettivo() : null,
+				                       associazione.getIdMensa());
 		
 		return findDipendenteByIdEnte(associazione.getIdMensa());
 		
@@ -294,7 +302,16 @@ public class RuoliServiceImpl implements RuoliService
 		if(listaAss != null && listaAss.size() > 0)
 		{
 			for(AssDipendenteRuolo ass : listaAss)
+			{
+				AssDipendenteRuoloDTO associazione = mapper.map(ass, AssDipendenteRuoloDTO.class); 
+				if(ass.getRuolo().getDescrizioneRuoloMensa().equalsIgnoreCase("Operatore mensa"))
+					associazione.setEmailDipendente(ass.getDipendente().getEmail());
+				
 				listaAssDTO.add(mapper.map(ass, AssDipendenteRuoloDTO.class));
+				
+					
+			}
+				
 		}
 		
 		dettaglio.setAssociazioniRuolo(listaAssDTO);
