@@ -10,5 +10,5 @@ import it.gesev.mensa.dto.PrenotazioneDTO;
 public interface PrenotazioneService 
 {
 	public void insertPrenotazioni(MultipartFile file) throws IOException;
-	public List<PrenotazioneDTO> getListaPrenotazioni();
+	public List<PrenotazioneDTO> getListaPrenotazioni(String dataPrenotazione);
 }

@@ -10,7 +10,8 @@ import lombok.NoArgsConstructor;
 public class PrenotazioneDTO 
 {
 	private String sistemaPersonale;
-	private String denominazioneEnte;
+	//private String denominazioneEnte;
+	private String denominazioneMensa;
 	private String dataPrenotazione; 
 	private String codiceFiscale;
 	private String nomeCognome;

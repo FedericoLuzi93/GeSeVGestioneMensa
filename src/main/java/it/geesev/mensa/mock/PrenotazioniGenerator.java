@@ -155,7 +155,7 @@ public class PrenotazioniGenerator
 		
 		Integer idMensa = 265;
 		String idSistema = "GPS";
-		Integer idTipoPasto = 1;
+		Integer idTipoPasto = 3;
 		
 		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
 		Calendar calendar = Calendar.getInstance();

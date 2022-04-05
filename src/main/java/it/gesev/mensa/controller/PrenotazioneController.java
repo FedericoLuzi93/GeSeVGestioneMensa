@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -66,11 +67,11 @@ public class PrenotazioneController
 		return ResponseEntity.status(status).headers(new HttpHeaders()).body(esito);
 	}
 	
-	@GetMapping("/caricaPrenotazioni")
+	@GetMapping("/listaPrenotazioni/{dataPrenotazione}")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
 			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
 			@ApiResponse(code = 500, message = "Errore interno") })
-	public ResponseEntity<EsitoDTO> caricaPrenotazioni()
+	public ResponseEntity<EsitoDTO> caricaPrenotazioni(@PathVariable("dataPrenotazione") String dataPrenotazione)
 	{
 		logger.info("Accesso al servizio caricaPrenotazioni");
 		EsitoDTO esito = new EsitoDTO();
@@ -78,7 +79,7 @@ public class PrenotazioneController
 		
 		try
 		{
-			esito.setBody(prenotazioneService.getListaPrenotazioni());
+			esito.setBody(prenotazioneService.getListaPrenotazioni(dataPrenotazione));
 			status = HttpStatus.OK;
 		}
 		

@@ -98,7 +98,7 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO
 		if(listaPrenotazioni == null || listaPrenotazioni.size() == 0)
 			return;
 		
-		SimpleDateFormat formatter = new SimpleDateFormat(this.dateFormat);
+		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
 		int rowCounter = 0;
 		
 		Map<String, IdentificativoSistema> mappaIdSistema = new HashMap<>();
@@ -326,27 +326,28 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO
 	}
 
 	@Override
-	public List<PrenotazioneDTO> getListaPrenotazioni() 
+	public List<PrenotazioneDTO> getListaPrenotazioni(Date dataPrenotazione) 
 	{
 		logger.info("Ricerca lista prenotazioni...");
 		
 		List<PrenotazioneDTO> listaPrenotazioni = new ArrayList<>();
-		String query = "select sistema.descrizione_sistema, e.descrizione_ente, TO_CHAR(p.data_prenotazione, 'DD-MM-YYYY'), p.codice_fiscale, "
-				+ "d.nome || ' ' || d.cognome as NOME_COGNOME, "
-				+ "case when d.tipo_personale = 'M' then 'Militare' else 'Civile' end as TIPO_PERSONALE, "
-				+ "d.grado, tp.descrizione as tipo_pasto, "
+		String query = "select sistema.descrizione_sistema, m.descrizione_mensa, TO_CHAR(p.data_prenotazione, 'DD-MM-YYYY'), p.codice_fiscale, "
+				+ "p.nome || ' ' || p.cognome as NOME_COGNOME, "
+				+ "case when p.tipo_personale = 'M' then 'Militare' else 'Civile' end as TIPO_PERSONALE, "
+				+ "grado.descb_grado, tp.descrizione as tipo_pasto, "
 				+ "case when p.flag_cestino = 'Y' then 'SI' else 'NO' end FLAG_CESTINO, "
 				+ "td.descrizione_tipo_dieta, "
 				+ "tr.descrizione_tipo_razione "
 				+ "from prenotazione p "
 				+ "left join identificativo_sistema sistema on p.identificativo_sistema_fk = sistema.id_sistema "
-				+ "left join ente e on p.ente_fk = e.id_ente "
-				+ "left join dipendente d on p.codice_fiscale = d.codice_fiscale "
 				+ "left join tipo_pasto tp on tp.codice_tipo_pasto = p.tipo_pasto_fk "
 				+ "left join tipo_dieta td on p.tipo_dieta_fk = td.id_tipo_dieta "
-				+ "left join tipo_razione tr on tr.id_tipo_razione = p.tipo_razione_fk ";
+				+ "left join tipo_razione tr on tr.id_tipo_razione = p.tipo_razione_fk "
+				+ "left join mensa m on p.identificativo_mensa_fk = m.codice_mensa "
+				+ "left join grado on p.grado_fk = grado.shsgra_cod_uid_pk "
+				+ "where p.data_prenotazione = :dataPrenotazione";
 		
-		Query selectQuery = entityManager.createNativeQuery(query);
+		Query selectQuery = entityManager.createNativeQuery(query).setParameter("dataPrenotazione", dataPrenotazione);
 		@SuppressWarnings("unchecked")
 		List<Object[]> results = selectQuery.getResultList();
 		
@@ -354,7 +355,7 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO
 		{
 			PrenotazioneDTO prenotazione = new PrenotazioneDTO();
 			prenotazione.setSistemaPersonale((String)record[0]);
-			prenotazione.setDenominazioneEnte((String)record[1]);
+			prenotazione.setDenominazioneMensa((String)record[1]);
 			prenotazione.setDataPrenotazione((String)record[2]);
 			prenotazione.setCodiceFiscale((String)record[3]);
 			prenotazione.setNomeCognome((String)record[4]);
