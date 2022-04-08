@@ -14,7 +14,7 @@ public interface RuoliService
 {
 	public DettaglioRuoloDTO getDettaglioRuoli();
 	public List<OrganoDirettivoDTO> getListaOrganiDirettivi();
-	public List<RuoloDTO> getRuoliByIdOrdineDirettivo();
+	public List<RuoloDTO> getRuoliByIdOrdineDirettivo(String tipoRuolo);
 	public void aggiungiRuoloDipendente(AssDipendenteRuoloDTO associazione) throws ParseException;
 	public DettaglioRuoloDTO ricercaDipendenti(List<RicercaColonnaDTO> listaColonne, Integer idMensa);
 	public DettaglioRuoloDTO updateRuoloDipendente(AssDipendenteRuoloDTO associazione);

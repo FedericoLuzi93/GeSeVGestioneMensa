@@ -25,6 +25,12 @@ public class RuoloMensa
 	@Column(name = "DESCRIZIONE_RUOLO_MENSA")
 	private String descrizioneRuoloMensa;
 	
+	@Column(name = "flag_personale_esterno")
+	private String flagPersonaleEsterno;
+	
+	@Column(name = "flag_personale_interno")
+	private String flagPersonaleInterno;
+	
 	@OneToMany(mappedBy = "ruolo")
 	private List<AssDipendenteRuolo> listaDipendenteRuolo;
 	

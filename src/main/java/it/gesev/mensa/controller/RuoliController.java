@@ -108,11 +108,11 @@ public class RuoliController
 		return ResponseEntity.status(status).headers(new HttpHeaders()).body(esito);
 	}
 	
-	@GetMapping("/elencoRuoli")
+	@GetMapping("/elencoRuoli/{tipoRuoli}")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
 			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
 			@ApiResponse(code = 500, message = "Errore interno") })
-	public ResponseEntity<EsitoDTO> getElencoRuoli()
+	public ResponseEntity<EsitoDTO> getElencoRuoli(@PathVariable("tipoRuoli") String tipoRuoli)
 	{
 		logger.info("Accesso al servizio getElencoRuoli");
 		EsitoDTO esito = new EsitoDTO();
@@ -120,7 +120,7 @@ public class RuoliController
 		
 		try
 		{
-			esito.setBody(ruoliService.getRuoliByIdOrdineDirettivo());
+			esito.setBody(ruoliService.getRuoliByIdOrdineDirettivo(tipoRuoli));
 			status = HttpStatus.OK;
 		}
 		

@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
@@ -32,6 +33,7 @@ import it.gesev.mensa.entity.Mensa;
 import it.gesev.mensa.entity.OrganoDirettivo;
 import it.gesev.mensa.entity.RuoloMensa;
 import it.gesev.mensa.enums.ColonneDipendenteEnum;
+import it.gesev.mensa.enums.TipoRuoloEnum;
 import it.gesev.mensa.exc.GesevException;
 import it.gesev.mensa.repository.AssRuoloDipendenteRepository;
 import it.gesev.mensa.repository.DipendenteRepository;
@@ -113,11 +115,43 @@ public class RuoliDAOImpl implements RuoliDAO
 	}
 
 	@Override
-	public List<RuoloMensa> getRuoliByIdOrdineDirettivo() 
+	public List<RuoloMensa> getRuoliByIdOrdineDirettivo(String tipoRuolo) 
 	{
 		logger.info("Ricerca dei ruoli...");
-//		List<RuoloMensa> listaRuoli = ruoloMensaRepository.getRuoliByIdOrdineDirettivo(idOrganoDirettivo);
-		List<RuoloMensa> listaRuoli = ruoloMensaRepository.findAllByOrderByDescrizioneRuoloMensaAsc();
+		
+		List<RuoloMensa> listaRuoli = null;
+		
+		TipoRuoloEnum ruoloEnum;
+		try 
+		{
+			ruoloEnum = TipoRuoloEnum.valueOf(tipoRuolo.toUpperCase());
+		} 
+		
+		catch (Exception e) 
+		{
+			throw new GesevException("Il tipo ruolo fornito non e' valido", HttpStatus.BAD_REQUEST);
+		}
+		
+		if(ruoloEnum == null)
+			throw new GesevException("Il tipo ruolo fornito non e' valido", HttpStatus.BAD_REQUEST);
+		
+		switch(ruoloEnum)
+		{
+			case DIPENDENTE:
+				listaRuoli = ruoloMensaRepository.getRuoliPerInterni(Sort.by(Sort.Direction.ASC, "descrizioneRuoloMensa"));
+				break;
+				
+			case ESTERNO:
+				listaRuoli = ruoloMensaRepository.getRuoliEsterni(Sort.by(Sort.Direction.ASC, "descrizioneRuoloMensa"));
+				break;
+			default:
+				break;
+		
+		}
+		
+		if(listaRuoli == null)
+			throw new GesevException("Il tipo ruolo fornito non e' valido", HttpStatus.BAD_REQUEST);
+		
 		logger.info("Trovati " + listaRuoli.size() + " elementi.");
 		
 		return listaRuoli;
