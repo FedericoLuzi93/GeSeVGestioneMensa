@@ -3,7 +3,6 @@ package it.gesev.mensa.service;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -72,8 +71,8 @@ public class RuoliServiceImpl implements RuoliService
 				ruoloDTO.setAssDipendenteRuoloId(ruolo.getAssDipendenteRuoloId());
 				ruoloDTO.setOrganoDirettivo(ruolo.getOrganoDirettivo() != null ? mapper.map(ruolo.getOrganoDirettivo(), OrganoDirettivoDTO.class) : null);
 				
-				if(ruolo.getRuolo().getDescrizioneRuoloMensa().equalsIgnoreCase("Operatore mensa"))
-					ruoloDTO.setEmailDipendente(ruolo.getDipendente().getEmail());
+//				if(ruolo.getRuolo().getDescrizioneRuoloMensa().equalsIgnoreCase("Operatore mensa"))
+//					ruoloDTO.setEmailEsterno(ruolo.getDipendente().getEmail());
 				
 				listaRuoliDTO.add(ruoloDTO);
 			}
@@ -180,8 +179,8 @@ public class RuoliServiceImpl implements RuoliService
 				ruoloDTO.setAssDipendenteRuoloId(ruolo.getAssDipendenteRuoloId());
 				ruoloDTO.setOrganoDirettivo(ruolo.getOrganoDirettivo() != null ? mapper.map(ruolo.getOrganoDirettivo(), OrganoDirettivoDTO.class) : null);
 				
-				if(ruolo.getRuolo().getDescrizioneRuoloMensa().equalsIgnoreCase("Operatore mensa"))
-					ruoloDTO.setEmailDipendente(ruolo.getDipendente().getEmail());
+//				if(ruolo.getRuolo().getDescrizioneRuoloMensa().equalsIgnoreCase("Operatore mensa"))
+//					ruoloDTO.setEmailEsterno(ruolo.getDipendente().getEmail());
 				
 				listaRuoliDTO.add(ruoloDTO);
 			}
@@ -304,8 +303,8 @@ public class RuoliServiceImpl implements RuoliService
 			for(AssDipendenteRuolo ass : listaAss)
 			{
 				AssDipendenteRuoloDTO associazione = mapper.map(ass, AssDipendenteRuoloDTO.class); 
-				if(ass.getRuolo().getDescrizioneRuoloMensa().equalsIgnoreCase("Operatore mensa"))
-					associazione.setEmailDipendente(ass.getDipendente().getEmail());
+//				if(ass.getRuolo().getDescrizioneRuoloMensa().equalsIgnoreCase("Operatore mensa"))
+//					associazione.setEmailEsterno(ass.getDipendente().getEmail());
 				
 				listaAssDTO.add(mapper.map(ass, AssDipendenteRuoloDTO.class));
 				
@@ -318,6 +317,57 @@ public class RuoliServiceImpl implements RuoliService
 		dettaglio.setListaDipendenti(listaDTO);
 		
 		return dettaglio;
+	}
+
+	@Override
+	public void aggiungiRuoloDipendenteEsterno(AssDipendenteRuoloDTO adrd) throws ParseException 
+	{
+		logger.info("Servizio per aggiunta dipendente esterno...");
+		
+		if(adrd == null || adrd.getRuolo() == null || adrd.getIdMensa() == null)
+			throw new GesevException("Dati forniti per l'associazione non validi", HttpStatus.BAD_REQUEST);
+		
+		ruoliDAO.aggiungiRuoloDipendenteEsterno(adrd.getNomeEsterno(), adrd.getCognomeEsterno(), adrd.getEmailEsterno(), adrd.getRuolo().getCodiceRuoloMensa(), adrd.getIdMensa());
+		
+	}
+
+	@Override
+	public List<AssDipendenteRuoloDTO> findRuoliDipendentiEsterni(Integer codiceMensa) 
+	{
+		logger.info("Servizio per ricerca ruoli per dipendenti esterni...");
+		
+		List<AssDipendenteRuolo> listaRuoli = ruoliDAO.findRuoliDipendentiEsterni(codiceMensa);
+		List<AssDipendenteRuoloDTO> listaRuoliDTO = new ArrayList<>();
+		
+		if(listaRuoli != null && listaRuoli.size() > 0)
+		{
+			ModelMapper mapper = new ModelMapper();
+			
+			for(AssDipendenteRuolo ruolo : listaRuoli)
+			{
+				AssDipendenteRuoloDTO ruoloDTO = new AssDipendenteRuoloDTO();
+				ruoloDTO.setRuolo(mapper.map(ruolo.getRuolo(), RuoloDTO.class));
+				ruoloDTO.setAssDipendenteRuoloId(ruolo.getAssDipendenteRuoloId());
+				
+				if(ruolo.getDipendente() != null)
+					ruoloDTO.setDipendente(mapper.map(ruolo.getDipendente(), DipendenteDTO.class));
+				
+				if(ruolo.getMensa() != null)
+					ruoloDTO.setIdMensa(ruolo.getMensa().getCodiceMensa());
+				
+				if(ruolo.getDipendenteEsterno() != null)
+				{
+					ruoloDTO.setNomeEsterno(ruolo.getDipendenteEsterno().getNomeDipendenteEsterno());
+					ruoloDTO.setCognomeEsterno(ruolo.getDipendenteEsterno().getCognomeDipendenteEsterno());
+					ruoloDTO.setEmailEsterno(ruolo.getDipendenteEsterno().getEmailDipendenteEsterno());
+				}
+				
+				listaRuoliDTO.add(ruoloDTO);
+			}
+		}
+		
+		return listaRuoliDTO;
+		
 	}
 
 }

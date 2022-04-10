@@ -32,6 +32,10 @@ public class AssDipendenteRuolo
 	private Dipendente dipendente;
 	
 	@ManyToOne
+	@JoinColumn(name = "dipendente_esterno_fk")
+	private DipendenteEsterno dipendenteEsterno;
+	
+	@ManyToOne
 	@JoinColumn(name = "RUOLO_FK")
 	private RuoloMensa ruolo;
 	

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import it.gesev.mensa.dto.AssDipendenteRuoloDTO;
+import it.gesev.mensa.dto.AssReportRuoloMensaDTO;
 import it.gesev.mensa.dto.DettaglioRuoloDTO;
 import it.gesev.mensa.dto.EsitoDTO;
 import it.gesev.mensa.dto.OrganoDirettivoDTO;
@@ -385,6 +386,74 @@ public class RuoliController
 		try
 		{
 			esito.setBody(ruoliService.findDipendenteByIdEnte(idMensa));
+			status = HttpStatus.OK;
+		}
+		
+		catch(GesevException gex)   
+		{
+			logger.info("Si e' verificata un'eccezione", gex);
+			status = gex.getStatus();
+			esito.setMessaggio(gex.getMessage());
+		}
+		catch(Exception ex)
+		{
+			logger.info("Si e' verificata un'eccezione interna", ex);
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+			esito.setMessaggio(MESSAGGIO_ERRORE_INTERNO);
+		}
+		
+		esito.setStatus(status.value());
+		return ResponseEntity.status(status).headers(new HttpHeaders()).body(esito);
+	}
+	
+	@GetMapping("/getRuoliDipendenteEsterno/{idMensa}")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
+			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
+			@ApiResponse(code = 500, message = "Errore interno") })
+	public ResponseEntity<EsitoDTO> getRuoliDipendenteEsterno(@PathVariable("idMensa") Integer idMensa)
+	{
+		logger.info("Accesso al servizio getRuoliDipendenteEsterno");
+		EsitoDTO esito = new EsitoDTO();
+		HttpStatus status = null;
+		
+		try
+		{
+			esito.setBody(ruoliService.findRuoliDipendentiEsterni(idMensa));
+			status = HttpStatus.OK;
+		}
+		
+		catch(GesevException gex)   
+		{
+			logger.info("Si e' verificata un'eccezione", gex);
+			status = gex.getStatus();
+			esito.setMessaggio(gex.getMessage());
+		}
+		catch(Exception ex)
+		{
+			logger.info("Si e' verificata un'eccezione interna", ex);
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+			esito.setMessaggio(MESSAGGIO_ERRORE_INTERNO);
+		}
+		
+		esito.setStatus(status.value());
+		return ResponseEntity.status(status).headers(new HttpHeaders()).body(esito);
+	}
+	
+	
+	@PostMapping("/aggiungiRuoloDipendenteEsterno")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
+			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
+			@ApiResponse(code = 500, message = "Errore interno") })
+	public ResponseEntity<EsitoDTO> aggiungiRuoloDipendenteEsterno(@RequestBody AssDipendenteRuoloDTO associazione)
+	{
+		logger.info("Accesso al servizio aggiungiRuoloDipendenteEsterno");
+		EsitoDTO esito = new EsitoDTO();
+		HttpStatus status = null;
+		
+		try
+		{
+			ruoliService.aggiungiRuoloDipendenteEsterno(associazione);
+			esito.setBody(ruoliService.findRuoliDipendentiEsterni(associazione.getIdMensa()));
 			status = HttpStatus.OK;
 		}
 		

@@ -5,10 +5,10 @@ import java.util.List;
 
 import it.gesev.mensa.dto.AssDipendenteRuoloDTO;
 import it.gesev.mensa.dto.DettaglioRuoloDTO;
-import it.gesev.mensa.dto.DipendenteDTO;
 import it.gesev.mensa.dto.OrganoDirettivoDTO;
 import it.gesev.mensa.dto.RicercaColonnaDTO;
 import it.gesev.mensa.dto.RuoloDTO;
+import it.gesev.mensa.entity.AssDipendenteRuolo;
 
 public interface RuoliService 
 {
@@ -25,5 +25,8 @@ public interface RuoliService
 	public int cancellaOrganoDirettivo(int idOrganoDirettivo);
 	
 	public DettaglioRuoloDTO findDipendenteByIdEnte(Integer idMensa);
+	public void aggiungiRuoloDipendenteEsterno(AssDipendenteRuoloDTO adrd) throws ParseException;
+	public List<AssDipendenteRuoloDTO> findRuoliDipendentiEsterni(Integer codiceMensa);
+
 
 }

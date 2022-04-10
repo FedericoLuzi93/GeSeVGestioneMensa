@@ -28,6 +28,7 @@ import org.springframework.stereotype.Component;
 import it.gesev.mensa.dto.RicercaColonnaDTO;
 import it.gesev.mensa.entity.AssDipendenteRuolo;
 import it.gesev.mensa.entity.Dipendente;
+import it.gesev.mensa.entity.DipendenteEsterno;
 import it.gesev.mensa.entity.Ente;
 import it.gesev.mensa.entity.Mensa;
 import it.gesev.mensa.entity.OrganoDirettivo;
@@ -36,6 +37,7 @@ import it.gesev.mensa.enums.ColonneDipendenteEnum;
 import it.gesev.mensa.enums.TipoRuoloEnum;
 import it.gesev.mensa.exc.GesevException;
 import it.gesev.mensa.repository.AssRuoloDipendenteRepository;
+import it.gesev.mensa.repository.DipendenteEsternoRepository;
 import it.gesev.mensa.repository.DipendenteRepository;
 import it.gesev.mensa.repository.EnteRepository;
 import it.gesev.mensa.repository.MensaRepository;
@@ -68,6 +70,9 @@ public class RuoliDAOImpl implements RuoliDAO
 	
 	@Autowired
 	private EnteRepository enteRepository;
+	
+	@Autowired
+	private DipendenteEsternoRepository dipendenteEsternoRepository;
 	
 	@PersistenceContext
 	EntityManager entityManager;
@@ -409,6 +414,65 @@ public class RuoliDAOImpl implements RuoliDAO
 			throw new GesevException("Impossibile reperire l'ente di appartennza della mensa", HttpStatus.INTERNAL_SERVER_ERROR);
 		
 		return dipendenteRepository.findDipendenteByIdEnte(optEnte.get().getIdEnte());
+	}
+
+	@Override
+	public void aggiungiRuoloDipendenteEsterno(String nome, String cognome, String email, Integer idRuolo, Integer idMensa) throws ParseException 
+	{
+		logger.info("Aggiunta ruolo per dipendente esterno...");
+		
+		logger.info("Controllo dati anagrafici...");
+		if(StringUtils.isBlank(email))
+			throw new GesevException("L'email e' obbligatoria", HttpStatus.BAD_REQUEST);
+		
+		if(StringUtils.isBlank(nome))
+			throw new GesevException("Il nome e' obbligatoria", HttpStatus.BAD_REQUEST);
+		
+		if(StringUtils.isBlank(cognome))
+			throw new GesevException("Il cognome e' obbligatoria", HttpStatus.BAD_REQUEST);
+		
+		logger.info("Controllo ruolo...");
+		if(idRuolo == null)
+			throw new GesevException("Nessun ruolo trovato con l'ID specificato", HttpStatus.BAD_REQUEST);
+		
+		Optional<RuoloMensa> optRuolo = ruoloMensaRepository.findById(idRuolo);
+		if(!optRuolo.isPresent())
+			throw new GesevException("Nessun ruolo trovato con l'ID specificato", HttpStatus.BAD_REQUEST);
+		
+		logger.info("Controllo mensa...");
+		if(idMensa == null)
+			throw new GesevException("Nessuna mensa trovata con l'ID specificato", HttpStatus.BAD_REQUEST);
+		
+		Optional<Mensa> optMensa = mensaRepository.findById(idMensa);
+		if(!optMensa.isPresent())
+			throw new GesevException("Nessuna mensa trovata con l'ID specificato", HttpStatus.BAD_REQUEST);
+		
+		logger.info("Creazione nuovo dipendente esterno...");
+		DipendenteEsterno dipendente = new DipendenteEsterno();
+		dipendente.setCognomeDipendenteEsterno(cognome.toUpperCase());
+		dipendente.setEmailDipendenteEsterno(email.toUpperCase());
+		dipendente.setNomeDipendenteEsterno(nome.toUpperCase());
+		
+		DipendenteEsterno dipendenteSalvato = dipendenteEsternoRepository.save(dipendente);
+		
+		logger.info("Creazione nuovo ruolo...");
+		AssDipendenteRuolo associazione = new AssDipendenteRuolo();
+		SimpleDateFormat formatter = new SimpleDateFormat(this.dateFormat);
+		associazione.setDataFineRuolo(formatter.parse("9999-12-31"));
+		associazione.setDataInizioRuolo(new Date());
+		associazione.setDipendenteEsterno(dipendenteSalvato);
+		associazione.setMensa(optMensa.get());
+		associazione.setRuolo(optRuolo.get());
+		
+		assRuoloDipendenteRepository.save(associazione);
+		
+	}
+
+	@Override
+	public List<AssDipendenteRuolo> findRuoliDipendentiEsterni(Integer codiceMensa) {
+		logger.info("Ricerca ruoli per dipendenti esterni...");
+		
+		return assRuoloDipendenteRepository.findRuoliDipendentiEsterni(codiceMensa);
 	}
 
 	
