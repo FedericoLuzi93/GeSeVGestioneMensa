@@ -370,4 +370,12 @@ public class RuoliServiceImpl implements RuoliService
 		
 	}
 
+	@Override
+	public void updateRuoloDipendenteEsterno(AssDipendenteRuoloDTO associazione) {
+		logger.info("Servizio per aggiornamento ruolo esterno...");
+		
+		ruoliDAO.updateRuoloDipendenteEsterno(associazione);
+		
+	}
+
 }

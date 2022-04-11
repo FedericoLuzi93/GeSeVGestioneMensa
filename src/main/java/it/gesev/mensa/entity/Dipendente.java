@@ -30,8 +30,8 @@ public class Dipendente
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer codiceDipendente;
 	
-	@Column(name = "FOTO", columnDefinition = "BLOB")
-	@Lob
+	@Column(name = "FOTO" /*, columnDefinition = "BLOB"*/)
+	//@Lob
 	private byte[] foto;
 	
 	@Column(name = "NOME")

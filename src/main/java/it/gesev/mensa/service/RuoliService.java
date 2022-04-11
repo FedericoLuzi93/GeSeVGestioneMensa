@@ -27,6 +27,6 @@ public interface RuoliService
 	public DettaglioRuoloDTO findDipendenteByIdEnte(Integer idMensa);
 	public void aggiungiRuoloDipendenteEsterno(AssDipendenteRuoloDTO adrd) throws ParseException;
 	public List<AssDipendenteRuoloDTO> findRuoliDipendentiEsterni(Integer codiceMensa);
-
+	public void updateRuoloDipendenteEsterno(AssDipendenteRuoloDTO associazione);
 
 }

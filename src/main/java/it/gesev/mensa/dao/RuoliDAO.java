@@ -3,6 +3,7 @@ package it.gesev.mensa.dao;
 import java.text.ParseException;
 import java.util.List;
 
+import it.gesev.mensa.dto.AssDipendenteRuoloDTO;
 import it.gesev.mensa.dto.RicercaColonnaDTO;
 import it.gesev.mensa.entity.AssDipendenteRuolo;
 import it.gesev.mensa.entity.Dipendente;
@@ -29,4 +30,5 @@ public interface RuoliDAO
 	
 	public List<Dipendente> findDipendenteByIdEnte(Integer idMensa);
 	public List<AssDipendenteRuolo> findRuoliDipendentiEsterni(Integer codiceMensa);
+	public void updateRuoloDipendenteEsterno(AssDipendenteRuoloDTO associazione);
 }

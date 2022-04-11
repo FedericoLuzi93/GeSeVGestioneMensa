@@ -25,6 +25,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
+import it.gesev.mensa.dto.AssDipendenteRuoloDTO;
 import it.gesev.mensa.dto.RicercaColonnaDTO;
 import it.gesev.mensa.entity.AssDipendenteRuolo;
 import it.gesev.mensa.entity.Dipendente;
@@ -473,6 +474,36 @@ public class RuoliDAOImpl implements RuoliDAO
 		logger.info("Ricerca ruoli per dipendenti esterni...");
 		
 		return assRuoloDipendenteRepository.findRuoliDipendentiEsterni(codiceMensa);
+	}
+
+	@Override
+	public void updateRuoloDipendenteEsterno(AssDipendenteRuoloDTO associazione) 
+	{
+		logger.info("Aggiornamento dipendente esterno...");
+		
+		if(associazione == null || associazione.getAssDipendenteRuoloId() == null)
+			throw new GesevException("Informazioni sull'associazione insufficienti", HttpStatus.BAD_REQUEST);
+		
+		logger.info("Ricerca associazione...");
+		Optional<AssDipendenteRuolo> optAssociazione = assRuoloDipendenteRepository.findById(associazione.getAssDipendenteRuoloId());
+		if(!optAssociazione.isPresent())
+			throw new GesevException("Identificativo associazione non valido", HttpStatus.BAD_REQUEST);
+		
+		if(associazione.getDipendente() != null)
+		{
+			optAssociazione.get().getDipendente().setEmail(associazione.getDipendente().getEmail());
+			
+		}
+		
+		else if(associazione.getDipendente() == null)
+		{
+			optAssociazione.get().getDipendenteEsterno().setCognomeDipendenteEsterno(associazione.getCognomeEsterno());
+			optAssociazione.get().getDipendenteEsterno().setNomeDipendenteEsterno(associazione.getNomeEsterno());
+			optAssociazione.get().getDipendenteEsterno().setEmailDipendenteEsterno(associazione.getEmailEsterno());
+		}
+		
+		assRuoloDipendenteRepository.save(optAssociazione.get());
+	
 	}
 
 	
