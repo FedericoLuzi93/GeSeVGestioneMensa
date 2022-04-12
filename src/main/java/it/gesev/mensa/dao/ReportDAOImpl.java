@@ -29,9 +29,12 @@ import org.springframework.stereotype.Repository;
 import it.gesev.mensa.dto.DC4RichiestaDTO;
 import it.gesev.mensa.dto.DC4TabellaAllegatoCDTO;
 import it.gesev.mensa.dto.DC4TabellaDTO;
+import it.gesev.mensa.dto.FirmaQuotidianaDC4DTO;
 import it.gesev.mensa.dto.FirmeDC4;
 import it.gesev.mensa.dto.PastiConsumatiDTO;
 import it.gesev.mensa.entity.Dipendente;
+import it.gesev.mensa.entity.Ente;
+import it.gesev.mensa.entity.FirmaQuodidiana;
 import it.gesev.mensa.entity.ForzaEffettiva;
 import it.gesev.mensa.entity.IdentificativoSistema;
 import it.gesev.mensa.entity.Mensa;
@@ -40,6 +43,7 @@ import it.gesev.mensa.entity.TipoPagamento;
 import it.gesev.mensa.entity.TipoPasto;
 import it.gesev.mensa.exc.GesevException;
 import it.gesev.mensa.repository.DipendenteRepository;
+import it.gesev.mensa.repository.EnteRepository;
 import it.gesev.mensa.repository.FirmaQuodidianaRepository;
 import it.gesev.mensa.repository.ForzaEffettivaRepository;
 import it.gesev.mensa.repository.IdentificativoSistemaRepository;
@@ -78,9 +82,13 @@ public class ReportDAOImpl implements ReportDAO
 
 	@Autowired
 	private IdentificativoSistemaRepository identificativoSistemaRepository;
-	
+
 	@Autowired
 	private FirmaQuodidianaRepository firmaQuodidianaRepository;
+
+	@Autowired
+	private EnteRepository enteRepository;
+
 
 	@PersistenceContext
 	EntityManager entityManager;
@@ -161,7 +169,7 @@ public class ReportDAOImpl implements ReportDAO
 					+ "prenotati.COLAZIONE, "
 					+ "prenotati.PRANZO, "
 					+ "prenotati.CENA "
-//					+ "case when fqd.id_firma is not null then 'Y' else 'N' end FIRMATO "
+					//					+ "case when fqd.id_firma is not null then 'Y' else 'N' end FIRMATO "
 					+ "from "
 					+ "(select p.data_prenotazione, "
 					+ "sum(case when p.tipo_pasto_fk = 1 then 1 else 0 end) as COLAZIONE, "
@@ -171,22 +179,22 @@ public class ReportDAOImpl implements ReportDAO
 					+ "left join mensa m on p.identificativo_mensa_fk = m.codice_mensa  "
 					+ "where to_char(p.data_prenotazione, 'YYYY-MM-DD') like " + giorno + "  "
 					+ "and m.ente_fk = " + enteFk + " ";
-			
+
 			if(!StringUtils.isBlank(dc4RichiestaDTO.getSistemaPersonale()))
 				queryOrdinati = queryOrdinati + "and p.identificativo_sistema_fk = :idPersonale ";
-			
-			
+
+
 			queryOrdinati = queryOrdinati 	+ "group by p.data_prenotazione "
-											+ "order by p.data_prenotazione) prenotati "
-//											+ "left join firma_quotidiana_dc4 fqd on prenotati.data_prenotazione = fqd.data_firma and fqd.id_operatore = " + idOperatore + "  "
-											+ "order by prenotati.data_prenotazione;";
+					+ "order by p.data_prenotazione) prenotati "
+					//											+ "left join firma_quotidiana_dc4 fqd on prenotati.data_prenotazione = fqd.data_firma and fqd.id_operatore = " + idOperatore + "  "
+					+ "order by prenotati.data_prenotazione;";
 
 			logger.info("Esecuzione query: " + queryOrdinati); 
 			Query ordQuery = entityManager.createNativeQuery(queryOrdinati);
-			
+
 			if(!StringUtils.isBlank(dc4RichiestaDTO.getSistemaPersonale()))
 				ordQuery = ordQuery.setParameter("idPersonale", dc4RichiestaDTO.getSistemaPersonale());
-				
+
 			List<Object[]> listOfResultsOrdinati = ordQuery.getResultList();
 
 			for(Object[] obj : listOfResultsOrdinati)
@@ -200,11 +208,11 @@ public class ReportDAOImpl implements ReportDAO
 				Integer cenaOrdinati = ((BigInteger) obj[3]).intValue();
 				dc4.setCenaOridnati(cenaOrdinati);
 
-//				String firma = (String) obj[4];
-//				if(firma.equalsIgnoreCase("Y"))
-//					dc4.setFirma("SI");
-//				else
-//					dc4.setFirma("NO");
+				//				String firma = (String) obj[4];
+				//				if(firma.equalsIgnoreCase("Y"))
+				//					dc4.setFirma("SI");
+				//				else
+				//					dc4.setFirma("NO");
 
 				Date dataReport = ((Date) obj[0]);
 				dc4.setGiorno(simpleDateFormat.format(dataReport));
@@ -225,19 +233,19 @@ public class ReportDAOImpl implements ReportDAO
 					+ "left join mensa m on p.mensa_fk = m.codice_mensa  "
 					+ "where	m.ente_fk = " + enteFk + "  "
 					+ "and to_char(p.data_pasto, 'YYYY-MM-DD') like " + giorno + "  ";
-			
+
 			if(!StringUtils.isBlank(dc4RichiestaDTO.getSistemaPersonale()))
 				queryConsumati = queryConsumati + "and p.identificativo_sistema_fk = :idPersonale ";
-			
+
 			queryConsumati = queryConsumati	+ "group by p.data_pasto  "
-											+ "order by p.data_pasto;";
-	
+					+ "order by p.data_pasto;";
+
 			logger.info("Esecuzione query: " + queryConsumati); 
 			Query consQuery = entityManager.createNativeQuery(queryConsumati);
-			
+
 			if(!StringUtils.isBlank(dc4RichiestaDTO.getSistemaPersonale()))
 				consQuery = consQuery.setParameter("idPersonale", dc4RichiestaDTO.getSistemaPersonale());
-			
+
 			List<Object[]> listOfResultsConsumati = consQuery.getResultList();
 
 			for(Object[] obj : listOfResultsConsumati)
@@ -289,7 +297,7 @@ public class ReportDAOImpl implements ReportDAO
 					dto.setColazioneEffettiva(fe.getNumDipendenti());
 					dto.setPranzoEffettiva(fe.getNumDipendenti());
 					dto.setCenaEffettiva(fe.getNumDipendenti());
-					
+
 					dto.setGiorno(simpleDateFormat.format(fe.getDataRiferimento()));
 
 					dto.setDescrizioneEnte(descrizioneEnte);
@@ -299,7 +307,7 @@ public class ReportDAOImpl implements ReportDAO
 				}
 			}
 		}
-		
+
 		//Firme
 		logger.info("Ricerca firme del mese in corso...");
 		Date dataInizio = simpleDateFormat.parse(dc4RichiestaDTO.getAnno() + "-" + dc4RichiestaDTO.getMese() + "-01");
@@ -308,17 +316,17 @@ public class ReportDAOImpl implements ReportDAO
 		calendar.setTime(dataInizio);
 		int maxGiorno = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
 		calendar.set(Calendar.DAY_OF_MONTH, maxGiorno);
-		
+
 		List<Date> listaDate = firmaQuodidianaRepository.getDateFirmeMensili(dataInizio, calendar.getTime());
-		
+
 		for(Date dataFirmata :  listaDate)
 		{
 			String dataFormattata = simpleDateFormat.format(dataFirmata);
 			if(map.containsKey(dataFormattata))
 				map.get(dataFormattata).setFirma("SI");	
 		}
-		
-		
+
+
 
 		List<DC4TabellaDTO> listaDC4TabellaDTO = map.entrySet().stream()
 				.sorted(Comparator.comparing(Map.Entry::getKey))
@@ -467,6 +475,64 @@ public class ReportDAOImpl implements ReportDAO
 		logger.info("Accesso a getAllIdentificativiSistema classe ReportDAOImpl");
 		return identificativoSistemaRepository.findAll();
 	}
+
+
+	/* Aggiungi una nuova Firma */
+	@Override
+	public int createNuovaFirma(FirmaQuotidianaDC4DTO firmaQuotidianaDC4DTO) throws ParseException 
+	{
+		logger.info("Accesso al servizio createNuovaFirma");
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
+		FirmaQuodidiana firmaQuodidiana = new FirmaQuodidiana();
+
+		logger.info("Controllo esistenza ente in corso...");
+		Optional<Ente> optionalEnte = enteRepository.findById(firmaQuotidianaDC4DTO.getIdEnte());
+
+		if(!optionalEnte.isPresent())
+			throw new GesevException("Non è stato possibile creare la Firma, ente non presente");
+
+		logger.info("Creazione firma in corso...");
+		try 
+		{
+			firmaQuodidiana.setDataFirma(simpleDateFormat.parse(firmaQuotidianaDC4DTO.getDataFirma()));
+			firmaQuodidiana.setIdOperatore(firmaQuotidianaDC4DTO.getIdOperatore());
+			firmaQuodidiana.setEnte(optionalEnte.get());
+			firmaQuodidianaRepository.save(firmaQuodidiana);
+		}
+		catch(GesevException exc)
+		{
+			logger.info("Eccezione nel servizio createTipoDerrata" + exc);
+			throw new GesevException("Non è stato possibile inserire la nuova firma" + exc, HttpStatus.BAD_REQUEST);
+		}
+		logger.info("Creazione firma avvenuta con successo");
+		return 1;
+	}
+
+	/* Cancella un Firma */
+	@Override
+	public int deleteFirma(FirmaQuotidianaDC4DTO firmaQuotidianaDC4DTO) throws ParseException
+	{
+		logger.info("Accesso al servizio createNuovaFirma");
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
+		logger.info("Cancellazione firma in corso...");
+		try
+		{
+			Date dataDelete = simpleDateFormat.parse(firmaQuotidianaDC4DTO.getDataFirma());
+			firmaQuodidianaRepository.deleteByValues(firmaQuotidianaDC4DTO.getIdEnte(), 
+					firmaQuotidianaDC4DTO.getIdOperatore(), dataDelete);
+		}
+		catch(GesevException exc)
+		{
+			logger.info("Eccezione nel servizio deleteFirma" + exc);
+			throw new GesevException("Non è stato possibile cancellare la nuova firma" + exc, HttpStatus.BAD_REQUEST);
+		}
+		logger.info("Cancellazione avvenuta con successo");
+		return 1;
+	}
+
+
+
+
 
 
 

@@ -28,12 +28,11 @@ import it.gesev.mensa.dto.DC4RichiestaDTO;
 import it.gesev.mensa.dto.DC4TabellaAllegatoCDTO;
 import it.gesev.mensa.dto.DC4TabellaDTO;
 import it.gesev.mensa.dto.FileDC4DTO;
+import it.gesev.mensa.dto.FirmaQuotidianaDC4DTO;
 import it.gesev.mensa.dto.FirmeDC4;
 import it.gesev.mensa.dto.IdentificativoSistemaDTO;
-import it.gesev.mensa.dto.MensaDTO;
 import it.gesev.mensa.dto.PastiConsumatiDTO;
 import it.gesev.mensa.entity.IdentificativoSistema;
-import it.gesev.mensa.entity.Mensa;
 import it.gesev.mensa.jasper.FirmaDC4Jasper;
 import it.gesev.mensa.jasper.FirmaJasper;
 import it.gesev.mensa.jasper.ForzaEffettivaJasper;
@@ -43,7 +42,6 @@ import it.gesev.mensa.jasper.NumeroPastiUFCJasper;
 import it.gesev.mensa.jasper.PastoConsumatoJasper;
 import it.gesev.mensa.jasper.PastoOrdinatoJasper;
 import it.gesev.mensa.utils.IdentificativoSistemaMapper;
-import it.gesev.mensa.utils.MensaMapper;
 import it.gesev.mensa.utils.MensaUtils;
 import net.sf.jasperreports.engine.JREmptyDataSource;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -322,6 +320,24 @@ public class ReportServiceImpl implements ReportService
 		}
 		logger.info("Fine getAllIdentificativiSistem classe ReportServiceImpl");
 		return listaIdentificativoSistemaDTO;
+	}
+
+	/* Aggiungi una nuova Firma */
+	@Override
+	public int createNuovaFirma(FirmaQuotidianaDC4DTO firmaQuotidianaDC4DTO) throws ParseException
+	{
+		logger.info("Accesso a createNuovaFirma classe ReportServiceImpl");
+		reportDAO.createNuovaFirma(firmaQuotidianaDC4DTO);
+		return 1;
+	}
+
+	/* Cancella un Firma */
+	@Override
+	public int deleteFirma(FirmaQuotidianaDC4DTO firmaQuotidianaDC4DTO) throws ParseException 
+	{
+		logger.info("Accesso a deleteFirma classe ReportServiceImpl");
+		reportDAO.deleteFirma(firmaQuotidianaDC4DTO);
+		return 1;
 	}
 
 }
