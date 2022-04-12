@@ -131,7 +131,7 @@ public class ReportController
 			List<DC4TabellaDTO> listaDC4TabellaDTO = new ArrayList<>();
 			listaDC4TabellaDTO = reportService.richiestaDocumentoDC4(dc4RichiestaDTO);
 			esito.setStatus(HttpStatus.OK.value());
-			esito.setMessaggio("DOCUMAENTO CREATO CON SUCCESSO");
+			esito.setMessaggio("DOCUMENTO CREATO CON SUCCESSO");
 			esito.setBody(listaDC4TabellaDTO);
 		}
 		catch(GesevException gex)   
@@ -184,7 +184,7 @@ public class ReportController
 			List<DC4TabellaAllegatoCDTO> listaDC4TabellaAllegatoC = new ArrayList<>();
 			listaDC4TabellaAllegatoC = reportService.richiestaDocumentoDC4AllegatoC(dc4RichiestaDTO);
 			esito.setStatus(HttpStatus.OK.value());
-			esito.setMessaggio("DOCUMAENTO CREATO CON SUCCESSO");
+			esito.setMessaggio("DOCUMENTO CREATO CON SUCCESSO");
 			esito.setBody(listaDC4TabellaAllegatoC);
 		}
 		catch(GesevException gex)   
@@ -254,7 +254,4 @@ public class ReportController
 		esito.setStatus(status.value());
 		return ResponseEntity.status(status).headers(new HttpHeaders()).body(esito);
 	}
-	
-	
-
 }

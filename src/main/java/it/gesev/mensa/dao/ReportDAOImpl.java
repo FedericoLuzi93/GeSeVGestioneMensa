@@ -74,7 +74,7 @@ public class ReportDAOImpl implements ReportDAO
 
 	@Autowired
 	private ForzaEffettivaRepository forzaEffettivaRepository;
-	
+
 	@Autowired
 	private IdentificativoSistemaRepository identificativoSistemaRepository;
 
@@ -143,13 +143,13 @@ public class ReportDAOImpl implements ReportDAO
 		//Ordinati
 		String anno = "'" + dc4RichiestaDTO.getAnno();
 		String giorno = anno.concat("-" + dc4RichiestaDTO.getMese() + "-%'");
-		
+
 		int enteFk = dc4RichiestaDTO.getIdEnte();
 		int idOperatore = dc4RichiestaDTO.getIdOperatore();
-		
+
 		if(StringUtils.isBlank(giorno))
 			throw new GesevException("Impossibile generare il documento DC4, mese non valido", HttpStatus.BAD_REQUEST);
-		
+
 		if(includiPrenotati)
 		{
 			String queryOrdinati = "select\r\n"
@@ -240,6 +240,7 @@ public class ReportDAOImpl implements ReportDAO
 		}
 
 		//Effettivi
+		logger.info("Query forza effettiva in corso...");
 		if(includiForzaEffettiva)
 		{
 			Date dataInizio = simpleDateFormat.parse(dc4RichiestaDTO.getAnno() + "-" + dc4RichiestaDTO.getMese() + "-01");
@@ -250,25 +251,28 @@ public class ReportDAOImpl implements ReportDAO
 			calendar.set(Calendar.DAY_OF_MONTH, maxGiorno);
 
 			List<ForzaEffettiva> listaForzaEff = forzaEffettivaRepository.listaForzaEffettiva(dc4RichiestaDTO.getIdEnte(), dataInizio, calendar.getTime());
-			
-			ForzaEffettiva fel0 = listaForzaEff.get(0);
-			String descrizioneEnte = fel0.getEnte().getDescrizioneEnte();
-			
-			for(ForzaEffettiva fe : listaForzaEff)
-			{
-				DC4TabellaDTO dto = map.get(simpleDateFormat.format(fe.getDataRiferimento()));
-				boolean isDtoNull = dto == null;
-				if(isDtoNull)
-					dto = new DC4TabellaDTO();
 
-				dto.setColazioneEffettiva(fe.getNumDipendenti());
-				dto.setPranzoEffettiva(fe.getNumDipendenti());
-				dto.setCenaEffettiva(fe.getNumDipendenti());
-				
-				dto.setDescrizioneEnte(descrizioneEnte);
-				
-				if(isDtoNull)
-					map.put(simpleDateFormat.format(simpleDateFormat.format(fe.getDataRiferimento())), dto);
+			if(listaForzaEff.size() > 0)
+			{
+				ForzaEffettiva fel0 = listaForzaEff.get(0);
+				String descrizioneEnte = fel0.getEnte().getDescrizioneEnte();
+
+				for(ForzaEffettiva fe : listaForzaEff)
+				{
+					DC4TabellaDTO dto = map.get(simpleDateFormat.format(fe.getDataRiferimento()));
+					boolean isDtoNull = dto == null;
+					if(isDtoNull)
+						dto = new DC4TabellaDTO();
+
+					dto.setColazioneEffettiva(fe.getNumDipendenti());
+					dto.setPranzoEffettiva(fe.getNumDipendenti());
+					dto.setCenaEffettiva(fe.getNumDipendenti());
+
+					dto.setDescrizioneEnte(descrizioneEnte);
+
+					if(isDtoNull)
+						map.put(simpleDateFormat.format(simpleDateFormat.format(fe.getDataRiferimento())), dto);
+				}
 			}
 		}
 
@@ -277,6 +281,7 @@ public class ReportDAOImpl implements ReportDAO
 				.map(Map.Entry::getValue)
 				.collect(Collectors.toList());
 
+		logger.info("Lista DC4 creata con successo");
 		return listaDC4TabellaDTO;
 	}
 
@@ -285,9 +290,9 @@ public class ReportDAOImpl implements ReportDAO
 	public List<FirmeDC4> richiestaFirmeDC4(DC4RichiestaDTO dc4RichiestaDTO)
 	{
 		logger.info("Accesso a richiestaFirmeDC4 classe ReportDAOImpl");
-	
+
 		int enteFk = dc4RichiestaDTO.getIdEnte();
-		
+
 		String queryFirme = "select arrm.ordine_firma, rm.descrizione_ruolo_mensa, d.nome, d.cognome, arrm.ruolo_fk\r\n"
 				+ "from ass_report_ruolo_mensa arrm\r\n"
 				+ "left join ruolo_mensa rm on arrm.ruolo_fk  = rm.codice_ruolo_mensa\r\n"
@@ -313,6 +318,7 @@ public class ReportDAOImpl implements ReportDAO
 			listaFirmeDC4.add(firmaDC4);
 		}
 
+		logger.info("Lista firme creata con successo");
 		return listaFirmeDC4;
 	}
 
@@ -406,6 +412,7 @@ public class ReportDAOImpl implements ReportDAO
 				.map(Map.Entry::getValue)
 				.collect(Collectors.toList());
 
+		logger.info("Lista creata con successo");
 		return listaDC4TabellaAllegatoCDTO;
 	}
 

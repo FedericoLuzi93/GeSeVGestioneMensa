@@ -101,11 +101,14 @@ public class ReportServiceImpl implements ReportService
 	@Override
 	public FileDC4DTO downloadDC4(DC4RichiestaDTO dc4RichiestaDTO) throws ParseException, FileNotFoundException 
 	{
+		logger.info("Accesso a downloadDC4 classe ReportServiceImpl");
 		List<DC4TabellaDTO> listaDC4TabellaDTO = reportDAO.richiestaDocumentoDC4(dc4RichiestaDTO, true, true, true);
 		List<FirmeDC4> listaFirmeDC4 = reportDAO.richiestaFirmeDC4(dc4RichiestaDTO);
+		
 		FileDC4DTO fileDC4DTO = new FileDC4DTO();
-		//String filePath = "C:\\Users\\alien\\OneDrive\\Desktop\\Gene\\Pitech\\Git\\Gesev\\GeSeV GestioneMensa\\GeSeV-GestioneMensa\\src\\main\\resources\\DC4.jrxml";
 		File mockFile = ResourceUtils.getFile("classpath:DC4.jrxml");
+		
+		logger.info("Generazione report in corso...");
 		try
 		{
 			List<FirmaJasper> listaFJ= new ArrayList<>();
@@ -215,6 +218,7 @@ public class ReportServiceImpl implements ReportService
 
 		}
 
+		logger.info("Report generato con successo");
 		return fileDC4DTO;
 	}
 
@@ -234,6 +238,7 @@ public class ReportServiceImpl implements ReportService
 		FileDC4DTO fileDC4DTO = new FileDC4DTO();
 		File mockFile = ResourceUtils.getFile("classpath:DC4AllegatoC.jrxml");
 
+		logger.info("Generazione report DC4 allegato C in corso...");
 		try
 		{
 			List<NumeroPastiUFCJasper> listaPastiUFCJ = new ArrayList<>();
@@ -294,6 +299,7 @@ public class ReportServiceImpl implements ReportService
 		{
 
 		}
+		logger.info("Report generato con successo");
 		return fileDC4DTO;
 
 	}
