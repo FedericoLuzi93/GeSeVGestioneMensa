@@ -223,7 +223,8 @@ public class ReportDAOImpl implements ReportDAO
 					+ "  	p.data_pasto  "
 					+ "from pasti_consumati p  "
 					+ "left join mensa m on p.mensa_fk = m.codice_mensa  "
-					+ "where	m.ente_fk = " + enteFk + "  ";
+					+ "where	m.ente_fk = " + enteFk + "  "
+					+ "and to_char(p.data_pasto, 'YYYY-MM-DD') like " + giorno + "  ";
 			
 			if(!StringUtils.isBlank(dc4RichiestaDTO.getSistemaPersonale()))
 				queryConsumati = queryConsumati + "and p.identificativo_sistema_fk = :idPersonale ";
