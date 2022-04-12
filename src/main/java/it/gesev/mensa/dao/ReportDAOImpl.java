@@ -288,6 +288,8 @@ public class ReportDAOImpl implements ReportDAO
 					dto.setColazioneEffettiva(fe.getNumDipendenti());
 					dto.setPranzoEffettiva(fe.getNumDipendenti());
 					dto.setCenaEffettiva(fe.getNumDipendenti());
+					
+					dto.setGiorno(simpleDateFormat.format(fe.getDataRiferimento()));
 
 					dto.setDescrizioneEnte(descrizioneEnte);
 
