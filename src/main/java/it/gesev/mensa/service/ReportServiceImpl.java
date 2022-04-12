@@ -127,17 +127,18 @@ public class ReportServiceImpl implements ReportService
 
 				fJ.setFirma(dc4Tab.getFirma());
 
-				feJ.setColazioneEF(dc4Tab.getColazioneEffettiva().toString());
-				feJ.setPranzoEF(dc4Tab.getPranzoEffettiva().toString());
-				feJ.setCenaEF(dc4Tab.getCenaEffettiva().toString());
+				
+				feJ.setColazioneEF(dc4Tab.getColazioneEffettiva() != null ? dc4Tab.getColazioneEffettiva().toString() : "");
+				feJ.setPranzoEF(dc4Tab.getPranzoEffettiva() != null ? dc4Tab.getPranzoEffettiva().toString() : "");
+				feJ.setCenaEF(dc4Tab.getCenaEffettiva() != null ? dc4Tab.getCenaEffettiva().toString() : "");
 
-				pcJ.setColazionePC(dc4Tab.getColazioneConsumati().toString());
-				pcJ.setPranzoPC(dc4Tab.getPranzoConsumati().toString());
-				pcJ.setCenaPC(dc4Tab.getCenaConsumati().toString());
+				pcJ.setColazionePC(dc4Tab.getColazioneConsumati() != null ? dc4Tab.getColazioneConsumati().toString() : "");
+				pcJ.setPranzoPC(dc4Tab.getPranzoConsumati() != null ? dc4Tab.getPranzoConsumati().toString() : "");
+				pcJ.setCenaPC(dc4Tab.getCenaConsumati() != null ? dc4Tab.getCenaConsumati().toString() : "");
 
-				poJ.setColazionePO(dc4Tab.getColazioneOrdinati().toString());
-				poJ.setPranzoPO(dc4Tab.getPranzoOrdinati().toString());
-				poJ.setCenaPO(dc4Tab.getCenaOridnati().toString());
+				poJ.setColazionePO(dc4Tab.getColazioneOrdinati() != null ? dc4Tab.getColazioneOrdinati().toString() : "");
+				poJ.setPranzoPO(dc4Tab.getPranzoOrdinati() != null ? dc4Tab.getPranzoOrdinati().toString() : "");
+				poJ.setCenaPO(dc4Tab.getCenaOridnati() != null ? dc4Tab.getCenaOridnati().toString() : "");
 
 				listaFJ.add(fJ);
 				listaFeJ.add(feJ);

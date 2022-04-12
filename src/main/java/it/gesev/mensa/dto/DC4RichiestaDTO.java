@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class DC4RichiestaDTO 
 {
-	private String SchemaPersonale;
+	private String sistemaPersonale;
 	private String anno;
 	private String mese;
 	private int idEnte;
