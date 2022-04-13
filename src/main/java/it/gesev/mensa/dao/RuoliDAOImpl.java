@@ -164,7 +164,7 @@ public class RuoliDAOImpl implements RuoliDAO
 	}
 
 	@Override
-	public void aggiungiRuoloDipendente(Integer idDipendente, Integer idRuolo, Integer idOrganoDirettivo, Integer idMensa) throws ParseException 
+	public void aggiungiRuoloDipendente(Integer idDipendente,  String emailDipendente, Integer idRuolo, Integer idOrganoDirettivo, Integer idMensa) throws ParseException 
 	{
 		logger.info("Aggiunta nuovo ruolo...");
 		
@@ -197,6 +197,13 @@ public class RuoliDAOImpl implements RuoliDAO
 		if(!optionalDipendente.isPresent() || !optionalRuolo.isPresent())
 			throw new GesevException("Dipendente o ruolo indicati non sono presenti sulla base dati", HttpStatus.BAD_REQUEST);
 		
+		if(StringUtils.isNotBlank(emailDipendente))
+		{
+			logger.info("Aggiornamento email dipendente");
+			optionalDipendente.get().setEmail(emailDipendente);
+			dipendenteRepository.save(optionalDipendente.get());
+		}
+		
 		logger.info("Controllo della presenza dell'associazione richiesta...");
 		int associazioneCounter = assRuoloDipendenteRepository.findAssociazioneByDipendenteAndRuolo(idDipendente, idRuolo);
 		if(associazioneCounter > 0)
@@ -213,6 +220,8 @@ public class RuoliDAOImpl implements RuoliDAO
 		associazione.setMensa(optionalMensa.get());
 		
 		assRuoloDipendenteRepository.save(associazione);
+		
+		
 		
 		logger.info("Fine creazione associazione");
 		
