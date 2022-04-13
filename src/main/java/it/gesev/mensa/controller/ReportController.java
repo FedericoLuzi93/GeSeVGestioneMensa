@@ -21,9 +21,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.google.gson.Gson;
 
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -31,10 +34,10 @@ import it.gesev.mensa.dto.DC4RichiestaDTO;
 import it.gesev.mensa.dto.DC4TabellaDTO;
 import it.gesev.mensa.dto.EnteDTO;
 import it.gesev.mensa.dto.EsitoDTO;
+import it.gesev.mensa.dto.FESistemaEnteDTO;
 import it.gesev.mensa.dto.FileDC4DTO;
 import it.gesev.mensa.dto.FirmaQuotidianaDC4DTO;
 import it.gesev.mensa.dto.IdentificativoSistemaDTO;
-import it.gesev.mensa.dto.FESistemaEnteDTO;
 import it.gesev.mensa.dto.PastiConsumatiDTO;
 import it.gesev.mensa.dto.SendListPastiDC4AllegatoC;
 import it.gesev.mensa.exc.GesevException;
@@ -155,14 +158,18 @@ public class ReportController
 	}
 	
 	/* Download File DC4 */
-	@PostMapping(value = "/downloadDC4")
+	@GetMapping(value = "/downloadDC4")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Richiesta download DC4 andata a buon fine"),
 			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
 			@ApiResponse(code = 500, message = "Errore interno") })
-	public ResponseEntity<Resource> downloadFileDC4(@RequestBody DC4RichiestaDTO dc4RichiestaDTO) throws ParseException, FileNotFoundException
+	public ResponseEntity<Resource> downloadFileDC4(@RequestParam("dc4RichiestaDTO") String LDc4RichiestaDTO) throws ParseException, FileNotFoundException
 	{
 		logger.info("Accesso al servizio downloadDC4");
 		HttpHeaders headers = new HttpHeaders();
+		int posizione = LDc4RichiestaDTO.indexOf("\"dc4RichiestaDTO\":");
+		String JSON = LDc4RichiestaDTO.substring(posizione + "\"dc4RichiestaDTO\":".length(), LDc4RichiestaDTO.length() - 1);
+//		String JSON = LDc4RichiestaDTO;
+		DC4RichiestaDTO dc4RichiestaDTO = new Gson().fromJson(JSON, DC4RichiestaDTO.class);
 
 		/* Invio FIle */
 		FileDC4DTO fileDC4DTO = reportService.downloadDC4(dc4RichiestaDTO);
