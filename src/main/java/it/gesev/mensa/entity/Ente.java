@@ -65,6 +65,11 @@ public class Ente
 		 	CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
 	List<ForzaEffettiva> listaForzaEffettiva;
 	
+	@OneToMany(mappedBy = "ente", cascade={CascadeType.PERSIST, CascadeType.DETACH,
+		 	CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
+	List<FirmaQuodidiana> listaFirmaQuodidiana;
+	
+	
 //	@OneToMany(mappedBy = "ente", cascade={CascadeType.PERSIST, CascadeType.DETACH,
 //		 	CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
 //	List<Prenotazione> listaPrenotazioni;

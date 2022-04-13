@@ -19,7 +19,7 @@ public class DC4TabellaDTO
 	private Integer colazioneConsumati;
 	private Integer pranzoConsumati;
 	private Integer cenaConsumati;
-	private String firma;
+	private String firma = "NO";
 	private String descrizioneEnte;
 
 }

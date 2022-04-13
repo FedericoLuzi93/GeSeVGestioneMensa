@@ -6,8 +6,10 @@ import java.util.List;
 import it.gesev.mensa.dto.DC4RichiestaDTO;
 import it.gesev.mensa.dto.DC4TabellaAllegatoCDTO;
 import it.gesev.mensa.dto.DC4TabellaDTO;
+import it.gesev.mensa.dto.FirmaQuotidianaDC4DTO;
 import it.gesev.mensa.dto.FirmeDC4;
 import it.gesev.mensa.dto.PastiConsumatiDTO;
+import it.gesev.mensa.entity.FirmaQuodidiana;
 import it.gesev.mensa.entity.IdentificativoSistema;
 
 public interface ReportDAO 
@@ -22,6 +24,10 @@ public interface ReportDAO
 	public List<DC4TabellaAllegatoCDTO> richiestaDocumentoDC4AllegatoC(DC4RichiestaDTO dc4RichiestaDTO);
 
 	public List<IdentificativoSistema> getAllIdentificativiSistema();
+
+	public int createNuovaFirma(FirmaQuotidianaDC4DTO firmaQuotidianaDC4DTO) throws ParseException;
+	public int deleteFirma(FirmaQuotidianaDC4DTO firmaQuotidianaDC4DTO) throws ParseException;
+
 
 
 

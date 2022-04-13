@@ -28,12 +28,11 @@ import it.gesev.mensa.dto.DC4RichiestaDTO;
 import it.gesev.mensa.dto.DC4TabellaAllegatoCDTO;
 import it.gesev.mensa.dto.DC4TabellaDTO;
 import it.gesev.mensa.dto.FileDC4DTO;
+import it.gesev.mensa.dto.FirmaQuotidianaDC4DTO;
 import it.gesev.mensa.dto.FirmeDC4;
 import it.gesev.mensa.dto.IdentificativoSistemaDTO;
-import it.gesev.mensa.dto.MensaDTO;
 import it.gesev.mensa.dto.PastiConsumatiDTO;
 import it.gesev.mensa.entity.IdentificativoSistema;
-import it.gesev.mensa.entity.Mensa;
 import it.gesev.mensa.jasper.FirmaDC4Jasper;
 import it.gesev.mensa.jasper.FirmaJasper;
 import it.gesev.mensa.jasper.ForzaEffettivaJasper;
@@ -43,7 +42,6 @@ import it.gesev.mensa.jasper.NumeroPastiUFCJasper;
 import it.gesev.mensa.jasper.PastoConsumatoJasper;
 import it.gesev.mensa.jasper.PastoOrdinatoJasper;
 import it.gesev.mensa.utils.IdentificativoSistemaMapper;
-import it.gesev.mensa.utils.MensaMapper;
 import it.gesev.mensa.utils.MensaUtils;
 import net.sf.jasperreports.engine.JREmptyDataSource;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -101,11 +99,14 @@ public class ReportServiceImpl implements ReportService
 	@Override
 	public FileDC4DTO downloadDC4(DC4RichiestaDTO dc4RichiestaDTO) throws ParseException, FileNotFoundException 
 	{
+		logger.info("Accesso a downloadDC4 classe ReportServiceImpl");
 		List<DC4TabellaDTO> listaDC4TabellaDTO = reportDAO.richiestaDocumentoDC4(dc4RichiestaDTO, true, true, true);
 		List<FirmeDC4> listaFirmeDC4 = reportDAO.richiestaFirmeDC4(dc4RichiestaDTO);
+		
 		FileDC4DTO fileDC4DTO = new FileDC4DTO();
-		//String filePath = "C:\\Users\\alien\\OneDrive\\Desktop\\Gene\\Pitech\\Git\\Gesev\\GeSeV GestioneMensa\\GeSeV-GestioneMensa\\src\\main\\resources\\DC4.jrxml";
 		File mockFile = ResourceUtils.getFile("classpath:DC4.jrxml");
+		
+		logger.info("Generazione report in corso...");
 		try
 		{
 			List<FirmaJasper> listaFJ= new ArrayList<>();
@@ -124,17 +125,18 @@ public class ReportServiceImpl implements ReportService
 
 				fJ.setFirma(dc4Tab.getFirma());
 
-				feJ.setColazioneEF(dc4Tab.getColazioneEffettiva().toString());
-				feJ.setPranzoEF(dc4Tab.getPranzoEffettiva().toString());
-				feJ.setCenaEF(dc4Tab.getCenaEffettiva().toString());
+				
+				feJ.setColazioneEF(dc4Tab.getColazioneEffettiva() != null ? dc4Tab.getColazioneEffettiva().toString() : "");
+				feJ.setPranzoEF(dc4Tab.getPranzoEffettiva() != null ? dc4Tab.getPranzoEffettiva().toString() : "");
+				feJ.setCenaEF(dc4Tab.getCenaEffettiva() != null ? dc4Tab.getCenaEffettiva().toString() : "");
 
-				pcJ.setColazionePC(dc4Tab.getColazioneConsumati().toString());
-				pcJ.setPranzoPC(dc4Tab.getPranzoConsumati().toString());
-				pcJ.setCenaPC(dc4Tab.getCenaConsumati().toString());
+				pcJ.setColazionePC(dc4Tab.getColazioneConsumati() != null ? dc4Tab.getColazioneConsumati().toString() : "");
+				pcJ.setPranzoPC(dc4Tab.getPranzoConsumati() != null ? dc4Tab.getPranzoConsumati().toString() : "");
+				pcJ.setCenaPC(dc4Tab.getCenaConsumati() != null ? dc4Tab.getCenaConsumati().toString() : "");
 
-				poJ.setColazionePO(dc4Tab.getColazioneOrdinati().toString());
-				poJ.setPranzoPO(dc4Tab.getPranzoOrdinati().toString());
-				poJ.setCenaPO(dc4Tab.getCenaOridnati().toString());
+				poJ.setColazionePO(dc4Tab.getColazioneOrdinati() != null ? dc4Tab.getColazioneOrdinati().toString() : "");
+				poJ.setPranzoPO(dc4Tab.getPranzoOrdinati() != null ? dc4Tab.getPranzoOrdinati().toString() : "");
+				poJ.setCenaPO(dc4Tab.getCenaOridnati() != null ? dc4Tab.getCenaOridnati().toString() : "");
 
 				listaFJ.add(fJ);
 				listaFeJ.add(feJ);
@@ -215,6 +217,7 @@ public class ReportServiceImpl implements ReportService
 
 		}
 
+		logger.info("Report generato con successo");
 		return fileDC4DTO;
 	}
 
@@ -234,6 +237,7 @@ public class ReportServiceImpl implements ReportService
 		FileDC4DTO fileDC4DTO = new FileDC4DTO();
 		File mockFile = ResourceUtils.getFile("classpath:DC4AllegatoC.jrxml");
 
+		logger.info("Generazione report DC4 allegato C in corso...");
 		try
 		{
 			List<NumeroPastiUFCJasper> listaPastiUFCJ = new ArrayList<>();
@@ -294,6 +298,7 @@ public class ReportServiceImpl implements ReportService
 		{
 
 		}
+		logger.info("Report generato con successo");
 		return fileDC4DTO;
 
 	}
@@ -315,6 +320,24 @@ public class ReportServiceImpl implements ReportService
 		}
 		logger.info("Fine getAllIdentificativiSistem classe ReportServiceImpl");
 		return listaIdentificativoSistemaDTO;
+	}
+
+	/* Aggiungi una nuova Firma */
+	@Override
+	public int createNuovaFirma(FirmaQuotidianaDC4DTO firmaQuotidianaDC4DTO) throws ParseException
+	{
+		logger.info("Accesso a createNuovaFirma classe ReportServiceImpl");
+		reportDAO.createNuovaFirma(firmaQuotidianaDC4DTO);
+		return 1;
+	}
+
+	/* Cancella un Firma */
+	@Override
+	public int deleteFirma(FirmaQuotidianaDC4DTO firmaQuotidianaDC4DTO) throws ParseException 
+	{
+		logger.info("Accesso a deleteFirma classe ReportServiceImpl");
+		reportDAO.deleteFirma(firmaQuotidianaDC4DTO);
+		return 1;
 	}
 
 }

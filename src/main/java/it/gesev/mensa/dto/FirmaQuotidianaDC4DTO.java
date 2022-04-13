@@ -7,11 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class DC4RichiestaDTO 
+public class FirmaQuotidianaDC4DTO 
 {
-	private String sistemaPersonale;
-	private String anno;
-	private String mese;
-	private int idEnte;
-	private int idOperatore;
+	private String dataFirma;
+	private Integer idEnte;
+	private Integer idOperatore;
 }
