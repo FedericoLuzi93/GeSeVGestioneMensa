@@ -14,6 +14,7 @@ import it.gesev.mensa.dto.FileDC4DTO;
 import it.gesev.mensa.dto.FirmaQuotidianaDC4DTO;
 import it.gesev.mensa.dto.IdentificativoSistemaDTO;
 import it.gesev.mensa.dto.PastiConsumatiDTO;
+import it.gesev.mensa.dto.SendListPastiDC4AllegatoC;
 
 public interface ReportService 
 {
@@ -24,7 +25,7 @@ public interface ReportService
 	public List<DC4TabellaDTO> richiestaDocumentoDC4(DC4RichiestaDTO dc4RichiestaDTO) throws ParseException;
 	public FileDC4DTO downloadDC4(DC4RichiestaDTO dc4RichiestaDTO) throws ParseException, FileNotFoundException;
 	
-	public List<DC4TabellaAllegatoCDTO> richiestaDocumentoDC4AllegatoC(DC4RichiestaDTO dc4RichiestaDTO) throws ParseException;
+	public SendListPastiDC4AllegatoC richiestaDocumentoDC4AllegatoC(DC4RichiestaDTO dc4RichiestaDTO, SendListPastiDC4AllegatoC sendObjList) throws ParseException;
 	public FileDC4DTO downloadDC4AllegatoC(DC4RichiestaDTO dc4RichiestaDTO) throws ParseException, FileNotFoundException;
 	
 	public List<IdentificativoSistemaDTO> getAllIdentificativiSistema();

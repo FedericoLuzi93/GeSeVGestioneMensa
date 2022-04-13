@@ -32,6 +32,7 @@ import it.gesev.mensa.dto.DC4TabellaDTO;
 import it.gesev.mensa.dto.FirmaQuotidianaDC4DTO;
 import it.gesev.mensa.dto.FirmeDC4;
 import it.gesev.mensa.dto.PastiConsumatiDTO;
+import it.gesev.mensa.dto.SendListPastiDC4AllegatoC;
 import it.gesev.mensa.entity.Dipendente;
 import it.gesev.mensa.entity.Ente;
 import it.gesev.mensa.entity.FirmaQuodidiana;
@@ -42,6 +43,9 @@ import it.gesev.mensa.entity.PastiConsumati;
 import it.gesev.mensa.entity.TipoPagamento;
 import it.gesev.mensa.entity.TipoPasto;
 import it.gesev.mensa.exc.GesevException;
+import it.gesev.mensa.jasper.GiornoJasper;
+import it.gesev.mensa.jasper.NumeroPastiGraduatiJasper;
+import it.gesev.mensa.jasper.NumeroPastiUFCJasper;
 import it.gesev.mensa.repository.DipendenteRepository;
 import it.gesev.mensa.repository.EnteRepository;
 import it.gesev.mensa.repository.FirmaQuodidianaRepository;
@@ -88,7 +92,6 @@ public class ReportDAOImpl implements ReportDAO
 
 	@Autowired
 	private EnteRepository enteRepository;
-
 
 	@PersistenceContext
 	EntityManager entityManager;
@@ -376,7 +379,8 @@ public class ReportDAOImpl implements ReportDAO
 
 	/* Richiesta documento DC4 Allegato C */
 	@Override
-	public List<DC4TabellaAllegatoCDTO> richiestaDocumentoDC4AllegatoC(DC4RichiestaDTO dc4RichiestaDTO) 
+	public SendListPastiDC4AllegatoC richiestaDocumentoDC4AllegatoC(DC4RichiestaDTO dc4RichiestaDTO,
+			List<NumeroPastiUFCJasper> listaPastiUFC, List<NumeroPastiGraduatiJasper> listaPastiGraduati, SendListPastiDC4AllegatoC sendObjList)
 	{
 		logger.info("Accesso a richiestaDocumentoDC4AllegatoC classe ReportDAOImpl");
 
@@ -408,6 +412,7 @@ public class ReportDAOImpl implements ReportDAO
 
 		for(Object[] obj : listOfResultsPastiUFC)
 		{
+			NumeroPastiUFCJasper numeroPastiUFCJasper = new NumeroPastiUFCJasper();
 			DC4TabellaAllegatoCDTO dc4AllC = new DC4TabellaAllegatoCDTO();
 
 			Integer numpranziUSC = ((BigInteger) obj[1]).intValue();
@@ -418,7 +423,13 @@ public class ReportDAOImpl implements ReportDAO
 			Date dataReport = ((Date) obj[0]);
 			dc4AllC.setGiorno(simpleDateFormat.format(dataReport));
 
+			//Lista Passata
+			numeroPastiUFCJasper.setnPranziT1(String.valueOf(numpranziUSC));
+			numeroPastiUFCJasper.setnCeneT1(String.valueOf(numCeneUSC));
+			listaPastiUFC.add(numeroPastiUFCJasper);
+			
 			map.put((String) simpleDateFormat.format(dataReport),dc4AllC); 
+			
 		}
 
 		//Pasti Graduati
@@ -441,6 +452,8 @@ public class ReportDAOImpl implements ReportDAO
 
 		for(Object[] obj : listOfResultsPastiGraduati)
 		{
+			NumeroPastiGraduatiJasper graduatiJasper = new NumeroPastiGraduatiJasper();
+			
 			Integer numColazioniGraduati = ((BigInteger) obj[1]).intValue();
 			Integer numPranziGraduati = ((BigInteger) obj[2]).intValue();
 			Integer numCeneGraduati = ((BigInteger) obj[3]).intValue();
@@ -454,18 +467,48 @@ public class ReportDAOImpl implements ReportDAO
 			dto.setNumColazioniGraduati(numColazioniGraduati);
 			dto.setNumPranziGraduati(numPranziGraduati);
 			dto.setNumCeneGraduati(numCeneGraduati);
-
+			
+			//Lista Passata
+			graduatiJasper.setnColazioniT2(String.valueOf(numColazioniGraduati));
+			graduatiJasper.setnPranziT2(String.valueOf(numPranziGraduati));
+			graduatiJasper.setnCeneT2(String.valueOf(numCeneGraduati));
+			listaPastiGraduati.add(graduatiJasper);
+			
+			
 			if(isDtoNull)
 				map.put(simpleDateFormat.format(dataReport), dto);
+		}
+		
+		int day = 0;
+		int num1 = listaPastiGraduati.size();
+		int num2 = listaPastiUFC.size();
+		int max = 0;
+		if(num1 > num2)
+			max = num1;
+		else
+			max = num2;
+		
+		List<GiornoJasper> listaGiorni = new ArrayList<>();
+		
+		for(int i = 0; i < max; i++)
+		{
+			day++;
+			GiornoJasper gJ = new GiornoJasper(day);
+			listaGiorni.add(gJ);
 		}
 
 		List<DC4TabellaAllegatoCDTO> listaDC4TabellaAllegatoCDTO = map.entrySet().stream()
 				.sorted(Comparator.comparing(Map.Entry::getKey))
 				.map(Map.Entry::getValue)
 				.collect(Collectors.toList());
+		
+		sendObjList.setListaUFC(listaPastiUFC);
+		sendObjList.setListaGraduati(listaPastiGraduati);
+		sendObjList.setListaGiorni(listaGiorni);
+		
 
 		logger.info("Lista creata con successo");
-		return listaDC4TabellaAllegatoCDTO;
+		return sendObjList;
 	}
 
 	/* Leggi tutti identificativi Sistema */
