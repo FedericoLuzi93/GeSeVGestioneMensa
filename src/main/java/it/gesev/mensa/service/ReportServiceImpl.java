@@ -32,6 +32,7 @@ import it.gesev.mensa.dto.FirmaQuotidianaDC4DTO;
 import it.gesev.mensa.dto.FirmeDC4;
 import it.gesev.mensa.dto.IdentificativoSistemaDTO;
 import it.gesev.mensa.dto.PastiConsumatiDTO;
+import it.gesev.mensa.dto.SendListPastiDC4AllegatoC;
 import it.gesev.mensa.entity.IdentificativoSistema;
 import it.gesev.mensa.jasper.FirmaDC4Jasper;
 import it.gesev.mensa.jasper.FirmaJasper;
@@ -223,51 +224,57 @@ public class ReportServiceImpl implements ReportService
 
 	/* Richiesta documento DC4 Allegato C */
 	@Override
-	public List<DC4TabellaAllegatoCDTO> richiestaDocumentoDC4AllegatoC(DC4RichiestaDTO dc4RichiestaDTO) throws ParseException 
+	public SendListPastiDC4AllegatoC richiestaDocumentoDC4AllegatoC(DC4RichiestaDTO dc4RichiestaDTO, SendListPastiDC4AllegatoC sendObjList) throws ParseException 
 	{
 		logger.info("Accesso a richiestaDocumentoDC4 classe ReportServiceImpl");
-		return reportDAO.richiestaDocumentoDC4AllegatoC(dc4RichiestaDTO);
+		List<NumeroPastiUFCJasper> listaPastiUFC = new ArrayList<>();
+		List<NumeroPastiGraduatiJasper> listaPastiGraduati = new ArrayList<>();
+		reportDAO.richiestaDocumentoDC4AllegatoC(dc4RichiestaDTO, listaPastiUFC, listaPastiGraduati, sendObjList);
+		return sendObjList;
 	}
 
 	/* Download documento DC4 Allegato C */
 	@Override
 	public FileDC4DTO downloadDC4AllegatoC(DC4RichiestaDTO dc4RichiestaDTO) throws FileNotFoundException 
 	{
-		List<DC4TabellaAllegatoCDTO> listaDc4TabellaAllegatoCDTO = reportDAO.richiestaDocumentoDC4AllegatoC(dc4RichiestaDTO);
+		List<NumeroPastiUFCJasper> listaPastiUFC = new ArrayList<>();
+		List<NumeroPastiGraduatiJasper> listaPastiGraduati = new ArrayList<>();
+		SendListPastiDC4AllegatoC sendObjList = new SendListPastiDC4AllegatoC();
+		SendListPastiDC4AllegatoC listaDc4TabellaAllegatoCDTO = reportDAO.richiestaDocumentoDC4AllegatoC(dc4RichiestaDTO, listaPastiUFC, listaPastiGraduati, sendObjList);
 		FileDC4DTO fileDC4DTO = new FileDC4DTO();
 		File mockFile = ResourceUtils.getFile("classpath:DC4AllegatoC.jrxml");
 
 		logger.info("Generazione report DC4 allegato C in corso...");
 		try
 		{
-			List<NumeroPastiUFCJasper> listaPastiUFCJ = new ArrayList<>();
-			List<NumeroPastiGraduatiJasper> listaPastiGraduatiJ = new ArrayList<>();
-			List<GiornoJasper> listaGJ = new ArrayList<>();
+			List<NumeroPastiUFCJasper> listaPastiUFCJ = listaDc4TabellaAllegatoCDTO.getListaUFC();
+			List<NumeroPastiGraduatiJasper> listaPastiGraduatiJ = listaDc4TabellaAllegatoCDTO.getListaGraduati();
+			List<GiornoJasper> listaGJ = listaDc4TabellaAllegatoCDTO.getListaGiorni();
 
-			for(DC4TabellaAllegatoCDTO dc4Tab : listaDc4TabellaAllegatoCDTO)
-			{
-				NumeroPastiUFCJasper pastoUFCJ = new NumeroPastiUFCJasper();
-				NumeroPastiGraduatiJasper pastoGraduatoJ = new NumeroPastiGraduatiJasper();
+//			for(DC4TabellaAllegatoCDTO dc4Tab : listaDc4TabellaAllegatoCDTO)
+//			{
+//				NumeroPastiUFCJasper pastoUFCJ = new NumeroPastiUFCJasper();
+//				NumeroPastiGraduatiJasper pastoGraduatoJ = new NumeroPastiGraduatiJasper();
+//
+//				pastoUFCJ.setnPranziT1(dc4Tab.getNumpranziUSC().toString());
+//				pastoUFCJ.setnCeneT1(dc4Tab.getNumCeneUSC().toString());
+//
+//				pastoGraduatoJ.setnColazioniT2(dc4Tab.getNumColazioniGraduati().toString());
+//				pastoGraduatoJ.setnPranziT2(dc4Tab.getNumPranziGraduati().toString());
+//				pastoGraduatoJ.setnCeneT2(dc4Tab.getNumCeneGraduati().toString());
+//
+//				listaPastiUFCJ.add(pastoUFCJ);
+//				listaPastiGraduatiJ.add(pastoGraduatoJ);
+//			}
 
-				pastoUFCJ.setnPranziT1(dc4Tab.getNumpranziUSC().toString());
-				pastoUFCJ.setnCeneT1(dc4Tab.getNumCeneUSC().toString());
-
-				pastoGraduatoJ.setnColazioniT2(dc4Tab.getNumColazioniGraduati().toString());
-				pastoGraduatoJ.setnPranziT2(dc4Tab.getNumPranziGraduati().toString());
-				pastoGraduatoJ.setnCeneT2(dc4Tab.getNumCeneGraduati().toString());
-
-				listaPastiUFCJ.add(pastoUFCJ);
-				listaPastiGraduatiJ.add(pastoGraduatoJ);
-			}
-
-			int day = 0;
-			int max = listaDc4TabellaAllegatoCDTO.size();
-			for(int i = 0; i < max; i++)
-			{
-				day++;
-				GiornoJasper gJ = new GiornoJasper(day);
-				listaGJ.add(gJ);
-			}
+//			int day = 0;
+//			int max = listaDc4TabellaAllegatoCDTO.size();
+//			for(int i = 0; i < max; i++)
+//			{
+//				day++;
+//				GiornoJasper gJ = new GiornoJasper(day);
+//				listaGJ.add(gJ);
+//			}
 
 			//Riempimento tabella
 			JRBeanCollectionDataSource JRBlistaPastiUff = new JRBeanCollectionDataSource(listaPastiUFCJ);

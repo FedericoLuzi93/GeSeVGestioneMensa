@@ -35,7 +35,10 @@ import it.gesev.mensa.dto.FileDC4DTO;
 import it.gesev.mensa.dto.FirmaQuotidianaDC4DTO;
 import it.gesev.mensa.dto.IdentificativoSistemaDTO;
 import it.gesev.mensa.dto.PastiConsumatiDTO;
+import it.gesev.mensa.dto.SendListPastiDC4AllegatoC;
 import it.gesev.mensa.exc.GesevException;
+import it.gesev.mensa.jasper.NumeroPastiGraduatiJasper;
+import it.gesev.mensa.jasper.NumeroPastiUFCJasper;
 import it.gesev.mensa.service.ReportService;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -169,7 +172,7 @@ public class ReportController
 
 	}
 	
-	/* Richiesta documento DC4 */
+	/* Richiesta documento DC4 Allegato C */
 	@PostMapping(value = "/richiestaDocumentoDC4AllegatoC")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
 			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
@@ -180,11 +183,12 @@ public class ReportController
 		EsitoDTO esito = new EsitoDTO();
 		try
 		{	
-			List<DC4TabellaAllegatoCDTO> listaDC4TabellaAllegatoC = new ArrayList<>();
-			listaDC4TabellaAllegatoC = reportService.richiestaDocumentoDC4AllegatoC(dc4RichiestaDTO);
+			//List<DC4TabellaAllegatoCDTO> listaDC4TabellaAllegatoC = new ArrayList<>();
+			SendListPastiDC4AllegatoC sendObjList = new SendListPastiDC4AllegatoC();
+			sendObjList = reportService.richiestaDocumentoDC4AllegatoC(dc4RichiestaDTO, sendObjList);
 			esito.setStatus(HttpStatus.OK.value());
 			esito.setMessaggio("DOCUMENTO CREATO CON SUCCESSO");
-			esito.setBody(listaDC4TabellaAllegatoC);
+			esito.setBody(sendObjList);
 		}
 		catch(GesevException gex)   
 		{
