@@ -129,6 +129,7 @@ public class RuoliServiceImpl implements RuoliService
 			throw new GesevException("Impossibile trovare una mensa con l'ID specificato", HttpStatus.BAD_REQUEST);
 		
 		ruoliDAO.aggiungiRuoloDipendente(associazione.getDipendente().getCodiceDipendente(), 
+										 associazione.getDipendente().getEmail(),
 				                         associazione.getRuolo().getCodiceRuoloMensa(), 
 				                         associazione.getOrganoDirettivo() != null ? associazione.getOrganoDirettivo().getCodiceOrganoDirettivo() : null, 
 				                         associazione.getIdMensa());
