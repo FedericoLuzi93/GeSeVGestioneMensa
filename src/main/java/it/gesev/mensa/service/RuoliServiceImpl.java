@@ -128,8 +128,10 @@ public class RuoliServiceImpl implements RuoliService
 		if(associazione.getIdMensa() == null)
 			throw new GesevException("Impossibile trovare una mensa con l'ID specificato", HttpStatus.BAD_REQUEST);
 		
-		ruoliDAO.aggiungiRuoloDipendente(associazione.getDipendente().getCodiceDipendente(), associazione.getRuolo().getCodiceRuoloMensa(), 
-				                         associazione.getOrganoDirettivo().getCodiceOrganoDirettivo(), associazione.getIdMensa());
+		ruoliDAO.aggiungiRuoloDipendente(associazione.getDipendente().getCodiceDipendente(), 
+				                         associazione.getRuolo().getCodiceRuoloMensa(), 
+				                         associazione.getOrganoDirettivo() != null ? associazione.getOrganoDirettivo().getCodiceOrganoDirettivo() : null, 
+				                         associazione.getIdMensa());
 		
 	}
 
