@@ -27,6 +27,6 @@ public class IdentificativoSistema
 	@Column(name = "descrizione_sistema")
 	private String descrizioneSistema;
 	
-	@OneToMany(mappedBy = "identificativoSistema", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "identificativoSistema", fetch = FetchType.LAZY)
 	List<Prenotazione> listaPrenotazioni;
 }

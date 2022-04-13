@@ -167,8 +167,8 @@ public class ReportController
 		logger.info("Accesso al servizio downloadDC4");
 		HttpHeaders headers = new HttpHeaders();
 		int posizione = LDc4RichiestaDTO.indexOf("\"dc4RichiestaDTO\":");
-		String JSON = LDc4RichiestaDTO.substring(posizione + "\"dc4RichiestaDTO\":".length(), LDc4RichiestaDTO.length() - 1);
-//		String JSON = LDc4RichiestaDTO;
+//		String JSON = LDc4RichiestaDTO.substring(posizione + "\"dc4RichiestaDTO\":".length(), LDc4RichiestaDTO.length() - 1);
+		String JSON = LDc4RichiestaDTO;
 		DC4RichiestaDTO dc4RichiestaDTO = new Gson().fromJson(JSON, DC4RichiestaDTO.class);
 
 		/* Invio FIle */
