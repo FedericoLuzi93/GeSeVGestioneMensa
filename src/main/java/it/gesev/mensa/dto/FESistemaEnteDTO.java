@@ -9,8 +9,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SendListPastiDC4AllegatoC 
+public class FESistemaEnteDTO 
 {
-	public List<FEPastiDC4USC> listaUFC;
-	public List<FEPastiDC4Graduati> listaGraduati;
+	private List<EnteDTO> listaEnti;
+	private List<IdentificativoSistemaDTO> listaSistemi;
+
 }

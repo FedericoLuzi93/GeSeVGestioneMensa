@@ -27,6 +27,8 @@ import it.gesev.mensa.dao.ReportDAO;
 import it.gesev.mensa.dto.DC4RichiestaDTO;
 import it.gesev.mensa.dto.DC4TabellaAllegatoCDTO;
 import it.gesev.mensa.dto.DC4TabellaDTO;
+import it.gesev.mensa.dto.FEPastiDC4Graduati;
+import it.gesev.mensa.dto.FEPastiDC4USC;
 import it.gesev.mensa.dto.FileDC4DTO;
 import it.gesev.mensa.dto.FirmaQuotidianaDC4DTO;
 import it.gesev.mensa.dto.FirmeDC4;
@@ -42,6 +44,7 @@ import it.gesev.mensa.jasper.NumeroPastiGraduatiJasper;
 import it.gesev.mensa.jasper.NumeroPastiUFCJasper;
 import it.gesev.mensa.jasper.PastoConsumatoJasper;
 import it.gesev.mensa.jasper.PastoOrdinatoJasper;
+import it.gesev.mensa.jasper.TabellaDC4AllegatoCJasper;
 import it.gesev.mensa.utils.IdentificativoSistemaMapper;
 import it.gesev.mensa.utils.MensaUtils;
 import net.sf.jasperreports.engine.JREmptyDataSource;
@@ -103,10 +106,10 @@ public class ReportServiceImpl implements ReportService
 		logger.info("Accesso a downloadDC4 classe ReportServiceImpl");
 		List<DC4TabellaDTO> listaDC4TabellaDTO = reportDAO.richiestaDocumentoDC4(dc4RichiestaDTO, true, true, true);
 		List<FirmeDC4> listaFirmeDC4 = reportDAO.richiestaFirmeDC4(dc4RichiestaDTO);
-		
+
 		FileDC4DTO fileDC4DTO = new FileDC4DTO();
 		File mockFile = ResourceUtils.getFile("classpath:DC4.jrxml");
-		
+
 		logger.info("Generazione report in corso...");
 		try
 		{
@@ -116,7 +119,7 @@ public class ReportServiceImpl implements ReportService
 			List<ForzaEffettivaJasper> listaFeJ = new ArrayList<>();
 			List<PastoConsumatoJasper> listaPcJ = new ArrayList<>();
 			List<PastoOrdinatoJasper> listaPoJ = new ArrayList<>();
-			
+
 			for(DC4TabellaDTO dc4Tab : listaDC4TabellaDTO)
 			{
 				FirmaJasper fJ = new FirmaJasper();
@@ -126,7 +129,7 @@ public class ReportServiceImpl implements ReportService
 
 				fJ.setFirma(dc4Tab.getFirma());
 
-				
+
 				feJ.setColazioneEF(dc4Tab.getColazioneEffettiva() != null ? dc4Tab.getColazioneEffettiva().toString() : "");
 				feJ.setPranzoEF(dc4Tab.getPranzoEffettiva() != null ? dc4Tab.getPranzoEffettiva().toString() : "");
 				feJ.setCenaEF(dc4Tab.getCenaEffettiva() != null ? dc4Tab.getCenaEffettiva().toString() : "");
@@ -143,7 +146,7 @@ public class ReportServiceImpl implements ReportService
 				listaFeJ.add(feJ);
 				listaPcJ.add(pcJ);
 				listaPoJ.add(poJ);
-				
+
 			}
 
 			//Firme
@@ -153,7 +156,7 @@ public class ReportServiceImpl implements ReportService
 				fJDC4Jasper.setDescrizioneFirmaDC4(firme.getDescrizione());
 				fJDC4Jasper.setNomeFirmaDC4(firme.getNome());
 				fJDC4Jasper.setCognomeFirmaDC4(firme.getCognome());
-			
+
 				listaFirme.add(fJDC4Jasper);
 			}
 
@@ -227,8 +230,8 @@ public class ReportServiceImpl implements ReportService
 	public SendListPastiDC4AllegatoC richiestaDocumentoDC4AllegatoC(DC4RichiestaDTO dc4RichiestaDTO, SendListPastiDC4AllegatoC sendObjList) throws ParseException 
 	{
 		logger.info("Accesso a richiestaDocumentoDC4 classe ReportServiceImpl");
-		List<NumeroPastiUFCJasper> listaPastiUFC = new ArrayList<>();
-		List<NumeroPastiGraduatiJasper> listaPastiGraduati = new ArrayList<>();
+		List<FEPastiDC4USC> listaPastiUFC = new ArrayList<>();
+		List<FEPastiDC4Graduati> listaPastiGraduati = new ArrayList<>();
 		reportDAO.richiestaDocumentoDC4AllegatoC(dc4RichiestaDTO, listaPastiUFC, listaPastiGraduati, sendObjList);
 		return sendObjList;
 	}
@@ -239,46 +242,44 @@ public class ReportServiceImpl implements ReportService
 	{
 		List<NumeroPastiUFCJasper> listaPastiUFC = new ArrayList<>();
 		List<NumeroPastiGraduatiJasper> listaPastiGraduati = new ArrayList<>();
-		SendListPastiDC4AllegatoC sendObjList = new SendListPastiDC4AllegatoC();
-		SendListPastiDC4AllegatoC listaDc4TabellaAllegatoCDTO = reportDAO.richiestaDocumentoDC4AllegatoC(dc4RichiestaDTO, listaPastiUFC, listaPastiGraduati, sendObjList);
+		List<DC4TabellaAllegatoCDTO> listaDc4TabellaAllegatoCDTO = reportDAO.downloadDocumentoDC4AllegatoC(dc4RichiestaDTO);
 		FileDC4DTO fileDC4DTO = new FileDC4DTO();
 		File mockFile = ResourceUtils.getFile("classpath:DC4AllegatoC.jrxml");
 
 		logger.info("Generazione report DC4 allegato C in corso...");
 		try
 		{
-			List<NumeroPastiUFCJasper> listaPastiUFCJ = listaDc4TabellaAllegatoCDTO.getListaUFC();
-			List<NumeroPastiGraduatiJasper> listaPastiGraduatiJ = listaDc4TabellaAllegatoCDTO.getListaGraduati();
-			List<GiornoJasper> listaGJ = listaDc4TabellaAllegatoCDTO.getListaGiorni();
+			List<GiornoJasper> listaGJ = new ArrayList<GiornoJasper>();
 
-//			for(DC4TabellaAllegatoCDTO dc4Tab : listaDc4TabellaAllegatoCDTO)
-//			{
-//				NumeroPastiUFCJasper pastoUFCJ = new NumeroPastiUFCJasper();
-//				NumeroPastiGraduatiJasper pastoGraduatoJ = new NumeroPastiGraduatiJasper();
-//
-//				pastoUFCJ.setnPranziT1(dc4Tab.getNumpranziUSC().toString());
-//				pastoUFCJ.setnCeneT1(dc4Tab.getNumCeneUSC().toString());
-//
-//				pastoGraduatoJ.setnColazioniT2(dc4Tab.getNumColazioniGraduati().toString());
-//				pastoGraduatoJ.setnPranziT2(dc4Tab.getNumPranziGraduati().toString());
-//				pastoGraduatoJ.setnCeneT2(dc4Tab.getNumCeneGraduati().toString());
-//
-//				listaPastiUFCJ.add(pastoUFCJ);
-//				listaPastiGraduatiJ.add(pastoGraduatoJ);
-//			}
+			for(DC4TabellaAllegatoCDTO dc4Tab : listaDc4TabellaAllegatoCDTO)
+			{
+				NumeroPastiUFCJasper pastoUFCJ = new NumeroPastiUFCJasper();
+				NumeroPastiGraduatiJasper pastoGraduatoJ = new NumeroPastiGraduatiJasper();
 
-//			int day = 0;
-//			int max = listaDc4TabellaAllegatoCDTO.size();
-//			for(int i = 0; i < max; i++)
-//			{
-//				day++;
-//				GiornoJasper gJ = new GiornoJasper(day);
-//				listaGJ.add(gJ);
-//			}
+				pastoUFCJ.setnPranziT1(dc4Tab.getNumpranziUSC().toString());
+				pastoUFCJ.setnCeneT1(dc4Tab.getNumCeneUSC().toString());
+
+				pastoGraduatoJ.setnColazioniT2(dc4Tab.getNumColazioniGraduati().toString());
+				pastoGraduatoJ.setnPranziT2(dc4Tab.getNumPranziGraduati().toString());
+				pastoGraduatoJ.setnCeneT2(dc4Tab.getNumCeneGraduati().toString());
+
+				listaPastiUFC.add(pastoUFCJ);
+				listaPastiGraduati.add(pastoGraduatoJ);
+
+			}
+
+			int day = 0;
+			int max = listaDc4TabellaAllegatoCDTO.size();
+			for(int i = 0; i < max; i++)
+			{
+				day++;
+				GiornoJasper gJ = new GiornoJasper(day);
+				listaGJ.add(gJ);
+			}
 
 			//Riempimento tabella
-			JRBeanCollectionDataSource JRBlistaPastiUff = new JRBeanCollectionDataSource(listaPastiUFCJ);
-			JRBeanCollectionDataSource JRBlistaPastiTruppa = new JRBeanCollectionDataSource(listaPastiGraduatiJ);
+			JRBeanCollectionDataSource JRBlistaPastiUff = new JRBeanCollectionDataSource(listaPastiUFC);
+			JRBeanCollectionDataSource JRBlistaPastiTruppa = new JRBeanCollectionDataSource(listaPastiGraduati);
 			JRBeanCollectionDataSource JRBlistaGiorni1 = new JRBeanCollectionDataSource(listaGJ);
 			JRBeanCollectionDataSource JRBlistaGiorni2 = new JRBeanCollectionDataSource(listaGJ);
 
@@ -310,7 +311,7 @@ public class ReportServiceImpl implements ReportService
 
 	}
 
-	
+
 	/* Leggi tutti identificativi Sistema */
 	@Override
 	public List<IdentificativoSistemaDTO> getAllIdentificativiSistema() 

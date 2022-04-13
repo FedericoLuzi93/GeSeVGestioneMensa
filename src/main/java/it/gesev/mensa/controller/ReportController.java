@@ -28,17 +28,17 @@ import org.springframework.web.multipart.MultipartFile;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import it.gesev.mensa.dto.DC4RichiestaDTO;
-import it.gesev.mensa.dto.DC4TabellaAllegatoCDTO;
 import it.gesev.mensa.dto.DC4TabellaDTO;
+import it.gesev.mensa.dto.EnteDTO;
 import it.gesev.mensa.dto.EsitoDTO;
 import it.gesev.mensa.dto.FileDC4DTO;
 import it.gesev.mensa.dto.FirmaQuotidianaDC4DTO;
 import it.gesev.mensa.dto.IdentificativoSistemaDTO;
+import it.gesev.mensa.dto.FESistemaEnteDTO;
 import it.gesev.mensa.dto.PastiConsumatiDTO;
 import it.gesev.mensa.dto.SendListPastiDC4AllegatoC;
 import it.gesev.mensa.exc.GesevException;
-import it.gesev.mensa.jasper.NumeroPastiGraduatiJasper;
-import it.gesev.mensa.jasper.NumeroPastiUFCJasper;
+import it.gesev.mensa.service.MensaService;
 import it.gesev.mensa.service.ReportService;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -48,6 +48,9 @@ public class ReportController
 {
 	@Autowired
 	private ReportService reportService;
+	
+	@Autowired
+	private MensaService mensaService;
 	
 	private static final Logger logger = LoggerFactory.getLogger(ReportController.class);
 	private final String MESSAGGIO_ERRORE_INTERNO = "Si e' verificato un errore interno";
@@ -226,7 +229,7 @@ public class ReportController
 
 	}
 	
-	/* Leggi tutti identificativi Sistema */
+	/* Leggi identificativi Sistema ed Enti */
 	@GetMapping("/getAllIdentificativiSistema")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
 			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
@@ -239,7 +242,11 @@ public class ReportController
 		try
 		{
 			List<IdentificativoSistemaDTO> listaIdentificativoSistema = reportService.getAllIdentificativiSistema();
-			esito.setBody(listaIdentificativoSistema);
+			List<EnteDTO> listaEnteDTO = mensaService.getAllEnti();
+			FESistemaEnteDTO dto = new FESistemaEnteDTO();
+			dto.setListaEnti(listaEnteDTO);
+			dto.setListaSistemi(listaIdentificativoSistema);
+			esito.setBody(dto);
 			status = HttpStatus.OK;
 		}
 		catch(GesevException gex)
