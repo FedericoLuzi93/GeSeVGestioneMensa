@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,13 +52,13 @@ public class ReportController
 {
 	@Autowired
 	private ReportService reportService;
-	
+
 	@Autowired
 	private MensaService mensaService;
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(ReportController.class);
 	private final String MESSAGGIO_ERRORE_INTERNO = "Si e' verificato un errore interno";
-	
+
 	/* Carica pasti consumati CSV */
 	@PostMapping(value = "/caricaPastiConsumatiCSV", consumes = {"multipart/form-data"})
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
@@ -74,7 +75,7 @@ public class ReportController
 			boolean controlloCSV = name.endsWith(".csv");
 			if(controlloCSV == false)
 				throw new GesevException("Impossibile caricare i pasti consumati, il file non è di tipo CSV", HttpStatus.BAD_REQUEST);
-			
+
 			reportService.caricaPastiConsumatiCSV(multipartFile);
 			esito.setStatus(HttpStatus.OK.value());
 			esito.setMessaggio("INSERIMENTO AVVENUTO CON SUCCESSO");
@@ -93,8 +94,8 @@ public class ReportController
 		}
 		return ResponseEntity.status(esito.getStatus()).body(esito);
 	}
-	
-	
+
+
 	/* Carica pasti consumati JSON */
 	@PostMapping(value = "/caricaPastiConsumatiJson")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
@@ -124,7 +125,7 @@ public class ReportController
 		}
 		return ResponseEntity.status(esito.getStatus()).body(esito);
 	}
-	
+
 	/* Richiesta documento DC4 */
 	@PostMapping(value = "/richiestaDocumentoDC4")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
@@ -156,20 +157,35 @@ public class ReportController
 		}
 		return ResponseEntity.status(esito.getStatus()).body(esito);
 	}
-	
+
 	/* Download File DC4 */
 	@GetMapping(value = "/downloadDC4")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Richiesta download DC4 andata a buon fine"),
 			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
 			@ApiResponse(code = 500, message = "Errore interno") })
-	public ResponseEntity<Resource> downloadFileDC4(@RequestParam("dc4RichiestaDTO") String LDc4RichiestaDTO) throws ParseException, FileNotFoundException
+	public ResponseEntity<Resource> downloadFileDC4(@RequestParam String anno, @RequestParam String mese, 
+			@RequestParam int idEnte, @RequestParam int idOperatore, @RequestParam (required = false) String sistemaPersonale) throws ParseException, FileNotFoundException
 	{
 		logger.info("Accesso al servizio downloadDC4");
 		HttpHeaders headers = new HttpHeaders();
-		int posizione = LDc4RichiestaDTO.indexOf("\"dc4RichiestaDTO\":");
-//		String JSON = LDc4RichiestaDTO.substring(posizione + "\"dc4RichiestaDTO\":".length(), LDc4RichiestaDTO.length() - 1);
-		String JSON = LDc4RichiestaDTO;
-		DC4RichiestaDTO dc4RichiestaDTO = new Gson().fromJson(JSON, DC4RichiestaDTO.class);
+		DC4RichiestaDTO dc4RichiestaDTO = new DC4RichiestaDTO();
+
+		try
+		{			
+			if(!StringUtils.isBlank(sistemaPersonale))
+				dc4RichiestaDTO.setSistemaPersonale(sistemaPersonale);
+			else
+				dc4RichiestaDTO.setSistemaPersonale(null);
+
+			dc4RichiestaDTO.setAnno(anno);
+			dc4RichiestaDTO.setMese(mese);
+			dc4RichiestaDTO.setIdEnte(idEnte);
+			dc4RichiestaDTO.setIdOperatore(idOperatore);
+		}
+		catch(Exception e)
+		{
+			logger.info("Si e' verificata un'eccezione", e);
+		}
 
 		/* Invio FIle */
 		FileDC4DTO fileDC4DTO = reportService.downloadDC4(dc4RichiestaDTO);
@@ -179,9 +195,8 @@ public class ReportController
 
 		return ResponseEntity.ok().headers(headers).contentLength(fileDC4DTO.getFileDC4().length)
 				.contentType(MediaType.APPLICATION_OCTET_STREAM).body(new ByteArrayResource(fileDC4DTO.getFileDC4()));
-
 	}
-	
+
 	/* Richiesta documento DC4 Allegato C */
 	@PostMapping(value = "/richiestaDocumentoDC4AllegatoC")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
@@ -214,17 +229,36 @@ public class ReportController
 		}
 		return ResponseEntity.status(esito.getStatus()).body(esito);
 	}
-	
+
 	/* Download File DC4 AlleegatoC */
-	@PostMapping(value = "/downloadDC4AllegatoC")
+	@GetMapping(value = "/downloadDC4AllegatoC")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Richiesta download DC4 andata a buon fine"),
 			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
 			@ApiResponse(code = 500, message = "Errore interno") })
-	public ResponseEntity<Resource> downloadDC4AllegatoC(@RequestBody DC4RichiestaDTO dc4RichiestaDTO) throws ParseException, FileNotFoundException
+	public ResponseEntity<Resource> downloadDC4AllegatoC(@RequestParam String anno, @RequestParam String mese, 
+			@RequestParam int idEnte, @RequestParam int idOperatore, @RequestParam (required = false) String sistemaPersonale) throws ParseException, FileNotFoundException
 	{
 		logger.info("Accesso al servizio downloadDC4");
 		HttpHeaders headers = new HttpHeaders();
+		DC4RichiestaDTO dc4RichiestaDTO = new DC4RichiestaDTO();
 
+		try
+		{			
+			if(!StringUtils.isBlank(sistemaPersonale))
+				dc4RichiestaDTO.setSistemaPersonale(sistemaPersonale);
+			else
+				dc4RichiestaDTO.setSistemaPersonale(null);
+
+			dc4RichiestaDTO.setAnno(anno);
+			dc4RichiestaDTO.setMese(mese);
+			dc4RichiestaDTO.setIdEnte(idEnte);
+			dc4RichiestaDTO.setIdOperatore(idOperatore);
+		}
+		catch(Exception e)
+		{
+			logger.info("Si e' verificata un'eccezione", e);
+		}
+		
 		/* Invio FIle */
 		FileDC4DTO fileDC4DTO = reportService.downloadDC4AllegatoC(dc4RichiestaDTO);
 
@@ -233,9 +267,8 @@ public class ReportController
 
 		return ResponseEntity.ok().headers(headers).contentLength(fileDC4DTO.getFileDC4().length)
 				.contentType(MediaType.APPLICATION_OCTET_STREAM).body(new ByteArrayResource(fileDC4DTO.getFileDC4()));
-
 	}
-	
+
 	/* Leggi identificativi Sistema ed Enti */
 	@GetMapping("/getAllIdentificativiSistema")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
@@ -271,7 +304,7 @@ public class ReportController
 		esito.setStatus(status.value());
 		return ResponseEntity.status(status).headers(new HttpHeaders()).body(esito);
 	}
-	
+
 	/* Aggiungi una nuova Firma */
 	@PutMapping("/createNuovaFirma")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
@@ -303,7 +336,7 @@ public class ReportController
 		esito.setStatus(status.value());
 		return ResponseEntity.status(status).headers(new HttpHeaders()).body(esito);
 	}
-	
+
 	/* Cancella un Firma */
 	@DeleteMapping("/deleteFirma")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
