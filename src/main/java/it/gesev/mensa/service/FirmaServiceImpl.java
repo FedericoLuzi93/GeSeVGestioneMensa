@@ -124,6 +124,7 @@ public class FirmaServiceImpl implements FirmaService
 				associazioneDTO.setOrdineFirma(associazione.getOrdineFirma());
 				associazioneDTO.setRuolo(associazione.getRuoloMensa() != null ? associazione.getRuoloMensa().getDescrizioneRuoloMensa() : null);
 				associazioneDTO.setIdRuolo(associazione.getRuoloMensa() != null ? associazione.getRuoloMensa().getCodiceRuoloMensa() : null);
+				associazioneDTO.setFlagApprovatore(associazione.getFlagApprovatore());
 				
 				listaAssociazioniDTO.add(associazioneDTO);
 				

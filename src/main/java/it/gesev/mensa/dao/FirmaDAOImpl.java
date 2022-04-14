@@ -3,6 +3,7 @@ package it.gesev.mensa.dao;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -124,6 +125,9 @@ public class FirmaDAOImpl implements FirmaDAO {
 			if(ordine.getOrdineFirma() == null || ordine.getOrdineFirma() < 1)
 				throw new GesevException("Ordine firma " + ordine.getOrdineFirma() + " non valido.", HttpStatus.BAD_REQUEST);
 			
+			if(StringUtils.isBlank(ordine.getFlagApprovatore()) || !Arrays.asList("Y", "N").contains(ordine.getFlagApprovatore()))
+				throw new GesevException("Valore flag approvatore non valido", HttpStatus.BAD_REQUEST);
+			
 			AssReportRuoloMensa associazione = new AssReportRuoloMensa();
 			SimpleDateFormat formatter = new SimpleDateFormat(this.dateFormat);
 			
@@ -132,6 +136,7 @@ public class FirmaDAOImpl implements FirmaDAO {
 			associazione.setOrdineFirma(ordine.getOrdineFirma());
 			associazione.setReport(reportOpt.get());
 			associazione.setRuoloMensa(ruoloOpt.get());
+			associazione.setFlagApprovatore(ordine.getFlagApprovatore());
 			
 			assReportRuoloMensaRepository.save(associazione);
 			
