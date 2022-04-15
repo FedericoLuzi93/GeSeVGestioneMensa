@@ -310,6 +310,137 @@ public class ReportServiceImpl implements ReportService
 		return fileDC4DTO;
 
 	}
+	
+	/* Download documento DC4 Allegato C Ufficiali*/
+	@Override
+	public FileDC4DTO downloadDC4AllegatoCUfficiali(DC4RichiestaDTO dc4RichiestaDTO) throws FileNotFoundException 
+	{
+		List<NumeroPastiUFCJasper> listaPastiUFC = new ArrayList<>();
+		List<DC4TabellaAllegatoCDTO> listaDc4TabellaAllegatoCDTO = reportDAO.downloadDC4AllegatoCUfficiali(dc4RichiestaDTO);
+		FileDC4DTO fileDC4DTO = new FileDC4DTO();
+		File mockFile = ResourceUtils.getFile("classpath:DC4AllegatoC2Ufficiali.jrxml");
+
+		logger.info("Generazione report DC4 allegato C in corso...");
+		try
+		{
+			List<GiornoJasper> listaGJ = new ArrayList<GiornoJasper>();
+
+			for(DC4TabellaAllegatoCDTO dc4Tab : listaDc4TabellaAllegatoCDTO)
+			{
+				NumeroPastiUFCJasper pastoUFCJ = new NumeroPastiUFCJasper();
+
+				pastoUFCJ.setnPranziT1(dc4Tab.getNumpranziUSC().toString());
+				pastoUFCJ.setnCeneT1(dc4Tab.getNumCeneUSC().toString());
+				listaPastiUFC.add(pastoUFCJ);
+				
+			}
+
+			int day = 0;
+			int max = listaDc4TabellaAllegatoCDTO.size();
+			for(int i = 0; i < max; i++)
+			{
+				day++;
+				GiornoJasper gJ = new GiornoJasper(day);
+				listaGJ.add(gJ);
+			}
+
+			//Riempimento tabella
+			JRBeanCollectionDataSource JRBlistaPastiUff = new JRBeanCollectionDataSource(listaPastiUFC);
+			JRBeanCollectionDataSource JRBlistaGiorni1 = new JRBeanCollectionDataSource(listaGJ);
+			JRBeanCollectionDataSource JRBlistaGiorni2 = new JRBeanCollectionDataSource(listaGJ);
+
+			//Assegnazione oggetti
+			Map<String, Object> parameters = new HashMap<>();
+			parameters.put("Tab1", JRBlistaPastiUff);
+			parameters.put("giornoTab", JRBlistaGiorni1);
+			parameters.put("giornoTab2", JRBlistaGiorni2);
+
+			//Parametri singoli
+			String mese = MensaUtils.convertiMese(dc4RichiestaDTO.getMese());
+			parameters.put("mese", mese);
+
+			//Stampa
+			JasperReport report = JasperCompileManager.compileReport(mockFile.getAbsolutePath());
+			JasperPrint print = JasperFillManager.fillReport(report, parameters, new JREmptyDataSource());
+			byte[] arrayb = JasperExportManager.exportReportToPdf(print);
+			fileDC4DTO.setFileDC4(arrayb);
+			fileDC4DTO.setNomeFile("DC4_AllegatoC_" + dc4RichiestaDTO.getMese() + "_" + dc4RichiestaDTO.getAnno() + ".pdf"); 
+
+		}
+		catch(Exception e)
+		{
+
+		}
+		logger.info("Report generato con successo");
+		return fileDC4DTO;
+	}
+	
+	/* Download documento DC4 Allegato C Graduati*/
+	@Override
+	public FileDC4DTO downloadDC4AllegatoCGraduati(DC4RichiestaDTO dc4RichiestaDTO) throws FileNotFoundException {
+		List<NumeroPastiGraduatiJasper> listaPastiGraduati = new ArrayList<>();
+		List<DC4TabellaAllegatoCDTO> listaDc4TabellaAllegatoCDTO = reportDAO.downloadDC4AllegatoCGraduati(dc4RichiestaDTO);
+		FileDC4DTO fileDC4DTO = new FileDC4DTO();
+		File mockFile = ResourceUtils.getFile("classpath:DC4AllegatoC2Graduati.jrxml");
+
+		logger.info("Generazione report DC4 allegato C in corso...");
+		try
+		{
+			List<GiornoJasper> listaGJ = new ArrayList<GiornoJasper>();
+
+			for(DC4TabellaAllegatoCDTO dc4Tab : listaDc4TabellaAllegatoCDTO)
+			{
+
+				NumeroPastiGraduatiJasper pastoGraduatoJ = new NumeroPastiGraduatiJasper();
+
+				pastoGraduatoJ.setnColazioniT2(dc4Tab.getNumColazioniGraduati().toString());
+				pastoGraduatoJ.setnPranziT2(dc4Tab.getNumPranziGraduati().toString());
+				pastoGraduatoJ.setnCeneT2(dc4Tab.getNumCeneGraduati().toString());
+
+				listaPastiGraduati.add(pastoGraduatoJ);
+
+			}
+
+			int day = 0;
+			int max = listaDc4TabellaAllegatoCDTO.size();
+			for(int i = 0; i < max; i++)
+			{
+				day++;
+				GiornoJasper gJ = new GiornoJasper(day);
+				listaGJ.add(gJ);
+			}
+
+			//Riempimento tabella
+			JRBeanCollectionDataSource JRBlistaPastiTruppa = new JRBeanCollectionDataSource(listaPastiGraduati);
+			JRBeanCollectionDataSource JRBlistaGiorni1 = new JRBeanCollectionDataSource(listaGJ);
+			JRBeanCollectionDataSource JRBlistaGiorni2 = new JRBeanCollectionDataSource(listaGJ);
+
+			//Assegnazione oggetti
+			Map<String, Object> parameters = new HashMap<>();
+			parameters.put("Tab2", JRBlistaPastiTruppa);
+			parameters.put("giornoTab", JRBlistaGiorni1);
+			parameters.put("giornoTab2", JRBlistaGiorni2);
+
+			//Parametri singoli
+			String mese = MensaUtils.convertiMese(dc4RichiestaDTO.getMese());
+			parameters.put("mese", mese);
+
+			//Stampa
+			JasperReport report = JasperCompileManager.compileReport(mockFile.getAbsolutePath());
+			JasperPrint print = JasperFillManager.fillReport(report, parameters, new JREmptyDataSource());
+			byte[] arrayb = JasperExportManager.exportReportToPdf(print);
+			fileDC4DTO.setFileDC4(arrayb);
+			fileDC4DTO.setNomeFile("DC4_AllegatoC_" + dc4RichiestaDTO.getMese() + "_" + dc4RichiestaDTO.getAnno() + ".pdf"); 
+
+		}
+		catch(Exception e)
+		{
+
+		}
+		logger.info("Report generato con successo");
+		return fileDC4DTO;
+	}
+
 
 
 	/* Leggi tutti identificativi Sistema */
@@ -347,5 +478,8 @@ public class ReportServiceImpl implements ReportService
 		reportDAO.deleteFirma(firmaQuotidianaDC4DTO);
 		return 1;
 	}
+
+
+
 
 }

@@ -33,6 +33,11 @@ public interface ReportDAO
 	public SendListPastiDC4AllegatoC richiestaDocumentoDC4AllegatoC(DC4RichiestaDTO dc4RichiestaDTO, 
 			List<FEPastiDC4USC> listaPastiUFC, List<FEPastiDC4Graduati> listaPastiGraduati, SendListPastiDC4AllegatoC sendObjList);
 	public  List<DC4TabellaAllegatoCDTO> downloadDocumentoDC4AllegatoC(DC4RichiestaDTO dc4RichiestaDTO);
+	public List<DC4TabellaAllegatoCDTO> downloadDC4AllegatoCUfficiali(DC4RichiestaDTO dc4RichiestaDTO);
+	public List<DC4TabellaAllegatoCDTO> downloadDC4AllegatoCGraduati(DC4RichiestaDTO dc4RichiestaDTO);
+
+
+
 
 	
 

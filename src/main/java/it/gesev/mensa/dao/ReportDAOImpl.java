@@ -443,13 +443,13 @@ public class ReportDAOImpl implements ReportDAO
 		for(Object[] obj : listOfResultsPastiGraduati)
 		{
 			FEPastiDC4Graduati fePastiDC4Graduati = new FEPastiDC4Graduati();
-			
+
 			Integer numColazioniGraduati = ((BigInteger) obj[1]).intValue();
 			Integer numPranziGraduati = ((BigInteger) obj[2]).intValue();
 			Integer numCeneGraduati = ((BigInteger) obj[3]).intValue();
 
 			Date dataReport = (Date) obj[0];
-			
+
 			//Lista Passata
 			fePastiDC4Graduati.setNColazioniT2(String.valueOf(numColazioniGraduati));
 			fePastiDC4Graduati.setNPranziT2(String.valueOf(numPranziGraduati));
@@ -457,7 +457,7 @@ public class ReportDAOImpl implements ReportDAO
 			fePastiDC4Graduati.setGiorno(simpleDateFormat.format(dataReport));
 			listaPastiGraduati.add(fePastiDC4Graduati);
 		}
-				
+
 		sendObjList.setListaUFC(listaPastiUFC);
 		sendObjList.setListaGraduati(listaPastiGraduati);
 
@@ -508,7 +508,7 @@ public class ReportDAOImpl implements ReportDAO
 
 			Date dataReport = ((Date) obj[0]);
 			dc4AllC.setGiorno(simpleDateFormat.format(dataReport));
-		
+
 			map.put((String) simpleDateFormat.format(dataReport),dc4AllC); 
 		}
 
@@ -532,8 +532,8 @@ public class ReportDAOImpl implements ReportDAO
 
 		for(Object[] obj : listOfResultsPastiGraduati)
 		{
-			FEPastiDC4Graduati fePastiDC4Graduati = new FEPastiDC4Graduati();
-			
+			//FEPastiDC4Graduati fePastiDC4Graduati = new FEPastiDC4Graduati();
+
 			Integer numColazioniGraduati = ((BigInteger) obj[1]).intValue();
 			Integer numPranziGraduati = ((BigInteger) obj[2]).intValue();
 			Integer numCeneGraduati = ((BigInteger) obj[3]).intValue();
@@ -547,11 +547,11 @@ public class ReportDAOImpl implements ReportDAO
 			dto.setNumColazioniGraduati(numColazioniGraduati);
 			dto.setNumPranziGraduati(numPranziGraduati);
 			dto.setNumCeneGraduati(numCeneGraduati);		
-			
+
 			if(isDtoNull)
 				map.put(simpleDateFormat.format(dataReport), dto);
 		}
-		
+
 
 		List<DC4TabellaAllegatoCDTO> listaDC4TabellaAllegatoCDTO = map.entrySet().stream()
 				.sorted(Comparator.comparing(Map.Entry::getKey))
@@ -560,10 +560,131 @@ public class ReportDAOImpl implements ReportDAO
 
 
 		logger.info("Lista creata con successo");
-		
+
 		return listaDC4TabellaAllegatoCDTO;
 	}
-	
+
+
+	/* Download documento DC4 Allegato C Ufficiali*/
+	@Override
+	public List<DC4TabellaAllegatoCDTO> downloadDC4AllegatoCUfficiali(DC4RichiestaDTO dc4RichiestaDTO)
+	{
+		logger.info("Accesso a downloadDC4AllegatoCUfficiali classe ReportDAOImpl");
+
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
+		Map<String, DC4TabellaAllegatoCDTO> map = new HashMap<String, DC4TabellaAllegatoCDTO>();
+
+		//Pasti UFC	
+		String giornoGraduati = "'%";
+		String dataTotale = giornoGraduati.concat("-" + dc4RichiestaDTO.getMese() + "-" + dc4RichiestaDTO.getAnno() + "'");
+
+		if(StringUtils.isBlank(dataTotale))
+			throw new GesevException("Impossibile generare il documento DC4, mese non valido", HttpStatus.BAD_REQUEST);
+
+		String queryUFC = "select "
+				+ "pc.data_pasto, "
+				+ "sum(case when pc.tipo_pasto_fk = 2 then 1 else 0 end) as PRANZO, "
+				+ "sum(case when pc.tipo_pasto_fk = 3 then 1 else 0 end) as CENA "
+				+ "from pasti_consumati pc left join dipendente d "
+				+ "on pc.codice_fiscale = d.codice_fiscale "
+				+ "left join grado g on d.grado = g.shsgra_cod_uid_pk "
+				+ "where pc.tipo_pagamento_fk = 'TG' and (d.codice_dipendente is null or g.tipo_grado_fk in ('UF', 'SU') or d.tipo_personale = 'C') "
+				+ "and to_char(pc.data_pasto, 'DD-MM-YYYY') like " + dataTotale + " "
+				+ "group by pc.data_pasto "
+				+ "order by pc.data_pasto";
+
+		logger.info("Esecuzione query: " + queryUFC); 
+		Query numUFCQuery = entityManager.createNativeQuery(queryUFC);
+		List<Object[]> listOfResultsPastiUFC = numUFCQuery.getResultList();
+
+		for(Object[] obj : listOfResultsPastiUFC)
+		{
+			//FEPastiDC4USC fePastiDC4USC = new FEPastiDC4USC();
+			DC4TabellaAllegatoCDTO dc4AllC = new DC4TabellaAllegatoCDTO();
+
+			Integer numpranziUSC = ((BigInteger) obj[1]).intValue();
+			dc4AllC.setNumpranziUSC(numpranziUSC);
+			Integer numCeneUSC = ((BigInteger) obj[2]).intValue();
+			dc4AllC.setNumCeneUSC(numCeneUSC);
+
+			Date dataReport = ((Date) obj[0]);
+			dc4AllC.setGiorno(simpleDateFormat.format(dataReport));
+
+			map.put((String) simpleDateFormat.format(dataReport),dc4AllC); 
+		}
+
+		List<DC4TabellaAllegatoCDTO> listaDC4TabellaAllegatoCDTO = map.entrySet().stream()
+				.sorted(Comparator.comparing(Map.Entry::getKey))
+				.map(Map.Entry::getValue)
+				.collect(Collectors.toList());
+
+
+		logger.info("Lista creata con successo");
+
+		return listaDC4TabellaAllegatoCDTO;
+	}
+
+	/* Download documento DC4 Allegato C Graduati*/
+	@Override
+	public List<DC4TabellaAllegatoCDTO> downloadDC4AllegatoCGraduati(DC4RichiestaDTO dc4RichiestaDTO)
+	{
+		logger.info("Accesso a downloadDC4AllegatoCUfficiali classe ReportDAOImpl");
+
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
+		Map<String, DC4TabellaAllegatoCDTO> map = new HashMap<String, DC4TabellaAllegatoCDTO>();
+
+		String giornoGraduati = "'%";
+		String dataTotale = giornoGraduati.concat("-" + dc4RichiestaDTO.getMese() + "-" + dc4RichiestaDTO.getAnno() + "'");
+
+		//Pasti Graduati
+		String queryGraduati = "select "
+				+ "pc.data_pasto, "
+				+ "sum(case when pc.tipo_pasto_fk = 1 then 1 else 0 end) as COLAZIONE, "
+				+ "sum(case when pc.tipo_pasto_fk = 2 then 1 else 0 end) as PRANZO, "
+				+ "sum(case when pc.tipo_pasto_fk = 3 then 1 else 0 end) as CENA "
+				+ "from pasti_consumati pc left join dipendente d "
+				+ "on pc.codice_fiscale = d.codice_fiscale "
+				+ "left join grado g on d.grado = g.shsgra_cod_uid_pk "
+				+ "where pc.tipo_pagamento_fk = 'TG' and g.tipo_grado_fk = 'GT' "
+				+ "and to_char(pc.data_pasto, 'DD-MM-YYYY') like " + dataTotale + " "
+				+ "group by pc.data_pasto "
+				+ "order by pc.data_pasto";
+
+		logger.info("Esecuzione query: " + queryGraduati); 
+		Query graduatiQuery = entityManager.createNativeQuery(queryGraduati);
+		List<Object[]> listOfResultsPastiGraduati = graduatiQuery.getResultList();
+
+		for(Object[] obj : listOfResultsPastiGraduati)
+		{
+			//FEPastiDC4Graduati fePastiDC4Graduati = new FEPastiDC4Graduati();
+			DC4TabellaAllegatoCDTO dc4AllC = new DC4TabellaAllegatoCDTO();
+			
+			Integer numColazioniGraduati = ((BigInteger) obj[1]).intValue();
+			Integer numPranziGraduati = ((BigInteger) obj[2]).intValue();
+			Integer numCeneGraduati = ((BigInteger) obj[3]).intValue();
+
+			Date dataReport = (Date) obj[0];
+			
+			dc4AllC.setGiorno(simpleDateFormat.format(dataReport));
+			dc4AllC.setNumColazioniGraduati(numColazioniGraduati);
+			dc4AllC.setNumPranziGraduati(numPranziGraduati);
+			dc4AllC.setNumCeneGraduati(numCeneGraduati);		
+
+			map.put((String) simpleDateFormat.format(dataReport),dc4AllC); 
+		}
+
+
+		List<DC4TabellaAllegatoCDTO> listaDC4TabellaAllegatoCDTO = map.entrySet().stream()
+				.sorted(Comparator.comparing(Map.Entry::getKey))
+				.map(Map.Entry::getValue)
+				.collect(Collectors.toList());
+
+
+		logger.info("Lista creata con successo");
+
+		return listaDC4TabellaAllegatoCDTO;
+	}
+
 	/* Leggi tutti identificativi Sistema */
 	@Override
 	public List<IdentificativoSistema> getAllIdentificativiSistema() 
@@ -625,6 +746,12 @@ public class ReportDAOImpl implements ReportDAO
 		logger.info("Cancellazione avvenuta con successo");
 		return 1;
 	}
+
+
+
+
+
+
 
 
 
