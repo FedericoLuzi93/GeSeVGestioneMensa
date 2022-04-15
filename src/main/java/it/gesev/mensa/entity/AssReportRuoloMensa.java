@@ -38,6 +38,9 @@ public class AssReportRuoloMensa
 	@Column(name = "ORDINE_FIRMA")
 	private Integer ordineFirma;
 	
+	@Column(name = "FLAG_APPROVATORE")
+	private String flagApprovatore;
+	
 	@ManyToOne
 	@JoinColumn(name = "REPORT_FK")
 	private Report report;

@@ -14,4 +14,5 @@ public class AssReportRuoloMensaDTO
 	private Integer idRuolo;
 	private String etichetta;
 	private Integer ordineFirma;
+	private String flagApprovatore;
 }

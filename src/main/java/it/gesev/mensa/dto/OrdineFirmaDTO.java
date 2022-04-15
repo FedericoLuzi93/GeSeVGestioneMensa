@@ -14,4 +14,5 @@ public class OrdineFirmaDTO implements Serializable
 	private static final long serialVersionUID = 7657746253241611275L;
 	private Integer idRuolo;
 	private Integer ordineFirma;
+	private String flagApprovatore;
 }
