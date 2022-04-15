@@ -65,7 +65,7 @@ public class ReportDAOImpl implements ReportDAO
 	@Value("${gesev.data.format}")
 	private String dateFormat;
 	
-	@Value("${italian.data.format}")
+	@Value("${gesev.italian.data.format}")
 	private String italianDateFormat;
 
 	@Autowired
