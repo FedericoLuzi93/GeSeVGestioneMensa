@@ -64,6 +64,9 @@ public class ReportDAOImpl implements ReportDAO
 
 	@Value("${gesev.data.format}")
 	private String dateFormat;
+	
+	@Value("${italian.data.format}")
+	private String italianDateFormat;
 
 	@Autowired
 	private MensaRepository mensaRepository;
@@ -383,7 +386,7 @@ public class ReportDAOImpl implements ReportDAO
 	{
 		logger.info("Accesso a richiestaDocumentoDC4AllegatoC classe ReportDAOImpl");
 
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(italianDateFormat);
 
 		//Pasti UFC	
 		String giornoGraduati = "'%";

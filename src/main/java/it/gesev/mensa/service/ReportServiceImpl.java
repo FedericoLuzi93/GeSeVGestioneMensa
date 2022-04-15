@@ -441,8 +441,6 @@ public class ReportServiceImpl implements ReportService
 		return fileDC4DTO;
 	}
 
-
-
 	/* Leggi tutti identificativi Sistema */
 	@Override
 	public List<IdentificativoSistemaDTO> getAllIdentificativiSistema() 
