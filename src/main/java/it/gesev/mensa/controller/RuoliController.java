@@ -27,6 +27,7 @@ import it.gesev.mensa.dto.EsitoDTO;
 import it.gesev.mensa.dto.OrganoDirettivoDTO;
 import it.gesev.mensa.dto.RicercaColonnaDTO;
 import it.gesev.mensa.exc.GesevException;
+import it.gesev.mensa.service.MailService;
 import it.gesev.mensa.service.RuoliService;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -36,6 +37,9 @@ public class RuoliController
 {
 	@Autowired
 	private RuoliService ruoliService;
+	
+	@Autowired
+	private MailService mailService;
 	
 	private static final Logger logger = LoggerFactory.getLogger(RuoliController.class);
 	private final String MESSAGGIO_ERRORE_INTERNO = "Si e' verificato un errore interno";
@@ -507,4 +511,38 @@ public class RuoliController
 		esito.setStatus(status.value());
 		return ResponseEntity.status(status).headers(new HttpHeaders()).body(esito);
 	}
+	
+	@GetMapping("/inviaMail")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
+			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
+			@ApiResponse(code = 500, message = "Errore interno") })
+	public ResponseEntity<EsitoDTO> inviaMail()
+	{
+		logger.info("Accesso al servizio inviaMail");
+		EsitoDTO esito = new EsitoDTO();
+		HttpStatus status = null;
+		
+		try
+		{
+			mailService.sendMailOperatoreMensa("Biagio", "Montesano", "bia.montesano1983@gmail.com");
+			status = HttpStatus.OK;
+		}
+		
+		catch(GesevException gex)   
+		{
+			logger.info("Si e' verificata un'eccezione", gex);
+			status = gex.getStatus();
+			esito.setMessaggio(gex.getMessage());
+		}
+		catch(Exception ex)
+		{
+			logger.info("Si e' verificata un'eccezione interna", ex);
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+			esito.setMessaggio(MESSAGGIO_ERRORE_INTERNO);
+		}
+		
+		esito.setStatus(status.value());
+		return ResponseEntity.status(status).headers(new HttpHeaders()).body(esito);
+	}
+	
 }

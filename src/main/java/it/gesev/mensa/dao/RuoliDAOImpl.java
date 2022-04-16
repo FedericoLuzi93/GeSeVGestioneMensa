@@ -436,7 +436,7 @@ public class RuoliDAOImpl implements RuoliDAO
 			throw new GesevException("L'email e' obbligatoria", HttpStatus.BAD_REQUEST);
 		
 		if(StringUtils.isBlank(nome))
-			throw new GesevException("Il nome e' obbligatoria", HttpStatus.BAD_REQUEST);
+			throw new GesevException("Il nome e' obbligatorio", HttpStatus.BAD_REQUEST);
 		
 		if(StringUtils.isBlank(cognome))
 			throw new GesevException("Il cognome e' obbligatoria", HttpStatus.BAD_REQUEST);
