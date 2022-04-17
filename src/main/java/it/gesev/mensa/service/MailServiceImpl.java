@@ -1,13 +1,17 @@
 package it.gesev.mensa.service;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+
+import it.gesev.mensa.exc.GesevException;
 
 @Service
 public class MailServiceImpl implements MailService
@@ -27,6 +31,15 @@ public class MailServiceImpl implements MailService
 	public String sendMailOperatoreMensa(String nome, String cognome, String email) 
 	{
 		logger.info("Invio della mail di conferma a " + email);
+		
+		if(StringUtils.isAllBlank(nome))
+			throw new GesevException("Nome non valido", HttpStatus.BAD_REQUEST);
+		
+		if(StringUtils.isAllBlank(cognome))
+			throw new GesevException("Cognome non valido", HttpStatus.BAD_REQUEST);
+		
+		if(StringUtils.isAllBlank(email))
+			throw new GesevException("Email non valido", HttpStatus.BAD_REQUEST);
 		
 		SimpleMailMessage message = new SimpleMailMessage(); 
         message.setFrom(this.mailFrom);

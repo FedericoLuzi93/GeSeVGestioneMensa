@@ -1,0 +1,33 @@
+package it.gesev.mensa.entity;
+
+import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Table(name = "stato_client")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class StatoClient 
+{
+	@Id
+	@Column(name = "id_stato_client")
+	private Integer idStatoClient;
+	
+	@Column(name = "descrizione_stato_client")
+	private String descrizioneStatoClient;
+	
+	@OneToMany(mappedBy = "statoClient", fetch = FetchType.LAZY)
+	private List<AttestazioneClient> listaAttestazioni;
+	
+}

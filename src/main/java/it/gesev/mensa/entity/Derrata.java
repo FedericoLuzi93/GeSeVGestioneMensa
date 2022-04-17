@@ -54,10 +54,12 @@ public class Derrata
 	@JoinColumn(name="TIPO_DERRATA")
 	private TipoDerrata tipoDerrata;
 	
-	@OneToOne(mappedBy="derrata")
+	@OneToOne(mappedBy="derrata", cascade={CascadeType.PERSIST, CascadeType.DETACH,
+		 	CascadeType.MERGE, CascadeType.REFRESH})
 	private DettaglioPrelevamento dettaglioPrelevamento;
 	
-	@OneToOne(mappedBy="derrata")
+	@OneToOne(mappedBy="derrata", cascade={CascadeType.PERSIST, CascadeType.DETACH,
+		 	CascadeType.MERGE, CascadeType.REFRESH})
 	private DettaglioMovimento dettaglioMovimento;
 	
 	public Derrata()

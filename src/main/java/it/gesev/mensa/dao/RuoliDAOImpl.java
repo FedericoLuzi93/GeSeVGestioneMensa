@@ -28,6 +28,7 @@ import org.springframework.stereotype.Component;
 import it.gesev.mensa.dto.AssDipendenteRuoloDTO;
 import it.gesev.mensa.dto.RicercaColonnaDTO;
 import it.gesev.mensa.entity.AssDipendenteRuolo;
+import it.gesev.mensa.entity.AttestazioneClient;
 import it.gesev.mensa.entity.Dipendente;
 import it.gesev.mensa.entity.DipendenteEsterno;
 import it.gesev.mensa.entity.Ente;
@@ -38,12 +39,14 @@ import it.gesev.mensa.enums.ColonneDipendenteEnum;
 import it.gesev.mensa.enums.TipoRuoloEnum;
 import it.gesev.mensa.exc.GesevException;
 import it.gesev.mensa.repository.AssRuoloDipendenteRepository;
+import it.gesev.mensa.repository.AttestazioneClientRepository;
 import it.gesev.mensa.repository.DipendenteEsternoRepository;
 import it.gesev.mensa.repository.DipendenteRepository;
 import it.gesev.mensa.repository.EnteRepository;
 import it.gesev.mensa.repository.MensaRepository;
 import it.gesev.mensa.repository.OrganoDirettivoRepository;
 import it.gesev.mensa.repository.RuoloMensaRepository;
+import it.gesev.mensa.service.MailService;
 
 @Component
 public class RuoliDAOImpl implements RuoliDAO 
@@ -62,6 +65,12 @@ public class RuoliDAOImpl implements RuoliDAO
 	
 	@Autowired
 	private RuoloMensaRepository ruoloMensaRepository;
+	
+	@Autowired
+	private AttestazioneClientRepository attestazioneReository;
+	
+	@Autowired
+	private MailService mailService;
 	
 	@Value("${gesev.data.format}")
 	private String dateFormat;
@@ -221,7 +230,12 @@ public class RuoliDAOImpl implements RuoliDAO
 		
 		assRuoloDipendenteRepository.save(associazione);
 		
-		
+		/* invio mail per operatore mensa */
+		if(optionalRuolo.get().getDescrizioneRuoloMensa().trim().equalsIgnoreCase("Operatore mensa"))
+		{
+			String optCode = mailService.sendMailOperatoreMensa(optionalDipendente.get().getNome(), optionalDipendente.get().getCognome(), optionalDipendente.get().getEmail());
+			inserisciDatiAttestazione(optCode, optionalMensa.isPresent() ? optionalMensa.get() : null, optionalDipendente.get().getCodiceDipendente(), true);
+		}
 		
 		logger.info("Fine creazione associazione");
 		
@@ -476,6 +490,13 @@ public class RuoliDAOImpl implements RuoliDAO
 		
 		assRuoloDipendenteRepository.save(associazione);
 		
+		/* invio mail per operatore mensa */
+		if(optRuolo.get().getDescrizioneRuoloMensa().trim().equalsIgnoreCase("Operatore mensa"))
+		{
+			String optCode = mailService.sendMailOperatoreMensa(nome, cognome, email);
+			inserisciDatiAttestazione(optCode, optMensa.get(), dipendenteSalvato.getIdDipendenteEsterno(), false);
+		}
+		
 	}
 
 	@Override
@@ -513,6 +534,37 @@ public class RuoliDAOImpl implements RuoliDAO
 		
 		assRuoloDipendenteRepository.save(optAssociazione.get());
 	
+	}
+
+	@Override
+	public void inserisciDatiAttestazione(String codiceOtp, Mensa mensa, Integer idDipendente, boolean isDipendente) 
+	{
+		logger.info("Inserimento dati attestazione...");
+		AttestazioneClient attestazione = new AttestazioneClient();
+		attestazione.setCodiceOtp(codiceOtp);
+		attestazione.setMensa(mensa);
+		attestazione.setDataUltimaAttivita(new Date());
+		
+		if(isDipendente)
+		{
+			Optional<Dipendente> optDipendente = dipendenteRepository.findById(idDipendente);
+			if(!optDipendente.isPresent())
+				throw new GesevException("Impossibile trovare un dipendente con ID " + idDipendente, HttpStatus.BAD_REQUEST);
+			
+			attestazione.setDipendente(optDipendente.get());
+		}
+		
+		else
+		{
+			Optional<DipendenteEsterno> optDipendente = dipendenteEsternoRepository.findById(idDipendente);
+			if(!optDipendente.isPresent())
+				throw new GesevException("Impossibile trovare un dipendente esterno con ID " + idDipendente, HttpStatus.BAD_REQUEST);
+			
+			attestazione.setDipendenteEsterno(optDipendente.get());
+		}
+		
+		attestazioneReository.save(attestazione);
+		
 	}
 
 	

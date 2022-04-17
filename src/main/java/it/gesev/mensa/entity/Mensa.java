@@ -3,6 +3,7 @@ package it.gesev.mensa.entity;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -93,29 +94,33 @@ public class Mensa
 	@JoinColumn(name="TIPO_FORMA_VETTOVAGLIAMENTO_FK")
 	private TipoFormaVettovagliamento tipoFormaVettovagliamento;
 	
-	@OneToMany(mappedBy = "mensa")
+	@OneToMany(mappedBy = "mensa", fetch = FetchType.LAZY)
 	private List<AssMensaTipoLocale> listaAssDipendenteRuolo;
 	
-	@OneToMany(mappedBy = "mensa")
+	@OneToMany(mappedBy = "mensa", fetch = FetchType.LAZY)
 	private List<AssDipendenteRuolo> listaDipendentiRuoli;
 
-	@ManyToOne
+	@ManyToOne(cascade={CascadeType.PERSIST, CascadeType.DETACH,
+		 	CascadeType.MERGE, CascadeType.REFRESH})
 	@JoinColumn(name="ENTE_FK")
 	private Ente ente;
 	
-	@OneToMany(mappedBy= "mensa")
+	@OneToMany(mappedBy= "mensa", fetch = FetchType.LAZY)
 	private List<AssTipoPastoMensa> assTipoPastoMensa;
 	
-	@OneToMany(mappedBy= "mensa")
+	@OneToMany(mappedBy= "mensa", fetch = FetchType.LAZY)
 	private List<ServizioEvento> listaServizioEvento;
 	
 	@OneToMany(mappedBy = "mensa", fetch = FetchType.LAZY)
 	private List<AssMensaTipoDieta> listaAssMensaTipoDieta;
 	
-	@OneToMany(mappedBy= "mensa")
+	@OneToMany(mappedBy= "mensa", fetch = FetchType.LAZY)
 	private List<PastiConsumati> listaPastiConsumati;
 	
-	@OneToMany(mappedBy= "mensa")
+	@OneToMany(mappedBy= "mensa", fetch = FetchType.LAZY)
 	private List<Prenotazione> listaPrenotazioni;
+	
+	@OneToMany(mappedBy = "mensa", fetch = FetchType.LAZY)
+	private List<AttestazioneClient> listaAttestazioni;
 	
 }
