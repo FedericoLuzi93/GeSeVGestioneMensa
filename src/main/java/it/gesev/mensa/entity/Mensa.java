@@ -123,4 +123,7 @@ public class Mensa
 	@OneToMany(mappedBy = "mensa", fetch = FetchType.LAZY)
 	private List<AttestazioneClient> listaAttestazioni;
 	
+	@OneToMany(mappedBy = "mensa", fetch = FetchType.LAZY)
+	private List<Menu> listaMenu;
+	
 }

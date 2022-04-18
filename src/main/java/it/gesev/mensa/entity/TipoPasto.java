@@ -40,5 +40,8 @@ public class TipoPasto
 	
 	@OneToMany(mappedBy= "tipoPasto")
 	private List<PastiConsumati> listaPastiConsumati;
+	
+	@OneToMany(mappedBy= "tipoPasto")
+	private List<Pietanza> listaPIetanze;
 
 }
