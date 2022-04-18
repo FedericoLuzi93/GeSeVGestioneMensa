@@ -57,6 +57,9 @@ public class MenuDAOImpl implements MenuDAO
 	@Value("${gesev.data.format}")
 	private String dateFormat;
 	
+	@Value("${gesev.italian.data.format}")
+	private String italianDateFormat;
+	
 	private static Logger logger = LoggerFactory.getLogger(MenuDAOImpl.class);
 	
 	@Override
@@ -165,6 +168,20 @@ public class MenuDAOImpl implements MenuDAO
 		
 		logger.info("Fine inserimento menu");
 		
+		
+	}
+
+	@Override
+	public Menu getMenuGiorno(Integer idMensa, Date dataMenu) 
+	{
+		logger.info("Ricerca menu del giorno...");
+		
+		Optional<Menu> optMenu = menuRepository.cercaMenuDelGiorno(dataMenu, idMensa);
+		if(!optMenu.isPresent())
+			return null;
+		
+		else
+			return optMenu.get();
 		
 	}
 
