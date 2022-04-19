@@ -11,8 +11,8 @@ import it.gesev.mensa.entity.Menu;
 
 public interface MenuRepository extends JpaRepository<Menu, Integer> 
 {
-	@Query("select m from Menu m where m.dataMenu = :dataMenu and m.mensa.codiceMensa = :codiceMensa")
-	public Optional<Menu> cercaMenuDelGiorno(@Param("dataMenu") Date dataMenu, @Param("codiceMensa") Integer codiceMensa);
+	@Query("select m from Menu m where m.dataMenu = :dataMenu and m.mensa.codiceMensa = :codiceMensa and m.tipoDieta.idTipoDieta = :tipoDieta")
+	public Optional<Menu> cercaMenuDelGiorno(@Param("dataMenu") Date dataMenu, @Param("codiceMensa") Integer codiceMensa, @Param("tipoDieta") Integer tipoDieta);
 	
 
 }

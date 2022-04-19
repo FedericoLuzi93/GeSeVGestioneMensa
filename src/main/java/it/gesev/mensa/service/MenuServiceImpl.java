@@ -44,8 +44,8 @@ public class MenuServiceImpl implements MenuService
 	{
 		logger.info("Servizio per ricerca menu del giorno...");
 		
-		if(menuDTO.getIdMensa() == null || StringUtils.isBlank(menuDTO.getDataMenu()))
-			throw new GesevException("Dati dell'ID mensa o della data menu non validi", HttpStatus.BAD_REQUEST);
+		if(menuDTO.getIdMensa() == null || StringUtils.isBlank(menuDTO.getDataMenu()) || menuDTO.getTipoDieta() == null)
+			throw new GesevException("Dati dell'ID mensa, della data menu o del tipo dieta non validi", HttpStatus.BAD_REQUEST);
 		
 		SimpleDateFormat formatter = new SimpleDateFormat(this.dateFormat);
 		Date dataMenu = null;
@@ -62,7 +62,9 @@ public class MenuServiceImpl implements MenuService
 		
 		
 		MenuDTO menu = new MenuDTO();
-		Menu fonudMenu = menuDAO.getMenuGiorno(menuDTO.getIdMensa(), dataMenu);
+		Menu fonudMenu = menuDAO.getMenuGiorno(menuDTO.getIdMensa(), dataMenu, menuDTO.getTipoDieta());
+		if(fonudMenu == null)
+			return null;
 		
 		menu.setListaPietanze(new ArrayList<>());
 		menu.setDataMenu(formatter.format(fonudMenu.getDataMenu()));

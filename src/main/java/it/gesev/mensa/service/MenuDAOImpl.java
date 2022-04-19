@@ -94,7 +94,7 @@ public class MenuDAOImpl implements MenuDAO
 		
 		/* ricerca menu */
 		Menu menuSalvato = null;
-		Optional<Menu> menuDB = menuRepository.cercaMenuDelGiorno(dataMenu, optMensa.get().getCodiceMensa());
+		Optional<Menu> menuDB = menuRepository.cercaMenuDelGiorno(dataMenu, optMensa.get().getCodiceMensa(), menu.getTipoDieta());
 		if(menuDB.isPresent())
 			menuSalvato = menuDB.get();
 		
@@ -184,11 +184,11 @@ public class MenuDAOImpl implements MenuDAO
 	}
 
 	@Override
-	public Menu getMenuGiorno(Integer idMensa, Date dataMenu) 
+	public Menu getMenuGiorno(Integer idMensa, Date dataMenu, Integer tipoDieta) 
 	{
 		logger.info("Ricerca menu del giorno...");
 		
-		Optional<Menu> optMenu = menuRepository.cercaMenuDelGiorno(dataMenu, idMensa);
+		Optional<Menu> optMenu = menuRepository.cercaMenuDelGiorno(dataMenu, idMensa, tipoDieta);
 		if(!optMenu.isPresent())
 			return null;
 		

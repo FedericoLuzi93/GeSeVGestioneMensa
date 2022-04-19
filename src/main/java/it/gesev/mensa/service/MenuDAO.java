@@ -8,5 +8,5 @@ import it.gesev.mensa.entity.Menu;
 public interface MenuDAO 
 {
 	public void inserisciMenu(MenuDTO menu);
-	public Menu getMenuGiorno(Integer idMensa, Date dataMenu);
+	public Menu getMenuGiorno(Integer idMensa, Date dataMenu, Integer tipoDieta);
 }
