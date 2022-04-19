@@ -3,9 +3,14 @@ package it.gesev.mensa.service;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.transaction.Transactional;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -18,6 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import it.gesev.mensa.dto.MenuDTO;
+import it.gesev.mensa.dto.PairDTO;
 import it.gesev.mensa.dto.PietanzaDTO;
 import it.gesev.mensa.entity.Mensa;
 import it.gesev.mensa.entity.Menu;
@@ -53,6 +59,9 @@ public class MenuDAOImpl implements MenuDAO
 	
 	@Autowired
 	private MenuRepository menuRepository;
+	
+	@PersistenceContext
+	EntityManager entityManager;
 	
 	@Value("${gesev.data.format}")
 	private String dateFormat;
@@ -195,6 +204,36 @@ public class MenuDAOImpl implements MenuDAO
 		else
 			return optMenu.get();
 		
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Object[]> getDateConMenu(Integer idMensa, List<String> dateSettimana) 
+	{
+		logger.info("Controllo date della settimana...");
+		
+		if(idMensa == null)
+			throw new GesevException("ID mensa non valido", HttpStatus.BAD_REQUEST);
+		
+		List<Object[]> results = new ArrayList<>();
+		
+		if(!CollectionUtils.isEmpty(dateSettimana))
+		{
+			
+			String query = "select to_char(m.data_menu, 'YYYY-MM-DD') "
+					+ "from menu m left join "
+					+ "(select p.menu_fk, count(*) "
+					+ "from pietanza p  "
+					+ "group by p.menu_fk) cp  "
+					+ "on m.id_menu = cp.menu_fk	 "
+					+ "where m.mensa_fk = :idMensa and  "
+					+ "to_char(m.data_menu, 'YYYY-MM-DD') in :dateSettimana";
+			
+			Query selectQuery = entityManager.createNativeQuery(query).setParameter("idMensa", idMensa).setParameter("dateSettimana", dateSettimana);
+			results.addAll(selectQuery.getResultList());
+		}
+		
+		return results;
 	}
 
 }

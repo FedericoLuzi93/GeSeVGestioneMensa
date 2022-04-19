@@ -16,5 +16,6 @@ public class MenuDTO
 	private String dataMenu;
 	private Integer tipoDieta;
 	List<PietanzaDTO> listaPietanze;
+	List<String> dateSettimana;
 	
 }

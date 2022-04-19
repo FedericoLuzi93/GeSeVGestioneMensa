@@ -3,9 +3,12 @@ package it.gesev.mensa.service;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import it.gesev.mensa.dto.MenuDTO;
+import it.gesev.mensa.dto.PairDTO;
 import it.gesev.mensa.dto.PietanzaDTO;
 import it.gesev.mensa.entity.Menu;
 import it.gesev.mensa.entity.Pietanza;
@@ -84,6 +88,43 @@ public class MenuServiceImpl implements MenuService
 		}
 		
 		return menu;
+	}
+
+	@Override
+	public List<PairDTO<String, String>> getDateConMenu(MenuDTO menu) 
+	{
+		logger.info("Servizio controllo date settimanali del menu...");
+		List<PairDTO<String, String>> listaDate = new ArrayList<>();
+		
+		List<Object[]> listaRecord = menuDAO.getDateConMenu(menu.getIdMensa(), menu.getDateSettimana());
+		if(!CollectionUtils.isEmpty(listaRecord))
+		{
+			Set<String> dateTemporanee = new HashSet<>(menu.getDateSettimana());
+			
+			for(int counter = 0; counter < listaRecord.size(); counter++)
+			{
+				Object item = listaRecord.get(counter);
+				
+				PairDTO<String, String> dataFlag = new PairDTO<>();
+				dataFlag.setChiave((String)(item));
+				dataFlag.setValore("Y");
+				dateTemporanee.remove(dataFlag.getChiave());
+				
+				listaDate.add(dataFlag);
+			}
+			
+			for(String chiave : dateTemporanee)
+			{
+				PairDTO<String, String> dataFlag = new PairDTO<>();
+				dataFlag.setChiave(chiave);
+				dataFlag.setValore("N");
+				
+				listaDate.add(dataFlag);
+			}
+			
+		}
+		
+		return listaDate;
 	}
 
 	
