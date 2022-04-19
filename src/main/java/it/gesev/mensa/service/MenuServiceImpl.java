@@ -127,6 +127,14 @@ public class MenuServiceImpl implements MenuService
 		return listaDate;
 	}
 
+	@Override
+	public void cancellaPietanza(Integer idPietanza) {
+		logger.info("Servizio per la cancellazione delle pietanze...");
+		
+		menuDAO.cancellaPietanza(idPietanza);
+		
+	}
+
 	
 
 }

@@ -11,5 +11,7 @@ public interface MenuService
 	public void inserisciMenu(MenuDTO menu);
 	public MenuDTO getMenuGiorno(MenuDTO menuDTO);
 	public List<PairDTO<String, String>> getDateConMenu(MenuDTO menu);
+	public void cancellaPietanza(Integer idPietanza);
+	
 	
 }

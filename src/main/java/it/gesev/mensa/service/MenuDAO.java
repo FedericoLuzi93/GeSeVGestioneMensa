@@ -11,4 +11,5 @@ public interface MenuDAO
 	public void inserisciMenu(MenuDTO menu);
 	public Menu getMenuGiorno(Integer idMensa, Date dataMenu, Integer tipoDieta);
 	public List<Object[]> getDateConMenu(Integer idMensa, List<String> dateSettimana);
+	public void cancellaPietanza(Integer idPietanza);
 }

@@ -3,10 +3,8 @@ package it.gesev.mensa.service;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -23,7 +21,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import it.gesev.mensa.dto.MenuDTO;
-import it.gesev.mensa.dto.PairDTO;
 import it.gesev.mensa.dto.PietanzaDTO;
 import it.gesev.mensa.entity.Mensa;
 import it.gesev.mensa.entity.Menu;
@@ -235,5 +232,23 @@ public class MenuDAOImpl implements MenuDAO
 		
 		return results;
 	}
+
+	@Override
+	public void cancellaPietanza(Integer idPietanza) 
+	{
+		logger.info("Cancellazione pietanza...");
+		
+		if(idPietanza == null)
+			throw new GesevException("ID pietanza non valido", HttpStatus.BAD_REQUEST);
+		
+		Optional<Pietanza> optPIetanza = pietanzaRepository.findById(idPietanza);
+		if(!optPIetanza.isPresent())
+			throw new GesevException("Nessuna pietanza trovata con l'ID specificato", HttpStatus.BAD_REQUEST);
+		
+		pietanzaRepository.delete(optPIetanza.get());
+		
+	}
+	
+	
 
 }
