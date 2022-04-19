@@ -126,6 +126,19 @@ public class MenuDAOImpl implements MenuDAO
 			logger.info("Controllo pietanze...");
 			for(PietanzaDTO pietanzaDTO : menu.getListaPietanze())
 			{
+				Pietanza pietanza = null;
+				if(pietanzaDTO.getIdPietanza() != null)
+				{
+					Optional<Pietanza> optPietanza = pietanzaRepository.findById(pietanzaDTO.getIdPietanza());
+					if(!optPietanza.isPresent())
+						throw new GesevException("ID pietanza non valido: " + pietanzaDTO.getIdPietanza(), HttpStatus.BAD_REQUEST);
+					
+					pietanza = optPietanza.get();
+				}
+				
+				else
+					pietanza = new Pietanza();
+				
 				/* controllo tipo pietanza */
 				if(pietanzaDTO.getTipoPietanza() == null)
 					throw new GesevException("Tipo pietanza non valido per una o piu' pietanze", HttpStatus.BAD_REQUEST);
@@ -145,7 +158,6 @@ public class MenuDAOImpl implements MenuDAO
 				if(StringUtils.isBlank(pietanzaDTO.getDescrizionePietanza()))
 					throw new GesevException("Descrizione tipo pietanza non valido per una o piu' pietanze", HttpStatus.BAD_REQUEST);
 				
-				Pietanza pietanza = new Pietanza();
 				pietanza.setDescrizionePietanza(pietanzaDTO.getDescrizionePietanza());
 				pietanza.setMenu(menuSalvato);
 				pietanza.setTipoPietanza(optTipoPietanza.get());
