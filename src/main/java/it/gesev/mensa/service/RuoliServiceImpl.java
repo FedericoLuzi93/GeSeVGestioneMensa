@@ -132,7 +132,8 @@ public class RuoliServiceImpl implements RuoliService
 										 associazione.getDipendente().getEmail(),
 				                         associazione.getRuolo().getCodiceRuoloMensa(), 
 				                         associazione.getOrganoDirettivo() != null ? associazione.getOrganoDirettivo().getCodiceOrganoDirettivo() : null, 
-				                         associazione.getIdMensa());
+				                         associazione.getIdMensa(),
+				                         associazione.getIdFornitore());
 		
 	}
 
@@ -330,7 +331,7 @@ public class RuoliServiceImpl implements RuoliService
 		if(adrd == null || adrd.getRuolo() == null || adrd.getIdMensa() == null)
 			throw new GesevException("Dati forniti per l'associazione non validi", HttpStatus.BAD_REQUEST);
 		
-		ruoliDAO.aggiungiRuoloDipendenteEsterno(adrd.getNomeEsterno(), adrd.getCognomeEsterno(), adrd.getEmailEsterno(), adrd.getRuolo().getCodiceRuoloMensa(), adrd.getIdMensa());
+		ruoliDAO.aggiungiRuoloDipendenteEsterno(adrd.getNomeEsterno(), adrd.getCognomeEsterno(), adrd.getEmailEsterno(), adrd.getRuolo().getCodiceRuoloMensa(), adrd.getIdMensa(), adrd.getIdFornitore());
 		
 	}
 

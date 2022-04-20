@@ -32,6 +32,7 @@ import it.gesev.mensa.entity.AttestazioneClient;
 import it.gesev.mensa.entity.Dipendente;
 import it.gesev.mensa.entity.DipendenteEsterno;
 import it.gesev.mensa.entity.Ente;
+import it.gesev.mensa.entity.Fornitore;
 import it.gesev.mensa.entity.Mensa;
 import it.gesev.mensa.entity.OrganoDirettivo;
 import it.gesev.mensa.entity.RuoloMensa;
@@ -43,6 +44,7 @@ import it.gesev.mensa.repository.AttestazioneClientRepository;
 import it.gesev.mensa.repository.DipendenteEsternoRepository;
 import it.gesev.mensa.repository.DipendenteRepository;
 import it.gesev.mensa.repository.EnteRepository;
+import it.gesev.mensa.repository.FornitoreRepository;
 import it.gesev.mensa.repository.MensaRepository;
 import it.gesev.mensa.repository.OrganoDirettivoRepository;
 import it.gesev.mensa.repository.RuoloMensaRepository;
@@ -68,6 +70,9 @@ public class RuoliDAOImpl implements RuoliDAO
 	
 	@Autowired
 	private AttestazioneClientRepository attestazioneReository;
+	
+	@Autowired
+	private FornitoreRepository fornitoreRepository;
 	
 	@Autowired
 	private MailService mailService;
@@ -173,7 +178,7 @@ public class RuoliDAOImpl implements RuoliDAO
 	}
 
 	@Override
-	public void aggiungiRuoloDipendente(Integer idDipendente,  String emailDipendente, Integer idRuolo, Integer idOrganoDirettivo, Integer idMensa) throws ParseException 
+	public void aggiungiRuoloDipendente(Integer idDipendente,  String emailDipendente, Integer idRuolo, Integer idOrganoDirettivo, Integer idMensa, Integer idFornitore) throws ParseException 
 	{
 		logger.info("Aggiunta nuovo ruolo...");
 		
@@ -228,14 +233,26 @@ public class RuoliDAOImpl implements RuoliDAO
 		associazione.setDataFineRuolo(formatter.parse("9999-12-31"));
 		associazione.setMensa(optionalMensa.get());
 		
+		if(optionalRuolo.get().getFlagPersonaleEsterno().equalsIgnoreCase("Y"))
+		{
+			if(idFornitore == null)
+				throw new GesevException("ID fornitore non valido", HttpStatus.BAD_REQUEST);
+			
+			Optional<Fornitore> optFornitore = fornitoreRepository.findById(idFornitore);
+			if(!optFornitore.isPresent())
+				throw new GesevException("ID fornitore non valido", HttpStatus.BAD_REQUEST);
+			
+			associazione.setFornitore(optFornitore.get());
+		}
+		
 		assRuoloDipendenteRepository.save(associazione);
 		
 		/* invio mail per operatore mensa */
-		if(optionalRuolo.get().getDescrizioneRuoloMensa().trim().equalsIgnoreCase("Operatore mensa"))
-		{
-			String optCode = mailService.sendMailOperatoreMensa(optionalDipendente.get().getNome(), optionalDipendente.get().getCognome(), optionalDipendente.get().getEmail());
-			inserisciDatiAttestazione(optCode, optionalMensa.isPresent() ? optionalMensa.get() : null, optionalDipendente.get().getCodiceDipendente(), true);
-		}
+//		if(optionalRuolo.get().getDescrizioneRuoloMensa().trim().equalsIgnoreCase("Operatore mensa"))
+//		{
+//			String optCode = mailService.sendMailOperatoreMensa(optionalDipendente.get().getNome(), optionalDipendente.get().getCognome(), optionalDipendente.get().getEmail());
+//			inserisciDatiAttestazione(optCode, optionalMensa.isPresent() ? optionalMensa.get() : null, optionalDipendente.get().getCodiceDipendente(), true);
+//		}
 		
 		logger.info("Fine creazione associazione");
 		
@@ -441,7 +458,7 @@ public class RuoliDAOImpl implements RuoliDAO
 	}
 
 	@Override
-	public void aggiungiRuoloDipendenteEsterno(String nome, String cognome, String email, Integer idRuolo, Integer idMensa) throws ParseException 
+	public void aggiungiRuoloDipendenteEsterno(String nome, String cognome, String email, Integer idRuolo, Integer idMensa, Integer idFornitore) throws ParseException 
 	{
 		logger.info("Aggiunta ruolo per dipendente esterno...");
 		
@@ -488,14 +505,26 @@ public class RuoliDAOImpl implements RuoliDAO
 		associazione.setMensa(optMensa.get());
 		associazione.setRuolo(optRuolo.get());
 		
+		if(optRuolo.get().getFlagPersonaleEsterno().equalsIgnoreCase("Y"))
+		{
+			if(idFornitore == null)
+				throw new GesevException("ID fornitore non valido", HttpStatus.BAD_REQUEST);
+			
+			Optional<Fornitore> optFornitore = fornitoreRepository.findById(idFornitore);
+			if(!optFornitore.isPresent())
+				throw new GesevException("ID fornitore non valido", HttpStatus.BAD_REQUEST);
+			
+			associazione.setFornitore(optFornitore.get());
+		}
+		
 		assRuoloDipendenteRepository.save(associazione);
 		
 		/* invio mail per operatore mensa */
-		if(optRuolo.get().getDescrizioneRuoloMensa().trim().equalsIgnoreCase("Operatore mensa"))
-		{
-			String optCode = mailService.sendMailOperatoreMensa(nome, cognome, email);
-			inserisciDatiAttestazione(optCode, optMensa.get(), dipendenteSalvato.getIdDipendenteEsterno(), false);
-		}
+//		if(optRuolo.get().getDescrizioneRuoloMensa().trim().equalsIgnoreCase("Operatore mensa"))
+//		{
+//			String optCode = mailService.sendMailOperatoreMensa(nome, cognome, email);
+//			inserisciDatiAttestazione(optCode, optMensa.get(), dipendenteSalvato.getIdDipendenteEsterno(), false);
+//		}
 		
 	}
 

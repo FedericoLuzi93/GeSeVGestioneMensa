@@ -39,5 +39,9 @@ public class Fornitore implements Serializable
 		 	CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
 	private List<TestataMovimento> testataMovimento;
 	
+	@OneToMany(mappedBy="fornitore", cascade={CascadeType.PERSIST, CascadeType.DETACH,
+		 	CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
+	private List<AssDipendenteRuolo> listaAssDipendenteRuolo;
+	
 	
 }
