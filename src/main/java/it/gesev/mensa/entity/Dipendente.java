@@ -3,13 +3,14 @@ package it.gesev.mensa.entity;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -58,7 +59,8 @@ public class Dipendente
 	@Column(name = "GRADO")
 	private String grado;
 	
-	@ManyToOne
+	@ManyToOne(cascade={CascadeType.PERSIST, CascadeType.DETACH,
+		 	CascadeType.MERGE, CascadeType.REFRESH})
 	@JoinColumn(name = "ENTE_APPARTENENZA")
 	private Ente ente;
 	
@@ -74,11 +76,14 @@ public class Dipendente
 	@Column(name = "RUOLO_FUNZIONALE")
 	private String ruoloFunzionale;
 	
-	@OneToMany(mappedBy = "dipendente")
+	@OneToMany(mappedBy = "dipendente", fetch = FetchType.LAZY)
 	private List<AssDipendenteRuolo> listaDipendenteRuolo;
 	
-	@OneToMany(mappedBy = "dipendente")
+	@OneToMany(mappedBy = "dipendente", fetch = FetchType.LAZY)
 	private List<AssRepInviatiDipStatoRep> listaAssRepInviatiDipStatoRep;
+	
+	@OneToMany(mappedBy = "dipendente", fetch = FetchType.LAZY)
+	private List<AttestazioneClient> listaAttestazioni;
 	
 	
 }

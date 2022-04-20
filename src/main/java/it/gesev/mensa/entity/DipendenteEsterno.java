@@ -24,7 +24,7 @@ public class DipendenteEsterno
 	@Id
 	@Column(name = "id_dipendente_esterno")
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Integer idDipendenteeEsterno;
+	private Integer idDipendenteEsterno;
 	
 	@Column(name = "nome_dipendente_esterno")
 	private String nomeDipendenteEsterno;
@@ -37,5 +37,8 @@ public class DipendenteEsterno
 	
 	@OneToMany(mappedBy = "dipendenteEsterno")
 	private List<AssDipendenteRuolo> listaAssDipendenteRuolo;
+	
+	@OneToMany(mappedBy = "dipendenteEsterno")
+	private List<AttestazioneClient> listaAttestazioni;
 		
 }

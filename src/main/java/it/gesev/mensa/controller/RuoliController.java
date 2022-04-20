@@ -27,6 +27,7 @@ import it.gesev.mensa.dto.EsitoDTO;
 import it.gesev.mensa.dto.OrganoDirettivoDTO;
 import it.gesev.mensa.dto.RicercaColonnaDTO;
 import it.gesev.mensa.exc.GesevException;
+import it.gesev.mensa.service.MailService;
 import it.gesev.mensa.service.RuoliService;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -36,6 +37,9 @@ public class RuoliController
 {
 	@Autowired
 	private RuoliService ruoliService;
+	
+	@Autowired
+	private MailService mailService;
 	
 	private static final Logger logger = LoggerFactory.getLogger(RuoliController.class);
 	private final String MESSAGGIO_ERRORE_INTERNO = "Si e' verificato un errore interno";
@@ -507,4 +511,6 @@ public class RuoliController
 		esito.setStatus(status.value());
 		return ResponseEntity.status(status).headers(new HttpHeaders()).body(esito);
 	}
+
+	
 }

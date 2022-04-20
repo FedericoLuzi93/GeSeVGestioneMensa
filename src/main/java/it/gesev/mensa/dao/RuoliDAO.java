@@ -7,6 +7,7 @@ import it.gesev.mensa.dto.AssDipendenteRuoloDTO;
 import it.gesev.mensa.dto.RicercaColonnaDTO;
 import it.gesev.mensa.entity.AssDipendenteRuolo;
 import it.gesev.mensa.entity.Dipendente;
+import it.gesev.mensa.entity.Mensa;
 import it.gesev.mensa.entity.OrganoDirettivo;
 import it.gesev.mensa.entity.RuoloMensa;
 
@@ -31,4 +32,5 @@ public interface RuoliDAO
 	public List<Dipendente> findDipendenteByIdEnte(Integer idMensa);
 	public List<AssDipendenteRuolo> findRuoliDipendentiEsterni(Integer codiceMensa);
 	public void updateRuoloDipendenteEsterno(AssDipendenteRuoloDTO associazione);
+	public void inserisciDatiAttestazione(String codiceOtp, Mensa mensa, Integer idDipendente, boolean isDipendente);
 }
