@@ -2,7 +2,7 @@ package it.gesev.mensa.jasper;
 
 public class DC1MilitariJasper 
 {
-	private Integer nome;
+	private String nome;
 	
 	private Integer orCoAventiDiritto;
 	private Integer orCoPrenotati;
@@ -28,10 +28,11 @@ public class DC1MilitariJasper
 	private Integer cbt;
 	private Integer specchio;
 	private Integer colObb;
-	public Integer getNome() {
+	
+	public String getNome() {
 		return nome;
 	}
-	public void setNome(Integer nome) {
+	public void setNome(String nome) {
 		this.nome = nome;
 	}
 	public Integer getOrCoAventiDiritto() {
@@ -160,7 +161,7 @@ public class DC1MilitariJasper
 	public void setColObb(Integer colObb) {
 		this.colObb = colObb;
 	}
-	public DC1MilitariJasper(Integer nome, Integer orCoAventiDiritto, Integer orCoPrenotati, Integer orPrAventiDiritto,
+	public DC1MilitariJasper(String nome, Integer orCoAventiDiritto, Integer orCoPrenotati, Integer orPrAventiDiritto,
 			Integer orPrPrenotati, Integer orCeAventiDiritto, Integer orCePrenotati, Integer meCoAventiDiritto,
 			Integer meCoPrenotati, Integer mePrAventiDiritto, Integer mePrPrenotati, Integer meCeAventiDiritto,
 			Integer meCePrenotati, Integer peCoAventiDiritto, Integer peCoPrenotati, Integer pePrAventiDiritto,

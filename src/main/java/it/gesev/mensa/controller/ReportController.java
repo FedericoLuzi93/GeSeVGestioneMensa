@@ -43,6 +43,7 @@ import it.gesev.mensa.dto.PastiConsumatiDTO;
 import it.gesev.mensa.dto.SendListPastiDC4AllegatoC;
 import it.gesev.mensa.dto.SendListaDC1Prenotati;
 import it.gesev.mensa.exc.GesevException;
+import it.gesev.mensa.jasper.DC1MilitariJasper;
 import it.gesev.mensa.service.MensaService;
 import it.gesev.mensa.service.ReportService;
 
@@ -460,12 +461,11 @@ public class ReportController
 		EsitoDTO esito = new EsitoDTO();
 		try
 		{	
-			//List<DC4TabellaAllegatoCDTO> listaDC4TabellaAllegatoC = new ArrayList<>();
 			SendListaDC1Prenotati sendObjList = new SendListaDC1Prenotati();
-			sendObjList = reportService.richiestaDocumentoDC1Prenotati(dc4RichiestaDTO, sendObjList);
+			List<DC1MilitariJasper> listaDC1Jasper = reportService.richiestaDocumentoDC1Prenotati(dc4RichiestaDTO, sendObjList);
 			esito.setStatus(HttpStatus.OK.value());
 			esito.setMessaggio("DOCUMENTO CREATO CON SUCCESSO");
-			esito.setBody(sendObjList);
+			esito.setBody(listaDC1Jasper);
 		}
 		catch(GesevException gex)   
 		{
