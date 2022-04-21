@@ -35,6 +35,7 @@ import it.gesev.mensa.dto.FirmaQuotidianaDC4DTO;
 import it.gesev.mensa.dto.FirmeDC4;
 import it.gesev.mensa.dto.PastiConsumatiDTO;
 import it.gesev.mensa.dto.SendListPastiDC4AllegatoC;
+import it.gesev.mensa.dto.SendListaDC1Prenotati;
 import it.gesev.mensa.entity.Dipendente;
 import it.gesev.mensa.entity.Ente;
 import it.gesev.mensa.entity.FirmaQuodidiana;
@@ -749,6 +750,162 @@ public class ReportDAOImpl implements ReportDAO
 		logger.info("Cancellazione avvenuta con successo");
 		return 1;
 	}
+
+	
+	
+	/* Richiesta documento DC1 Prenotati */
+	@Override
+	public SendListaDC1Prenotati richiestaDocumentoDC1Prenotati(DC4RichiestaDTO dc4RichiestaDTO,
+			SendListaDC1Prenotati sendObjList) throws ParseException 
+	{
+		logger.info("Accesso a richiestaDocumentoDC1Prenotati classe ReportDAOImpl");
+		
+		SendListaDC1Prenotati sDc1 = new SendListaDC1Prenotati();
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
+		List<SendListaDC1Prenotati> listaDC1Prenotati = new ArrayList<>();
+		//Map<String, DC4TabellaAllegatoCDTO> map = new HashMap<String, DC4TabellaAllegatoCDTO>();
+
+		String giorno = dc4RichiestaDTO.getGiorno();
+		String dataTotale = giorno.concat("-" + dc4RichiestaDTO.getMese() + "-" + dc4RichiestaDTO.getAnno() + "'");
+		Date giornoDatato = simpleDateFormat.parse(dataTotale);
+		
+		int aventiDiritto = 10;
+				//forzaEffettivaRepository.aventiDiritto(dc4RichiestaDTO.getIdEnte(), giornoDatato);
+
+		if(StringUtils.isBlank(dataTotale))
+			throw new GesevException("Impossibile generare il documento DC4, mese non valido", HttpStatus.BAD_REQUEST);
+
+		String queryDC1Prenotati = "select\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 1 and p.tipo_personale = 'M') then 1 else 0 end ) as ORD_COL_MIL,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 2 and p.tipo_personale = 'M') then 1 else 0 end ) as ORD_PRA_MIL,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 3 and p.tipo_personale = 'M') then 1 else 0 end ) as ORD_CEN_MIL,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 1 and p.tipo_personale = 'M') then 1 else 0 end ) as MED_COL_MIL,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 2 and p.tipo_personale = 'M') then 1 else 0 end ) as MED_PRA_MIL,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 3 and p.tipo_personale = 'M') then 1 else 0 end ) as MED_CEN_MIL,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 1 and p.tipo_personale = 'M') then 1 else 0 end ) as PES_COL_MIL,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 2 and p.tipo_personale = 'M') then 1 else 0 end ) as PES_PRA_MIL,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 3 and p.tipo_personale = 'M') then 1 else 0 end ) as PES_CEN_MIL,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'C' and p.tipo_personale = 'M') then 1 else 0 end ) as CBT_MIL,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 1 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ) as ORD_COL_TG,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 2 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ) as ORD_PRA_TG,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 3 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ) as ORD_CEN_TG,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 1 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ) as MED_COL_TG,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 2 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ) as MED_PRA_TG,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 3 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ) as MED_CEN_TG,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 1 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ) as PES_COL_TG,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 2 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ) as PES_PRA_TG,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 3 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ) as PES_CEN_TG,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'C' and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ) as CBT_TG,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 1 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as ORD_COL_TO,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 2 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as ORD_PRA_TO,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 3 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as ORD_CEN_TO,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 1 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as MED_COL_TO,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 2 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as MED_PRA_TO,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 3 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as MED_CEN_TO,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 1 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as PES_COL_TO,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 2 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as PES_PRA_TO,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 3 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as PES_CEN_TO,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'C' and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as CBT_TO\r\n"
+				+ "from prenotazione p left join mensa m on p.identificativo_mensa_fk = m.codice_mensa\r\n"
+				+ "where m.ente_fk = 3 and p.data_prenotazione = '2022-03-04' and p.identificativo_sistema_fk = 'GPS'";
+
+		logger.info("Esecuzione query: " + queryDC1Prenotati); 
+		Query dc1PrenotatiQuery = entityManager.createNativeQuery(queryDC1Prenotati);
+		List<Object[]> listOfResultsDC1Prenotati = dc1PrenotatiQuery.getResultList();
+		
+		//Ente
+		Optional<Ente> optionalEnte = enteRepository.findById(dc4RichiestaDTO.getIdEnte());
+
+		if(!optionalEnte.isPresent())
+			throw new GesevException("Non è stato possibile creare la Firma, ente non presente");
+		
+		sDc1.setDescrizioneEnte(optionalEnte.get().getDescrizioneEnte());
+		
+		//Assegnazione Campi Query
+		for(Object[] obj : listOfResultsDC1Prenotati)
+		{
+
+			Integer ordColMil = ((BigInteger) obj[0]).intValue();
+			sDc1.setOrdColMil(ordColMil == null ? 0 : ordColMil);
+			Integer ordPraMil = ((BigInteger) obj[1]).intValue();
+			sDc1.setOrdPraMil(ordPraMil == null ? 0 : ordPraMil);
+			Integer ordCenMil = ((BigInteger) obj[2]).intValue();
+			sDc1.setOrdCenMil(ordCenMil == null ? 0 : ordCenMil);
+			Integer medColMil = ((BigInteger) obj[3]).intValue();
+			sDc1.setMedColMil(medColMil == null ? 0 : medColMil);
+			Integer medPraMil = ((BigInteger) obj[4]).intValue();
+			sDc1.setMedPraMil(medPraMil == null ? 0 : medPraMil);
+			Integer medCenMil = ((BigInteger) obj[5]).intValue();
+			sDc1.setMedCenMil(medCenMil == null ? 0 : medCenMil);
+			Integer pesColMil = ((BigInteger) obj[6]).intValue();
+			sDc1.setPesColMil(pesColMil == null ? 0 : pesColMil);
+			Integer pesPraMil = ((BigInteger) obj[7]).intValue();
+			sDc1.setPesPraMil(pesPraMil == null ? 0 : pesPraMil);
+			Integer pesCenMil = ((BigInteger) obj[8]).intValue();
+			sDc1.setPesCenMil(pesCenMil == null ? 0 : pesCenMil);
+			Integer cbtMil = ((BigInteger) obj[9]).intValue();
+			sDc1.setCbtMil(cbtMil == null ? 0 : cbtMil);
+
+			
+			Integer ordColTg = ((BigInteger) obj[10]).intValue();
+			sDc1.setOrdColTg(ordColTg == null ? 0 : ordColTg);
+			Integer ordPraTg = ((BigInteger) obj[11]).intValue();
+			sDc1.setOrdPraTg(ordPraTg == null ? 0 : ordPraTg);
+			Integer ordCenTg = ((BigInteger) obj[12]).intValue();
+			sDc1.setOrdCenTg(ordCenTg == null ? 0 : ordCenTg);
+			Integer medColTg = ((BigInteger) obj[13]).intValue();
+			sDc1.setMedColTg(medColTg == null ? 0 : medColTg);
+			Integer medPraTg = ((BigInteger) obj[14]).intValue();
+			sDc1.setMedPraTg(medPraTg == null ? 0 : medPraTg);
+			Integer medCenTg = ((BigInteger) obj[15]).intValue();
+			sDc1.setMedCenTg(medCenTg == null ? 0 : medCenTg);
+			Integer pesColTg = ((BigInteger) obj[16]).intValue();
+			sDc1.setPesColTg(pesColTg == null ? 0 : pesColTg);
+			Integer pesPraTg = ((BigInteger) obj[17]).intValue();
+			sDc1.setPesPraTg(pesPraTg == null ? 0 : pesPraTg);
+			Integer pesCenTg = ((BigInteger) obj[18]).intValue();
+			sDc1.setPesCenTg(pesCenTg == null ? 0 : pesCenTg);
+			Integer cbtTg = ((BigInteger) obj[19]).intValue();
+			sDc1.setCbtTg(cbtTg == null ? 0 : cbtTg);
+			
+			Integer ordColTo = ((BigInteger) obj[20]).intValue();
+			sDc1.setOrdColTo(ordColTo == null ? 0 : ordColTo);
+			Integer ordPraTo = ((BigInteger) obj[21]).intValue();
+			sDc1.setOrdPraTo(ordPraTo == null ? 0 : ordPraTo);
+			Integer ordCenTo = ((BigInteger) obj[22]).intValue();
+			sDc1.setOrdCenTo(ordCenTo == null ? 0 : ordCenTo);
+			Integer medColTo = ((BigInteger) obj[23]).intValue();
+			sDc1.setMedColTo(medColTo == null ? 0 : medColTo);
+			Integer medPraTo = ((BigInteger) obj[24]).intValue();
+			sDc1.setMedPraTo(medPraTo == null ? 0 : medPraTo);
+			Integer medCenTo = ((BigInteger) obj[25]).intValue();
+			sDc1.setMedCenTo(medCenTo == null ? 0 : medCenTo);
+			Integer pesColTo = ((BigInteger) obj[26]).intValue();
+			sDc1.setPesColTo(pesColTo == null ? 0 : pesColTo);
+			Integer pesPraTo = ((BigInteger) obj[27]).intValue();
+			sDc1.setPesPraTo(pesPraTo == null ? 0 : pesPraTo);
+			Integer pesCenTo = ((BigInteger) obj[28]).intValue();
+			sDc1.setPesCenTo(pesCenTo == null ? 0 : pesCenTo);
+			Integer cbtTo = ((BigInteger) obj[29]).intValue();
+			sDc1.setCbtTo(cbtTo == null ? 0 : cbtTo);
+			
+			sDc1.setAventiDiritto(aventiDiritto);
+			
+			listaDC1Prenotati.add(sDc1);
+			
+		}
+
+		logger.info("Lista creata con successo");
+		sendObjList = sDc1;
+		return sDc1;
+	}
+
+
+	
+
+
+
+	
 
 
 

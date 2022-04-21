@@ -12,4 +12,7 @@ public interface ForzaEffettivaRepository extends JpaRepository<ForzaEffettiva, 
 {
 	@Query("select f from ForzaEffettiva f where f.ente.idEnte = :idEnte and (f.dataRiferimento between :dataRiferimentoInit and :dataRiferimentoEnd)")
 	public List<ForzaEffettiva> listaForzaEffettiva (int idEnte, Date dataRiferimentoInit, Date dataRiferimentoEnd);
+
+	@Query("select f.numDipendenti from ForzaEffettiva f where f.ente.idEnte = :idEnte and f.dataRiferimento = :giornoDatato")
+	public int aventiDiritto(int idEnte, Date giornoDatato);
 }

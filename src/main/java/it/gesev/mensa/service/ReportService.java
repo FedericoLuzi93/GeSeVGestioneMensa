@@ -14,6 +14,7 @@ import it.gesev.mensa.dto.FirmaQuotidianaDC4DTO;
 import it.gesev.mensa.dto.IdentificativoSistemaDTO;
 import it.gesev.mensa.dto.PastiConsumatiDTO;
 import it.gesev.mensa.dto.SendListPastiDC4AllegatoC;
+import it.gesev.mensa.dto.SendListaDC1Prenotati;
 
 public interface ReportService 
 {
@@ -33,6 +34,10 @@ public interface ReportService
 	
 	public int createNuovaFirma(FirmaQuotidianaDC4DTO firmaQuotidianaDC4DTO) throws ParseException;
 	public int deleteFirma(FirmaQuotidianaDC4DTO firmaQuotidianaDC4DTO) throws ParseException;
+	
+	public SendListaDC1Prenotati richiestaDocumentoDC1Prenotati(DC4RichiestaDTO dc4RichiestaDTO,
+			SendListaDC1Prenotati sendObjList) throws ParseException;
+	FileDC4DTO downloadDC1Prenotati(DC4RichiestaDTO dc4RichiestaDTO) throws ParseException, FileNotFoundException;
 
 
 }

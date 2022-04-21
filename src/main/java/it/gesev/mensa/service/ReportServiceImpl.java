@@ -35,7 +35,9 @@ import it.gesev.mensa.dto.FirmeDC4;
 import it.gesev.mensa.dto.IdentificativoSistemaDTO;
 import it.gesev.mensa.dto.PastiConsumatiDTO;
 import it.gesev.mensa.dto.SendListPastiDC4AllegatoC;
+import it.gesev.mensa.dto.SendListaDC1Prenotati;
 import it.gesev.mensa.entity.IdentificativoSistema;
+import it.gesev.mensa.jasper.DC1MilitariJasper;
 import it.gesev.mensa.jasper.FirmaDC4Jasper;
 import it.gesev.mensa.jasper.FirmaJasper;
 import it.gesev.mensa.jasper.ForzaEffettivaJasper;
@@ -310,7 +312,7 @@ public class ReportServiceImpl implements ReportService
 		return fileDC4DTO;
 
 	}
-	
+
 	/* Download documento DC4 Allegato C Ufficiali*/
 	@Override
 	public FileDC4DTO downloadDC4AllegatoCUfficiali(DC4RichiestaDTO dc4RichiestaDTO) throws FileNotFoundException 
@@ -332,7 +334,7 @@ public class ReportServiceImpl implements ReportService
 				pastoUFCJ.setnPranziT1(dc4Tab.getNumpranziUSC().toString());
 				pastoUFCJ.setnCeneT1(dc4Tab.getNumCeneUSC().toString());
 				listaPastiUFC.add(pastoUFCJ);
-				
+
 			}
 
 			int day = 0;
@@ -374,7 +376,7 @@ public class ReportServiceImpl implements ReportService
 		logger.info("Report generato con successo");
 		return fileDC4DTO;
 	}
-	
+
 	/* Download documento DC4 Allegato C Graduati*/
 	@Override
 	public FileDC4DTO downloadDC4AllegatoCGraduati(DC4RichiestaDTO dc4RichiestaDTO) throws FileNotFoundException {
@@ -475,6 +477,248 @@ public class ReportServiceImpl implements ReportService
 		logger.info("Accesso a deleteFirma classe ReportServiceImpl");
 		reportDAO.deleteFirma(firmaQuotidianaDC4DTO);
 		return 1;
+	}
+
+	/* Richiesta documento DC1 Prenotati */
+	@Override
+	public SendListaDC1Prenotati richiestaDocumentoDC1Prenotati(DC4RichiestaDTO dc4RichiestaDTO,
+			SendListaDC1Prenotati sendObjList) throws ParseException 
+	{
+		logger.info("Accesso a richiestaDocumentoDC1Prenotati classe ReportServiceImpl");
+		sendObjList = reportDAO.richiestaDocumentoDC1Prenotati(dc4RichiestaDTO, sendObjList);
+		return sendObjList;
+	}
+
+
+	/* Download documento DC1 Prenotati */
+	@Override
+	public FileDC4DTO downloadDC1Prenotati(DC4RichiestaDTO dc4RichiestaDTO) throws ParseException, FileNotFoundException 
+	{
+		logger.info("Accesso a downloadDC1Prenotati classe ReportServiceImpl");
+		SendListaDC1Prenotati sendObjList = null;
+		SendListaDC1Prenotati so = reportDAO.richiestaDocumentoDC1Prenotati(dc4RichiestaDTO, sendObjList);
+		FileDC4DTO fileDC4DTO = new FileDC4DTO();
+		List<DC1MilitariJasper> listaDC1Ordinarie = new ArrayList<>();
+		File mockFile = ResourceUtils.getFile("classpath:DC1Prenotati.jrxml");
+
+		logger.info("Generazione report DC1 in corso...");
+		try
+		{
+			//Militari
+			DC1MilitariJasper dc1M = new DC1MilitariJasper();
+			dc1M.setOrCoAventiDiritto(so.getAventiDiritto());
+			dc1M.setOrCoPrenotati(so.getOrdColMil());
+			dc1M.setOrPrAventiDiritto(so.getAventiDiritto());
+			dc1M.setOrPrPrenotati(so.getOrdPraMil());
+			dc1M.setOrCeAventiDiritto(so.getAventiDiritto());
+			dc1M.setOrCePrenotati(so.getOrdCenMil());
+			
+			dc1M.setMeCoAventiDiritto(so.getAventiDiritto());
+			dc1M.setMeCoPrenotati(so.getMedColMil());
+			dc1M.setMePrAventiDiritto(so.getAventiDiritto());
+			dc1M.setMePrPrenotati(so.getMedPraMil());
+			dc1M.setMeCeAventiDiritto(so.getAventiDiritto());
+			dc1M.setMeCePrenotati(so.getMedCenMil());
+			
+			dc1M.setPeCoAventiDiritto(so.getAventiDiritto());
+			dc1M.setPeCoPrenotati(so.getPesColMil());
+			dc1M.setPePrAventiDiritto(so.getAventiDiritto());
+			dc1M.setPePrPrenotati(so.getPesPraMil());
+			dc1M.setPeCeAventiDiritto(so.getAventiDiritto());
+			dc1M.setPeCePrenotati(so.getPesCenMil());
+			
+			dc1M.setCbt(so.getCbtMil());
+			dc1M.setSpecchio(0);
+			dc1M.setColObb(0);
+
+			listaDC1Ordinarie.add(dc1M);
+			
+			//Personale TG
+			DC1MilitariJasper dc1P = new DC1MilitariJasper();
+			dc1P.setOrCoAventiDiritto(so.getAventiDiritto());
+			dc1P.setOrCoPrenotati(so.getOrdColTg());
+			dc1P.setOrPrAventiDiritto(so.getAventiDiritto());
+			dc1P.setOrPrPrenotati(so.getOrdPraTg());
+			dc1P.setOrCeAventiDiritto(so.getAventiDiritto());
+			dc1P.setOrCePrenotati(so.getOrdCenTg());
+			
+			dc1P.setMeCoAventiDiritto(so.getAventiDiritto());
+			dc1P.setMeCoPrenotati(so.getMedColTg());
+			dc1P.setMePrAventiDiritto(so.getAventiDiritto());
+			dc1P.setMePrPrenotati(so.getMedPraTg());
+			dc1P.setMeCeAventiDiritto(so.getAventiDiritto());
+			dc1P.setMeCePrenotati(so.getMedCenTg());
+			
+			dc1P.setPeCoAventiDiritto(so.getAventiDiritto());
+			dc1P.setPeCoPrenotati(so.getPesColTg());
+			dc1P.setPePrAventiDiritto(so.getAventiDiritto());
+			dc1P.setPePrPrenotati(so.getPesPraTg());
+			dc1P.setPeCeAventiDiritto(so.getAventiDiritto());
+			dc1P.setPeCePrenotati(so.getPesCenTg());
+			
+			dc1P.setCbt(so.getCbtTg());
+			dc1P.setSpecchio(0);
+			dc1P.setColObb(0);
+
+			listaDC1Ordinarie.add(dc1P);
+			
+			//Personale TO
+			DC1MilitariJasper dc1O = new DC1MilitariJasper();
+			dc1O.setOrCoAventiDiritto(so.getAventiDiritto());
+			dc1O.setOrCoPrenotati(so.getOrdColTo());
+			dc1O.setOrPrAventiDiritto(so.getAventiDiritto());
+			dc1O.setOrPrPrenotati(so.getOrdPraTo());
+			dc1O.setOrCeAventiDiritto(so.getAventiDiritto());
+			dc1O.setOrCePrenotati(so.getOrdCenTo());
+			
+			dc1O.setMeCoAventiDiritto(so.getAventiDiritto());
+			dc1O.setMeCoPrenotati(so.getMedColTo());
+			dc1O.setMePrAventiDiritto(so.getAventiDiritto());
+			dc1O.setMePrPrenotati(so.getMedPraTo());
+			dc1O.setMeCeAventiDiritto(so.getAventiDiritto());
+			dc1O.setMeCePrenotati(so.getMedCenTo());
+			
+			dc1O.setPeCoAventiDiritto(so.getAventiDiritto());
+			dc1O.setPeCoPrenotati(so.getPesColTo());
+			dc1O.setPePrAventiDiritto(so.getAventiDiritto());
+			dc1O.setPePrPrenotati(so.getPesPraTo());
+			dc1O.setPeCeAventiDiritto(so.getAventiDiritto());
+			dc1O.setPeCePrenotati(so.getPesCenTo());
+			
+			dc1O.setCbt(so.getCbtTo());
+			dc1O.setSpecchio(0);
+			dc1O.setColObb(0);
+
+			listaDC1Ordinarie.add(dc1O);
+			
+			//Parziale
+			DC1MilitariJasper parziale = new DC1MilitariJasper();
+			parziale.setOrCoAventiDiritto(so.getAventiDiritto());
+			parziale.setOrCoPrenotati(so.getOrdColTo() + so.getOrdColMil() + so.getOrdColTg());
+			parziale.setOrPrAventiDiritto(so.getAventiDiritto());
+			parziale.setOrPrPrenotati(so.getOrdPraTo() + so.getOrdPraMil() + so.getOrdPraTg());
+			parziale.setOrCeAventiDiritto(so.getAventiDiritto());
+			parziale.setOrCePrenotati(so.getOrdCenTo() + so.getOrdCenMil() + so.getOrdCenTg());
+			
+			parziale.setMeCoAventiDiritto(so.getAventiDiritto());
+			parziale.setMeCoPrenotati(so.getMedColTo() + so.getMedColMil() + so.getMedColTg());
+			parziale.setMePrAventiDiritto(so.getAventiDiritto());
+			parziale.setMePrPrenotati(so.getMedPraTo() + so.getMedPraMil() + so.getMedPraTg());
+			parziale.setMeCeAventiDiritto(so.getAventiDiritto());
+			parziale.setMeCePrenotati(so.getMedCenTo() + so.getMedCenMil() + so.getMedCenTg());
+			
+			parziale.setPeCoAventiDiritto(so.getAventiDiritto());
+			parziale.setPeCoPrenotati(so.getPesColTo() + so.getPesColMil() + so.getPesColTg());
+			parziale.setPePrAventiDiritto(so.getAventiDiritto());
+			parziale.setPePrPrenotati(so.getPesPraTo() + so.getPesPraMil() + so.getPesPraTg());
+			parziale.setPeCeAventiDiritto(so.getAventiDiritto());
+			parziale.setPeCePrenotati(so.getPesCenTo() + so.getPesCenMil() + so.getPesCenTg());
+			
+			parziale.setCbt(so.getCbtMil() + so.getCbtTg() + so.getCbtTo());
+			parziale.setSpecchio(0);
+			parziale.setColObb(0);
+
+			listaDC1Ordinarie.add(parziale);
+			
+			//Campionatura
+			DC1MilitariJasper campionatura = new DC1MilitariJasper();
+			campionatura.setOrCoAventiDiritto(0);
+			campionatura.setOrCoPrenotati(0);
+			campionatura.setOrPrAventiDiritto(1);
+			campionatura.setOrPrPrenotati(0);
+			campionatura.setOrCeAventiDiritto(0);
+			campionatura.setOrCePrenotati(0);
+			
+			campionatura.setMeCoAventiDiritto(0);
+			campionatura.setMeCoPrenotati(0);
+			campionatura.setMePrAventiDiritto(0);
+			campionatura.setMePrPrenotati(0);
+			campionatura.setMeCeAventiDiritto(0);
+			campionatura.setMeCePrenotati(0);
+			
+			campionatura.setPeCoAventiDiritto(0);
+			campionatura.setPeCoPrenotati(0);
+			campionatura.setPePrAventiDiritto(0);
+			campionatura.setPePrPrenotati(0);
+			campionatura.setPeCeAventiDiritto(0);
+			campionatura.setPeCePrenotati(0);
+			
+			campionatura.setCbt(0);
+			campionatura.setSpecchio(0);
+			campionatura.setColObb(0);
+
+			listaDC1Ordinarie.add(campionatura);
+			
+			//Totale
+			DC1MilitariJasper totale = new DC1MilitariJasper();
+			totale.setOrCoAventiDiritto(so.getAventiDiritto());
+			totale.setOrCoPrenotati(so.getOrdColTo() + so.getOrdColMil() + so.getOrdColTg());
+			totale.setOrPrAventiDiritto(so.getAventiDiritto() + campionatura.getOrPrAventiDiritto());
+			totale.setOrPrPrenotati(so.getOrdPraTo() + so.getOrdPraMil() + so.getOrdPraTg());
+			totale.setOrCeAventiDiritto(so.getAventiDiritto());
+			totale.setOrCePrenotati(so.getOrdCenTo() + so.getOrdCenMil() + so.getOrdCenTg());
+			
+			totale.setMeCoAventiDiritto(so.getAventiDiritto());
+			totale.setMeCoPrenotati(so.getMedColTo() + so.getMedColMil() + so.getMedColTg());
+			totale.setMePrAventiDiritto(so.getAventiDiritto());
+			totale.setMePrPrenotati(so.getMedPraTo() + so.getMedPraMil() + so.getMedPraTg());
+			totale.setMeCeAventiDiritto(so.getAventiDiritto());
+			totale.setMeCePrenotati(so.getMedCenTo() + so.getMedCenMil() + so.getMedCenTg());
+			
+			totale.setPeCoAventiDiritto(so.getAventiDiritto());
+			totale.setPeCoPrenotati(so.getPesColTo() + so.getPesColMil() + so.getPesColTg());
+			totale.setPePrAventiDiritto(so.getAventiDiritto());
+			totale.setPePrPrenotati(so.getPesPraTo() + so.getPesPraMil() + so.getPesPraTg());
+			totale.setPeCeAventiDiritto(so.getAventiDiritto());
+			totale.setPeCePrenotati(so.getPesCenTo() + so.getPesCenMil() + so.getPesCenTg());
+			
+			totale.setCbt(so.getCbtMil() + so.getCbtTg() + so.getCbtTo());
+			totale.setSpecchio(0);
+			totale.setColObb(0);
+
+			listaDC1Ordinarie.add(totale);
+			
+			
+			
+
+
+			//Riempimento tabella
+			JRBeanCollectionDataSource JRBlistaOrdinarie = new JRBeanCollectionDataSource(listaDC1Ordinarie);
+
+			//Assegnazione oggetti
+			Map<String, Object> parameters = new HashMap<>();
+			parameters.put("TabOrdinarie", JRBlistaOrdinarie);
+
+
+			//Parametri singoli
+			String mese = MensaUtils.convertiMese(dc4RichiestaDTO.getMese());
+			parameters.put("mese", mese);
+			
+			String anno = dc4RichiestaDTO.getAnno();
+			parameters.put("anno", anno);
+			
+			String giorno = dc4RichiestaDTO.getGiorno();
+			parameters.put("giorno", giorno);
+			
+			String ente = so.getDescrizioneEnte();
+			parameters.put("ente", ente);
+			
+
+			//Stampa
+			JasperReport report = JasperCompileManager.compileReport(mockFile.getAbsolutePath());
+			JasperPrint print = JasperFillManager.fillReport(report, parameters, new JREmptyDataSource());
+			byte[] arrayb = JasperExportManager.exportReportToPdf(print);
+			fileDC4DTO.setFileDC4(arrayb);
+			fileDC4DTO.setNomeFile("DC1_Prenotati_" + dc4RichiestaDTO.getGiorno() + "_" + dc4RichiestaDTO.getMese() + "_" + dc4RichiestaDTO.getAnno() + ".pdf"); 
+
+		}
+		catch(Exception e)
+		{
+
+		}
+		logger.info("Report generato con successo");
+
+		return fileDC4DTO;
 	}
 
 
