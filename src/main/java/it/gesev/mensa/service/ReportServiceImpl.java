@@ -490,7 +490,7 @@ public class ReportServiceImpl implements ReportService
 
 			//Militari
 			DC1MilitariJasper dc1M = new DC1MilitariJasper();
-			dc1M.setNome("1. Militari e graduati di truppa");
+			dc1M.setNome("Militari e graduati di truppa");
 			dc1M.setOrCoAventiDiritto(so.getAventiDiritto());
 			dc1M.setOrCoPrenotati(so.getOrdColMil());
 			dc1M.setOrPrAventiDiritto(so.getAventiDiritto());
@@ -520,7 +520,7 @@ public class ReportServiceImpl implements ReportService
 			
 			//Personale TG
 			DC1MilitariJasper dc1P = new DC1MilitariJasper();
-			dc1P.setNome("2. Personale ammesso al vitto a titolo gratuito");
+			dc1P.setNome("Personale ammesso al vitto a titolo gratuito");
 			dc1P.setOrCoAventiDiritto(so.getAventiDiritto());
 			dc1P.setOrCoPrenotati(so.getOrdColTg());
 			dc1P.setOrPrAventiDiritto(so.getAventiDiritto());
@@ -550,7 +550,7 @@ public class ReportServiceImpl implements ReportService
 			
 			//Personale TO
 			DC1MilitariJasper dc1O = new DC1MilitariJasper();
-			dc1O.setNome("3. Personale ammesso alla mensa a pagamento");
+			dc1O.setNome("Personale ammesso alla mensa a pagamento");
 			dc1O.setOrCoAventiDiritto(so.getAventiDiritto());
 			dc1O.setOrCoPrenotati(so.getOrdColTo());
 			dc1O.setOrPrAventiDiritto(so.getAventiDiritto());
