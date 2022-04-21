@@ -76,7 +76,7 @@
 		<band height="80" splitType="Stretch">
 			<image hAlign="Center" vAlign="Middle">
 				<reportElement x="351" y="0" width="73" height="59" uuid="598b35e8-4a4f-4e49-8f36-50e4b86b1c75"/>
-				<imageExpression><![CDATA["C:/Users/alien/OneDrive/Desktop/ministero-della-difesa-squarelogo-1567666677225.png"]]></imageExpression>
+				<imageExpression><![CDATA["ministero-della-difesa-squarelogo-1567666677225.png"]]></imageExpression>
 			</image>
 		</band>
 	</title>

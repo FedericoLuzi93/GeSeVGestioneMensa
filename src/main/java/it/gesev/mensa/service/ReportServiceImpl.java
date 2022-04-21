@@ -889,7 +889,7 @@ public class ReportServiceImpl implements ReportService
 		}
 		catch(Exception e)
 		{
-
+			logger.info("si è verificata un eccezione", e);
 		}
 		
 		logger.info("Report generato con successo");
