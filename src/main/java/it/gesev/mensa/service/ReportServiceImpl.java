@@ -681,7 +681,7 @@ public class ReportServiceImpl implements ReportService
 		SendListaDC1Prenotati so = reportDAO.richiestaDocumentoDC1Prenotati(dc4RichiestaDTO, sendObjList);
 		FileDC4DTO fileDC4DTO = new FileDC4DTO();
 		List<DC1MilitariJasper> listaDC1Ordinarie = new ArrayList<>();
-		File mockFile = ResourceUtils.getFile("classpath:DC1ReportPrenotati.jrxml");
+		File mockFile = ResourceUtils.getFile("classpath:DC1Prenotati.jrxml");
 
 		logger.info("Generazione report DC1 in corso...");
 		try
