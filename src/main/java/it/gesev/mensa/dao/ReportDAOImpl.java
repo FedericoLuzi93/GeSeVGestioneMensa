@@ -46,6 +46,8 @@ import it.gesev.mensa.entity.PastiConsumati;
 import it.gesev.mensa.entity.TipoPagamento;
 import it.gesev.mensa.entity.TipoPasto;
 import it.gesev.mensa.exc.GesevException;
+import it.gesev.mensa.jasper.DC1NomJasper;
+import it.gesev.mensa.jasper.DC1NomNumericaJasper;
 import it.gesev.mensa.repository.DipendenteRepository;
 import it.gesev.mensa.repository.EnteRepository;
 import it.gesev.mensa.repository.FirmaQuodidianaRepository;
@@ -65,7 +67,7 @@ public class ReportDAOImpl implements ReportDAO
 
 	@Value("${gesev.data.format}")
 	private String dateFormat;
-	
+
 	@Value("${gesev.italian.data.format}")
 	private String italianDateFormat;
 
@@ -188,7 +190,6 @@ public class ReportDAOImpl implements ReportDAO
 
 			if(!StringUtils.isBlank(dc4RichiestaDTO.getSistemaPersonale()))
 				queryOrdinati = queryOrdinati + "and p.identificativo_sistema_fk = :idPersonale ";
-
 
 			queryOrdinati = queryOrdinati 	+ "group by p.data_prenotazione "
 					+ "order by p.data_prenotazione) prenotati "
@@ -332,8 +333,6 @@ public class ReportDAOImpl implements ReportDAO
 				map.get(dataFormattata).setFirma("SI");	
 		}
 
-
-
 		List<DC4TabellaDTO> listaDC4TabellaDTO = map.entrySet().stream()
 				.sorted(Comparator.comparing(Map.Entry::getKey))
 				.map(Map.Entry::getValue)
@@ -357,7 +356,7 @@ public class ReportDAOImpl implements ReportDAO
 				+ "left join ass_dipendente_ruolo adr on rm.codice_ruolo_mensa = adr.ruolo_fk "
 				+ "left join dipendente d on adr.dipendente_fk = d.codice_dipendente "
 				+ "left join mensa m on adr.mensa_fk = m.codice_mensa  "
-				+ "where arrm.report_fk = 'DC4D' and d.codice_dipendente is not null "
+				+ "where arrm.report_fk = 'DC4C' and d.codice_dipendente is not null "
 				+ "and m.ente_fk = "+ enteFk + "  "
 				+ "order by arrm.ordine_firma;";
 
@@ -556,18 +555,14 @@ public class ReportDAOImpl implements ReportDAO
 				map.put(simpleDateFormat.format(dataReport), dto);
 		}
 
-
 		List<DC4TabellaAllegatoCDTO> listaDC4TabellaAllegatoCDTO = map.entrySet().stream()
 				.sorted(Comparator.comparing(Map.Entry::getKey))
 				.map(Map.Entry::getValue)
 				.collect(Collectors.toList());
 
-
 		logger.info("Lista creata con successo");
-
 		return listaDC4TabellaAllegatoCDTO;
 	}
-
 
 	/* Download documento DC4 Allegato C Ufficiali*/
 	@Override
@@ -622,9 +617,7 @@ public class ReportDAOImpl implements ReportDAO
 				.map(Map.Entry::getValue)
 				.collect(Collectors.toList());
 
-
 		logger.info("Lista creata con successo");
-
 		return listaDC4TabellaAllegatoCDTO;
 	}
 
@@ -662,13 +655,13 @@ public class ReportDAOImpl implements ReportDAO
 		{
 			//FEPastiDC4Graduati fePastiDC4Graduati = new FEPastiDC4Graduati();
 			DC4TabellaAllegatoCDTO dc4AllC = new DC4TabellaAllegatoCDTO();
-			
+
 			Integer numColazioniGraduati = ((BigInteger) obj[1]).intValue();
 			Integer numPranziGraduati = ((BigInteger) obj[2]).intValue();
 			Integer numCeneGraduati = ((BigInteger) obj[3]).intValue();
 
 			Date dataReport = (Date) obj[0];
-			
+
 			dc4AllC.setGiorno(simpleDateFormat.format(dataReport));
 			dc4AllC.setNumColazioniGraduati(numColazioniGraduati);
 			dc4AllC.setNumPranziGraduati(numPranziGraduati);
@@ -677,15 +670,12 @@ public class ReportDAOImpl implements ReportDAO
 			map.put((String) simpleDateFormat.format(dataReport),dc4AllC); 
 		}
 
-
 		List<DC4TabellaAllegatoCDTO> listaDC4TabellaAllegatoCDTO = map.entrySet().stream()
 				.sorted(Comparator.comparing(Map.Entry::getKey))
 				.map(Map.Entry::getValue)
 				.collect(Collectors.toList());
 
-
 		logger.info("Lista creata con successo");
-
 		return listaDC4TabellaAllegatoCDTO;
 	}
 
@@ -696,7 +686,6 @@ public class ReportDAOImpl implements ReportDAO
 		logger.info("Accesso a getAllIdentificativiSistema classe ReportDAOImpl");
 		return identificativoSistemaRepository.findAll();
 	}
-
 
 	/* Aggiungi una nuova Firma */
 	@Override
@@ -751,26 +740,27 @@ public class ReportDAOImpl implements ReportDAO
 		return 1;
 	}
 
-	
-	
 	/* Richiesta documento DC1 Prenotati */
 	@Override
 	public SendListaDC1Prenotati richiestaDocumentoDC1Prenotati(DC4RichiestaDTO dc4RichiestaDTO,
 			SendListaDC1Prenotati sendObjList) throws ParseException 
 	{
 		logger.info("Accesso a richiestaDocumentoDC1Prenotati classe ReportDAOImpl");
-		
+
 		SendListaDC1Prenotati sDc1 = new SendListaDC1Prenotati();
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
 		List<SendListaDC1Prenotati> listaDC1Prenotati = new ArrayList<>();
-		//Map<String, DC4TabellaAllegatoCDTO> map = new HashMap<String, DC4TabellaAllegatoCDTO>();
 
 		String giorno = dc4RichiestaDTO.getGiorno();
 		String dataTotale = giorno.concat("-" + dc4RichiestaDTO.getMese() + "-" + dc4RichiestaDTO.getAnno() + "'");
-		Date giornoDatato = simpleDateFormat.parse(dataTotale);
-		
+
+		String dataYYYYmmDD = "'" + dc4RichiestaDTO.getAnno().concat("-" + dc4RichiestaDTO.getMese().concat("-" + dc4RichiestaDTO.getGiorno()) + "'");
+
+		String dataCorretta = dc4RichiestaDTO.getAnno().concat("-" + dc4RichiestaDTO.getMese().concat("-" + dc4RichiestaDTO.getGiorno()));
+		Date giornoDatato = simpleDateFormat.parse(dataCorretta);
+
 		int aventiDiritto = 10;
-				//forzaEffettivaRepository.aventiDiritto(dc4RichiestaDTO.getIdEnte(), giornoDatato);
+		//forzaEffettivaRepository.aventiDiritto(dc4RichiestaDTO.getIdEnte(), giornoDatato);
 
 		if(StringUtils.isBlank(dataTotale))
 			throw new GesevException("Impossibile generare il documento DC4, mese non valido", HttpStatus.BAD_REQUEST);
@@ -807,24 +797,34 @@ public class ReportDAOImpl implements ReportDAO
 				+ "sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 3 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as PES_CEN_TO,\r\n"
 				+ "sum(case when (p.tipo_razione_fk = 'C' and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as CBT_TO\r\n"
 				+ "from prenotazione p left join mensa m on p.identificativo_mensa_fk = m.codice_mensa\r\n"
-				+ "where m.ente_fk = 3 and p.data_prenotazione = '2022-03-04' and p.identificativo_sistema_fk = 'GPS'";
+				+ "where m.ente_fk = :idEnte and p.data_prenotazione = :giornoDatato ";
+
+		if(!StringUtils.isBlank(dc4RichiestaDTO.getSistemaPersonale()))
+			queryDC1Prenotati = queryDC1Prenotati + " and p.identificativo_sistema_fk = :idPersonale ";
 
 		logger.info("Esecuzione query: " + queryDC1Prenotati); 
 		Query dc1PrenotatiQuery = entityManager.createNativeQuery(queryDC1Prenotati);
+
+		dc1PrenotatiQuery = dc1PrenotatiQuery.setParameter("idEnte", dc4RichiestaDTO.getIdEnte());
+		dc1PrenotatiQuery = dc1PrenotatiQuery.setParameter("giornoDatato", giornoDatato);
+
+		if(!StringUtils.isBlank(dc4RichiestaDTO.getSistemaPersonale()))
+			dc1PrenotatiQuery = dc1PrenotatiQuery.setParameter("idPersonale", dc4RichiestaDTO.getSistemaPersonale());
+
+		logger.info("Esecuzione query: " + queryDC1Prenotati + " " + dataYYYYmmDD);
 		List<Object[]> listOfResultsDC1Prenotati = dc1PrenotatiQuery.getResultList();
-		
+		logger.info("Esecuzione query: " + queryDC1Prenotati);
 		//Ente
 		Optional<Ente> optionalEnte = enteRepository.findById(dc4RichiestaDTO.getIdEnte());
 
 		if(!optionalEnte.isPresent())
-			throw new GesevException("Non è stato possibile creare la Firma, ente non presente");
-		
+			throw new GesevException("Non è stato possibile creare il report, ente non presente");
+
 		sDc1.setDescrizioneEnte(optionalEnte.get().getDescrizioneEnte());
-		
+
 		//Assegnazione Campi Query
 		for(Object[] obj : listOfResultsDC1Prenotati)
 		{
-
 			Integer ordColMil = ((BigInteger) obj[0]).intValue();
 			sDc1.setOrdColMil(ordColMil == null ? 0 : ordColMil);
 			Integer ordPraMil = ((BigInteger) obj[1]).intValue();
@@ -846,7 +846,6 @@ public class ReportDAOImpl implements ReportDAO
 			Integer cbtMil = ((BigInteger) obj[9]).intValue();
 			sDc1.setCbtMil(cbtMil == null ? 0 : cbtMil);
 
-			
 			Integer ordColTg = ((BigInteger) obj[10]).intValue();
 			sDc1.setOrdColTg(ordColTg == null ? 0 : ordColTg);
 			Integer ordPraTg = ((BigInteger) obj[11]).intValue();
@@ -867,7 +866,7 @@ public class ReportDAOImpl implements ReportDAO
 			sDc1.setPesCenTg(pesCenTg == null ? 0 : pesCenTg);
 			Integer cbtTg = ((BigInteger) obj[19]).intValue();
 			sDc1.setCbtTg(cbtTg == null ? 0 : cbtTg);
-			
+
 			Integer ordColTo = ((BigInteger) obj[20]).intValue();
 			sDc1.setOrdColTo(ordColTo == null ? 0 : ordColTo);
 			Integer ordPraTo = ((BigInteger) obj[21]).intValue();
@@ -888,11 +887,10 @@ public class ReportDAOImpl implements ReportDAO
 			sDc1.setPesCenTo(pesCenTo == null ? 0 : pesCenTo);
 			Integer cbtTo = ((BigInteger) obj[29]).intValue();
 			sDc1.setCbtTo(cbtTo == null ? 0 : cbtTo);
-			
+
 			sDc1.setAventiDiritto(aventiDiritto);
-			
+
 			listaDC1Prenotati.add(sDc1);
-			
 		}
 
 		logger.info("Lista creata con successo");
@@ -900,23 +898,344 @@ public class ReportDAOImpl implements ReportDAO
 		return sDc1;
 	}
 
+	@Override
+	public List<FirmeDC4> richiestaFirmeDC1(DC4RichiestaDTO dc4RichiestaDTO) 
+	{
+		logger.info("Accesso a richiestaFirmeDC1 classe ReportDAOImpl");
 
-	
+		int enteFk = dc4RichiestaDTO.getIdEnte();
 
+		String queryFirme = "select arrm.ordine_firma, rm.descrizione_ruolo_mensa, d.nome, d.cognome, arrm.ruolo_fk "
+				+ "from ass_report_ruolo_mensa arrm "
+				+ "left join ruolo_mensa rm on arrm.ruolo_fk  = rm.codice_ruolo_mensa "
+				+ "left join ass_dipendente_ruolo adr on rm.codice_ruolo_mensa = adr.ruolo_fk "
+				+ "left join dipendente d on adr.dipendente_fk = d.codice_dipendente "
+				+ "left join mensa m on adr.mensa_fk = m.codice_mensa  "
+				+ "where arrm.report_fk = 'DC1' and d.codice_dipendente is not null "
+				+ "and m.ente_fk = "+ enteFk + "  "
+				+ "order by arrm.ordine_firma;";
 
+		logger.info("Esecuzione query: " + queryFirme); 
+		Query consQuery = entityManager.createNativeQuery(queryFirme);
+		List<Object[]> listOfResultsFirme = consQuery.getResultList();
 
-	
+		List<FirmeDC4> listaFirmeDC4 = new ArrayList<>();
+		for(Object[] obj : listOfResultsFirme)
+		{
+			FirmeDC4 firmaDC4 = new FirmeDC4();
+			firmaDC4.setDescrizione((String) obj[1]);
+			firmaDC4.setNome((String) obj[2]);
+			firmaDC4.setCognome((String) obj[3]);
 
+			listaFirmeDC4.add(firmaDC4);
+		}
 
+		logger.info("Lista firme creata con successo");
+		return listaFirmeDC4;
+	}
 
+	/* Richiesta documento DC1 Consumati */
+	@Override
+	public SendListaDC1Prenotati richiestaDocumentoDC1Consumati(DC4RichiestaDTO dc4RichiestaDTO,
+			SendListaDC1Prenotati sendObjList) throws ParseException 
+	{
+		logger.info("Accesso a richiestaDocumentoDC1Consumati classe ReportDAOImpl");
 
+		SendListaDC1Prenotati sDc1 = new SendListaDC1Prenotati();
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
+		List<SendListaDC1Prenotati> listaDC1Prenotati = new ArrayList<>();
 
+		String giorno = dc4RichiestaDTO.getGiorno();
+		String dataTotale = giorno.concat("-" + dc4RichiestaDTO.getMese() + "-" + dc4RichiestaDTO.getAnno() + "'");
 
+		String dataYYYYmmDD = "'" + dc4RichiestaDTO.getAnno().concat("-" + dc4RichiestaDTO.getMese().concat("-" + dc4RichiestaDTO.getGiorno()) + "'");
 
+		String dataCorretta = dc4RichiestaDTO.getAnno().concat("-" + dc4RichiestaDTO.getMese().concat("-" + dc4RichiestaDTO.getGiorno()));
+		Date giornoDatato = simpleDateFormat.parse(dataCorretta);
 
+		int aventiDiritto = 10;
+		//forzaEffettivaRepository.aventiDiritto(dc4RichiestaDTO.getIdEnte(), giornoDatato);
 
+		if(StringUtils.isBlank(dataTotale))
+			throw new GesevException("Impossibile generare il documento DC4, mese non valido", HttpStatus.BAD_REQUEST);
 
+		String queryDC1Prenotati = "select\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 1 and p.tipo_personale = 'M') then 1 else 0 end ) as ORD_COL_MIL,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 2 and p.tipo_personale = 'M') then 1 else 0 end ) as ORD_PRA_MIL,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 3 and p.tipo_personale = 'M') then 1 else 0 end ) as ORD_CEN_MIL,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 1 and p.tipo_personale = 'M') then 1 else 0 end ) as MED_COL_MIL,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 2 and p.tipo_personale = 'M') then 1 else 0 end ) as MED_PRA_MIL,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 3 and p.tipo_personale = 'M') then 1 else 0 end ) as MED_CEN_MIL,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 1 and p.tipo_personale = 'M') then 1 else 0 end ) as PES_COL_MIL,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 2 and p.tipo_personale = 'M') then 1 else 0 end ) as PES_PRA_MIL,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 3 and p.tipo_personale = 'M') then 1 else 0 end ) as PES_CEN_MIL,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'C' and p.tipo_personale = 'M') then 1 else 0 end ) as CBT_MIL,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 1 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ) as ORD_COL_TG,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 2 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ) as ORD_PRA_TG,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 3 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ) as ORD_CEN_TG,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 1 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ) as MED_COL_TG,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 2 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ) as MED_PRA_TG,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 3 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ) as MED_CEN_TG,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 1 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ) as PES_COL_TG,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 2 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ) as PES_PRA_TG,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 3 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ) as PES_CEN_TG,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'C' and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ) as CBT_TG,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 1 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as ORD_COL_TO,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 2 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as ORD_PRA_TO,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 3 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as ORD_CEN_TO,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 1 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as MED_COL_TO,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 2 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as MED_PRA_TO,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 3 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as MED_CEN_TO,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 1 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as PES_COL_TO,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 2 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as PES_PRA_TO,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 3 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as PES_CEN_TO,\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'C' and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as CBT_TO\r\n"
+				+ "from pasti_consumati p left join mensa m on p.mensa_fk  = m.codice_mensa\r\n"
+				+ "where m.ente_fk = :idEnte and p.data_pasto  = :giornoDatato ";
 
+		if(!StringUtils.isBlank(dc4RichiestaDTO.getSistemaPersonale()))
+			queryDC1Prenotati = queryDC1Prenotati + " and p.identificativo_sistema_fk = :idPersonale ";
 
+		logger.info("Esecuzione query: " + queryDC1Prenotati); 
+		Query dc1PrenotatiQuery = entityManager.createNativeQuery(queryDC1Prenotati);
+
+		dc1PrenotatiQuery = dc1PrenotatiQuery.setParameter("idEnte", dc4RichiestaDTO.getIdEnte());
+		dc1PrenotatiQuery = dc1PrenotatiQuery.setParameter("giornoDatato", giornoDatato);
+
+		if(!StringUtils.isBlank(dc4RichiestaDTO.getSistemaPersonale()))
+			dc1PrenotatiQuery = dc1PrenotatiQuery.setParameter("idPersonale", dc4RichiestaDTO.getSistemaPersonale());
+
+		logger.info("Esecuzione query: " + queryDC1Prenotati);
+		List<Object[]> listOfResultsDC1Prenotati = dc1PrenotatiQuery.getResultList();
+
+		//Ente
+		Optional<Ente> optionalEnte = enteRepository.findById(dc4RichiestaDTO.getIdEnte());
+
+		if(!optionalEnte.isPresent())
+			throw new GesevException("Non è stato possibile creare il report, ente non presente");
+
+		sDc1.setDescrizioneEnte(optionalEnte.get().getDescrizioneEnte());
+
+		//Assegnazione Campi Query
+		for(Object[] obj : listOfResultsDC1Prenotati)
+		{
+			Integer ordColMil = ((BigInteger) obj[0]).intValue();
+			sDc1.setOrdColMil(ordColMil == null ? 0 : ordColMil);
+			Integer ordPraMil = ((BigInteger) obj[1]).intValue();
+			sDc1.setOrdPraMil(ordPraMil == null ? 0 : ordPraMil);
+			Integer ordCenMil = ((BigInteger) obj[2]).intValue();
+			sDc1.setOrdCenMil(ordCenMil == null ? 0 : ordCenMil);
+			Integer medColMil = ((BigInteger) obj[3]).intValue();
+			sDc1.setMedColMil(medColMil == null ? 0 : medColMil);
+			Integer medPraMil = ((BigInteger) obj[4]).intValue();
+			sDc1.setMedPraMil(medPraMil == null ? 0 : medPraMil);
+			Integer medCenMil = ((BigInteger) obj[5]).intValue();
+			sDc1.setMedCenMil(medCenMil == null ? 0 : medCenMil);
+			Integer pesColMil = ((BigInteger) obj[6]).intValue();
+			sDc1.setPesColMil(pesColMil == null ? 0 : pesColMil);
+			Integer pesPraMil = ((BigInteger) obj[7]).intValue();
+			sDc1.setPesPraMil(pesPraMil == null ? 0 : pesPraMil);
+			Integer pesCenMil = ((BigInteger) obj[8]).intValue();
+			sDc1.setPesCenMil(pesCenMil == null ? 0 : pesCenMil);
+			Integer cbtMil = ((BigInteger) obj[9]).intValue();
+			sDc1.setCbtMil(cbtMil == null ? 0 : cbtMil);
+
+			Integer ordColTg = ((BigInteger) obj[10]).intValue();
+			sDc1.setOrdColTg(ordColTg == null ? 0 : ordColTg);
+			Integer ordPraTg = ((BigInteger) obj[11]).intValue();
+			sDc1.setOrdPraTg(ordPraTg == null ? 0 : ordPraTg);
+			Integer ordCenTg = ((BigInteger) obj[12]).intValue();
+			sDc1.setOrdCenTg(ordCenTg == null ? 0 : ordCenTg);
+			Integer medColTg = ((BigInteger) obj[13]).intValue();
+			sDc1.setMedColTg(medColTg == null ? 0 : medColTg);
+			Integer medPraTg = ((BigInteger) obj[14]).intValue();
+			sDc1.setMedPraTg(medPraTg == null ? 0 : medPraTg);
+			Integer medCenTg = ((BigInteger) obj[15]).intValue();
+			sDc1.setMedCenTg(medCenTg == null ? 0 : medCenTg);
+			Integer pesColTg = ((BigInteger) obj[16]).intValue();
+			sDc1.setPesColTg(pesColTg == null ? 0 : pesColTg);
+			Integer pesPraTg = ((BigInteger) obj[17]).intValue();
+			sDc1.setPesPraTg(pesPraTg == null ? 0 : pesPraTg);
+			Integer pesCenTg = ((BigInteger) obj[18]).intValue();
+			sDc1.setPesCenTg(pesCenTg == null ? 0 : pesCenTg);
+			Integer cbtTg = ((BigInteger) obj[19]).intValue();
+			sDc1.setCbtTg(cbtTg == null ? 0 : cbtTg);
+
+			Integer ordColTo = ((BigInteger) obj[20]).intValue();
+			sDc1.setOrdColTo(ordColTo == null ? 0 : ordColTo);
+			Integer ordPraTo = ((BigInteger) obj[21]).intValue();
+			sDc1.setOrdPraTo(ordPraTo == null ? 0 : ordPraTo);
+			Integer ordCenTo = ((BigInteger) obj[22]).intValue();
+			sDc1.setOrdCenTo(ordCenTo == null ? 0 : ordCenTo);
+			Integer medColTo = ((BigInteger) obj[23]).intValue();
+			sDc1.setMedColTo(medColTo == null ? 0 : medColTo);
+			Integer medPraTo = ((BigInteger) obj[24]).intValue();
+			sDc1.setMedPraTo(medPraTo == null ? 0 : medPraTo);
+			Integer medCenTo = ((BigInteger) obj[25]).intValue();
+			sDc1.setMedCenTo(medCenTo == null ? 0 : medCenTo);
+			Integer pesColTo = ((BigInteger) obj[26]).intValue();
+			sDc1.setPesColTo(pesColTo == null ? 0 : pesColTo);
+			Integer pesPraTo = ((BigInteger) obj[27]).intValue();
+			sDc1.setPesPraTo(pesPraTo == null ? 0 : pesPraTo);
+			Integer pesCenTo = ((BigInteger) obj[28]).intValue();
+			sDc1.setPesCenTo(pesCenTo == null ? 0 : pesCenTo);
+			Integer cbtTo = ((BigInteger) obj[29]).intValue();
+			sDc1.setCbtTo(cbtTo == null ? 0 : cbtTo);
+
+			sDc1.setAventiDiritto(aventiDiritto);
+
+			listaDC1Prenotati.add(sDc1);
+		}
+
+		logger.info("Lista creata con successo");
+		sendObjList = sDc1;
+		return sDc1;
+	}
+
+	/* Richiesta documento DC1 Nominativo Numerica */
+	@Override
+	public DC1NomNumericaJasper richiestaDocumentoDC1NominativoNumerica(DC4RichiestaDTO dc4RichiestaDTO) throws ParseException 
+	{
+		logger.info("Accesso a richiestaDocumentoDC1NominativoNumerica classe ReportDAOImpl");
+
+		//Controllo Ente
+		Optional<Ente> optionalEnte = enteRepository.findById(dc4RichiestaDTO.getIdEnte());
+
+		if(!optionalEnte.isPresent())
+			throw new GesevException("Non è stato possibile creare il report, ente non presente");
+
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
+
+		//String dataYYYYmmDD = "'" + dc4RichiestaDTO.getAnno().concat("-" + dc4RichiestaDTO.getMese().concat("-" + dc4RichiestaDTO.getGiorno()) + "'");
+		String dataCorretta = dc4RichiestaDTO.getAnno().concat("-" + dc4RichiestaDTO.getMese().concat("-" + dc4RichiestaDTO.getGiorno()));
+		Date giornoDatato = simpleDateFormat.parse(dataCorretta);
+
+		if(StringUtils.isBlank(dataCorretta))
+			throw new GesevException("Impossibile generare il documento DC1 Nominativo, data non valida", HttpStatus.BAD_REQUEST);
+
+		DC1NomNumericaJasper dc1NomNum = new DC1NomNumericaJasper();
+
+		String queryDC1Prenotati = "select\r\n"
+				+ "p.identificativo_sistema_fk,\r\n"
+				+ "sum(case when p.tipo_grado_fk = 'UF' and p.flag_cestino = 'N' then 1 else 0 end) as UFFICIALI,\r\n"
+				+ "sum(case when p.tipo_grado_fk = 'SU' and p.flag_cestino = 'N' then 1 else 0 end) as SOTTO_UFFICIALI,\r\n"
+				+ "sum(case when p.tipo_grado_fk = 'GT' and p.flag_cestino = 'N' then 1 else 0 end) as GRADUATI_TRUPPA,\r\n"
+				+ "sum(case when (p.tipo_personale = 'C' or p.tipo_personale is null) and p.flag_cestino = 'N' then 1 else 0 end) as CIVILI,\r\n"
+				+ "SUM(case when p.flag_cestino = 'Y' then 1 else 0 end) as cestini,\r\n"
+				+ "count(*) as totale\r\n"
+				+ "from prenotazione p left join mensa m on p.identificativo_mensa_fk = m.codice_mensa\r\n"
+				+ "where p.data_prenotazione = :giornoDatato and m.ente_fk = :idEnte and p.tipo_pasto_fk = :tipoPasto ";
+
+		if(!StringUtils.isBlank(dc4RichiestaDTO.getSistemaPersonale()))
+			queryDC1Prenotati = queryDC1Prenotati + " and p.identificativo_sistema_fk = :idPersonale ";
+		
+			queryDC1Prenotati = queryDC1Prenotati + "group by p.identificativo_sistema_fk";
+
+		logger.info("Esecuzione query: " + queryDC1Prenotati); 
+		Query dc1PrenotatiQuery = entityManager.createNativeQuery(queryDC1Prenotati);
+
+		//Parametri
+		dc1PrenotatiQuery = dc1PrenotatiQuery.setParameter("idEnte", dc4RichiestaDTO.getIdEnte());
+		dc1PrenotatiQuery = dc1PrenotatiQuery.setParameter("giornoDatato", giornoDatato);
+		dc1PrenotatiQuery = dc1PrenotatiQuery.setParameter("tipoPasto", dc4RichiestaDTO.getTipoPasto());
+
+		if(!StringUtils.isBlank(dc4RichiestaDTO.getSistemaPersonale()))
+			dc1PrenotatiQuery = dc1PrenotatiQuery.setParameter("idPersonale", dc4RichiestaDTO.getSistemaPersonale());
+
+		List<Object[]> listOfResultsDC1Prenotati = dc1PrenotatiQuery.getResultList();
+
+		//Assegnazione Campi Query
+		for(Object[] obj : listOfResultsDC1Prenotati)
+		{
+			Integer ufficiali = ((BigInteger) obj[1]).intValue();
+			Integer sottoUff = ((BigInteger) obj[2]).intValue();
+			Integer graduati = ((BigInteger) obj[3]).intValue();
+			Integer civili = ((BigInteger) obj[4]).intValue();
+			Integer cestini = ((BigInteger) obj[5]).intValue();
+			Integer totale = ((BigInteger) obj[6]).intValue();
+
+			dc1NomNum.setSistemaGestione((String) obj[0]);
+			dc1NomNum.setUfficiali(ufficiali);
+			dc1NomNum.setSottoUfficiali(sottoUff);
+			dc1NomNum.setGraduati(graduati);
+			dc1NomNum.setCivili(civili);
+			dc1NomNum.setCestini(cestini);
+			dc1NomNum.setTotale(totale);
+		}
+		
+		logger.info("Assegnazione eseguita con successo");
+		return dc1NomNum;
+	}
+
+	/* Richiesta documento DC1 Nominativo */
+	@Override
+	public List<DC1NomJasper> richiestaDocumentoDC1Nominativo(DC4RichiestaDTO dc4RichiestaDTO) throws ParseException 
+	{
+		logger.info("Accesso a richiestaDocumentoDC1Nominativo classe ReportDAOImpl");
+		
+		//Controllo Ente
+		Optional<Ente> optionalEnte = enteRepository.findById(dc4RichiestaDTO.getIdEnte());
+
+		if(!optionalEnte.isPresent())
+			throw new GesevException("Non è stato possibile creare il report, ente non presente");
+
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
+
+		//String dataYYYYmmDD = "'" + dc4RichiestaDTO.getAnno().concat("-" + dc4RichiestaDTO.getMese().concat("-" + dc4RichiestaDTO.getGiorno()) + "'");
+		String dataCorretta = dc4RichiestaDTO.getAnno().concat("-" + dc4RichiestaDTO.getMese().concat("-" + dc4RichiestaDTO.getGiorno()));
+		Date giornoDatato = simpleDateFormat.parse(dataCorretta);
+
+		if(StringUtils.isBlank(dataCorretta))
+			throw new GesevException("Impossibile generare il documento DC1 Nominativo, data non valida", HttpStatus.BAD_REQUEST);
+
+		List<DC1NomJasper> listaDC1NomJasper = new ArrayList<>();
+		
+		String queryDC1Prenotati = "select\r\n"
+				+ "e.descrizione_ente,\r\n"
+				+ "p.denominazione_unita_funzionale,\r\n"
+				+ "case when p.tipo_pagamento_fk = 'TO' then 'Titolo oneroso' else 'Titolo gratuito' end,\r\n"
+				+ "g.descr_grado,\r\n"
+				+ "p.nome,\r\n"
+				+ "p.cognome,\r\n"
+				+ "case when tipo_personale is null then 'SI' else 'NO' end esterno\r\n"
+				+ "from prenotazione p left join mensa m on p.identificativo_mensa_fk = m.codice_mensa\r\n"
+				+ "left join ente e on e.id_ente = m.ente_fk\r\n"
+				+ "left join grado g on g.shsgra_cod_uid_pk = p.grado_fk\r\n"
+				+ "where p.data_prenotazione = :giornoDatato and m.ente_fk = :idEnte ";
+
+		if(!StringUtils.isBlank(dc4RichiestaDTO.getSistemaPersonale()))
+			queryDC1Prenotati = queryDC1Prenotati + " and p.identificativo_sistema_fk = :idPersonale ";
+
+		logger.info("Esecuzione query: " + queryDC1Prenotati); 
+		Query dc1PrenotatiQuery = entityManager.createNativeQuery(queryDC1Prenotati);
+
+		//Parametri
+		dc1PrenotatiQuery = dc1PrenotatiQuery.setParameter("idEnte", dc4RichiestaDTO.getIdEnte());
+		dc1PrenotatiQuery = dc1PrenotatiQuery.setParameter("giornoDatato", giornoDatato);
+
+		if(!StringUtils.isBlank(dc4RichiestaDTO.getSistemaPersonale()))
+			dc1PrenotatiQuery = dc1PrenotatiQuery.setParameter("idPersonale", dc4RichiestaDTO.getSistemaPersonale());
+
+		List<Object[]> listOfResultsDC1Prenotati = dc1PrenotatiQuery.getResultList();
+
+		//Assegnazione Campi Query
+		for(Object[] obj : listOfResultsDC1Prenotati)
+		{
+			DC1NomJasper dc1Nom = new DC1NomJasper();
+			
+			dc1Nom.setEnte((String) obj[0]);
+			dc1Nom.setUnitaFunzionale((String) obj[1]);
+			dc1Nom.setTipoPagamento((String) obj[2]);
+			dc1Nom.setGrado((String) obj[3]);
+			dc1Nom.setNome((String) obj[4]);
+			dc1Nom.setCognome((String) obj[5]);
+			dc1Nom.setPersonaleEsterno((String) obj[6]);
+			
+			listaDC1NomJasper.add(dc1Nom);
+		}
+
+		logger.info("Assegnazione eseguita con successo");
+		return listaDC1NomJasper;
+	}
 
 }

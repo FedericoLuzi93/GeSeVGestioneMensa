@@ -14,6 +14,8 @@ import it.gesev.mensa.dto.PastiConsumatiDTO;
 import it.gesev.mensa.dto.SendListPastiDC4AllegatoC;
 import it.gesev.mensa.dto.SendListaDC1Prenotati;
 import it.gesev.mensa.entity.IdentificativoSistema;
+import it.gesev.mensa.jasper.DC1NomJasper;
+import it.gesev.mensa.jasper.DC1NomNumericaJasper;
 import it.gesev.mensa.jasper.NumeroPastiGraduatiJasper;
 import it.gesev.mensa.jasper.NumeroPastiUFCJasper;
 import it.gesev.mensa.jasper.TabellaDC4AllegatoCJasper;
@@ -39,6 +41,13 @@ public interface ReportDAO
 
 	public SendListaDC1Prenotati richiestaDocumentoDC1Prenotati(DC4RichiestaDTO dc4RichiestaDTO,
 			SendListaDC1Prenotati sendObjList) throws ParseException;
+	public List<FirmeDC4> richiestaFirmeDC1(DC4RichiestaDTO dc4RichiestaDTO);
+
+	public SendListaDC1Prenotati richiestaDocumentoDC1Consumati(DC4RichiestaDTO dc4RichiestaDTO,
+			SendListaDC1Prenotati sendObjList) throws ParseException;
+
+	public DC1NomNumericaJasper richiestaDocumentoDC1NominativoNumerica(DC4RichiestaDTO dc4RichiestaDTO) throws ParseException;
+	public List<DC1NomJasper> richiestaDocumentoDC1Nominativo(DC4RichiestaDTO dc4RichiestaDTO) throws ParseException;
 
 
 

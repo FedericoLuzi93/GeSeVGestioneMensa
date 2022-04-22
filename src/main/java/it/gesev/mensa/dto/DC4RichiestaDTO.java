@@ -13,6 +13,7 @@ public class DC4RichiestaDTO
 	private String anno;
 	private String mese;
 	private String giorno;
+	private int tipoPasto;
 	private int idEnte;
 	private int idOperatore;
 }

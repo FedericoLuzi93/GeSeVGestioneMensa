@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import it.gesev.mensa.dto.DC4RichiestaDTO;
 import it.gesev.mensa.dto.DC4TabellaDTO;
+import it.gesev.mensa.dto.FEDC1Nominativo;
 import it.gesev.mensa.dto.FileDC4DTO;
 import it.gesev.mensa.dto.FirmaQuotidianaDC4DTO;
 import it.gesev.mensa.dto.IdentificativoSistemaDTO;
@@ -39,6 +40,12 @@ public interface ReportService
 	public List<DC1MilitariJasper> richiestaDocumentoDC1Prenotati(DC4RichiestaDTO dc4RichiestaDTO,
 			SendListaDC1Prenotati sendObjList) throws ParseException;
 	FileDC4DTO downloadDC1Prenotati(DC4RichiestaDTO dc4RichiestaDTO) throws ParseException, FileNotFoundException;
+	
+	public List<DC1MilitariJasper> richiestaDocumentoDC1Consumati(DC4RichiestaDTO dc4RichiestaDTO,
+			SendListaDC1Prenotati sendObjList) throws ParseException;
+	public FileDC4DTO downloadDC1Consumati(DC4RichiestaDTO dc4RichiestaDTO) throws ParseException, FileNotFoundException;
+	
+	public FEDC1Nominativo richiestaDocumentoDC1Nominativo(DC4RichiestaDTO dc4RichiestaDTO) throws ParseException;
 
 
 }

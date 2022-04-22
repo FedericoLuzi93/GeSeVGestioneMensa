@@ -133,7 +133,7 @@
 		</band>
 	</pageHeader>
 	<detail>
-		<band height="187" splitType="Stretch">
+		<band height="190" splitType="Stretch">
 			<rectangle>
 				<reportElement x="106" y="8" width="540" height="10" uuid="18929554-0e4b-461b-8c56-8eeeb02f69f8"/>
 			</rectangle>
@@ -881,7 +881,7 @@ truppa]]></text>
 	<pageFooter>
 		<band height="55" splitType="Stretch">
 			<componentElement>
-				<reportElement x="5" y="8" width="792" height="32" uuid="1e203b3a-1584-41c2-8842-9361015ad982">
+				<reportElement x="5" y="8" width="792" height="30" uuid="1e203b3a-1584-41c2-8842-9361015ad982">
 					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
 					<property name="com.jaspersoft.studio.table.style.table_header" value="Table 1_TH"/>
 					<property name="com.jaspersoft.studio.table.style.column_header" value="Table 1_CH"/>

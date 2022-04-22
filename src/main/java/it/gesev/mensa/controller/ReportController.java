@@ -27,14 +27,13 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.google.gson.Gson;
-
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import it.gesev.mensa.dto.DC4RichiestaDTO;
 import it.gesev.mensa.dto.DC4TabellaDTO;
 import it.gesev.mensa.dto.EnteDTO;
 import it.gesev.mensa.dto.EsitoDTO;
+import it.gesev.mensa.dto.FEDC1Nominativo;
 import it.gesev.mensa.dto.FESistemaEnteDTO;
 import it.gesev.mensa.dto.FileDC4DTO;
 import it.gesev.mensa.dto.FirmaQuotidianaDC4DTO;
@@ -491,7 +490,7 @@ public class ReportController
 	public ResponseEntity<Resource> downloadDC1Prenotati(@RequestParam String anno, @RequestParam String mese, 
 			@RequestParam int idEnte, @RequestParam int idOperatore, @RequestParam String giorno, @RequestParam (required = false) String sistemaPersonale) throws ParseException, FileNotFoundException
 	{
-		logger.info("Accesso al servizio downloadDC4AllegatoCGraduati");
+		logger.info("Accesso al servizio downloadDC1Prenotati");
 		HttpHeaders headers = new HttpHeaders();
 		DC4RichiestaDTO dc4RichiestaDTO = new DC4RichiestaDTO();
 
@@ -521,5 +520,109 @@ public class ReportController
 
 		return ResponseEntity.ok().headers(headers).contentLength(fileDC4DTO.getFileDC4().length)
 				.contentType(MediaType.APPLICATION_OCTET_STREAM).body(new ByteArrayResource(fileDC4DTO.getFileDC4()));
+	}
+	
+	/* Richiesta documento DC1 Consumati */
+	@PostMapping(value = "/richiestaDocumentoDC1Consumati")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
+			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
+			@ApiResponse(code = 500, message = "Errore interno") })
+	public ResponseEntity<EsitoDTO> richiestaDocumentoDC1Consumati(@RequestBody DC4RichiestaDTO dc4RichiestaDTO)
+	{
+		logger.info("Accesso al servizio richiestaDocumentoDC1Consumati");
+		EsitoDTO esito = new EsitoDTO();
+		try
+		{	
+			SendListaDC1Prenotati sendObjList = new SendListaDC1Prenotati();
+			List<DC1MilitariJasper> listaDC1Jasper = reportService.richiestaDocumentoDC1Consumati(dc4RichiestaDTO, sendObjList);
+			esito.setStatus(HttpStatus.OK.value());
+			esito.setMessaggio("DOCUMENTO CREATO CON SUCCESSO");
+			esito.setBody(listaDC1Jasper);
+		}
+		catch(GesevException gex)   
+		{
+			logger.info("Si e' verificata un'eccezione", gex);
+			esito.setStatus(gex.getStatus().value());
+			esito.setMessaggio(gex.getMessage());
+		}
+		catch(Exception ex)
+		{
+			logger.info("Si e' verificata un'eccezione interna", ex);
+			esito.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			esito.setMessaggio(MESSAGGIO_ERRORE_INTERNO);
+		}
+		return ResponseEntity.status(esito.getStatus()).body(esito);
+	}
+	
+	
+	/* Download documento DC1 Consumati */
+	@GetMapping(value = "/downloadDC1Consumati")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Richiesta download DC1 Consumati andata a buon fine"),
+			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
+			@ApiResponse(code = 500, message = "Errore interno") })
+	public ResponseEntity<Resource> downloadDC1Consumati(@RequestParam String anno, @RequestParam String mese, 
+			@RequestParam int idEnte, @RequestParam int idOperatore, @RequestParam String giorno, @RequestParam (required = false) String sistemaPersonale) throws ParseException, FileNotFoundException
+	{
+		logger.info("Accesso al servizio downloadDC1Consumati");
+		HttpHeaders headers = new HttpHeaders();
+		DC4RichiestaDTO dc4RichiestaDTO = new DC4RichiestaDTO();
+
+		try
+		{			
+			if(!StringUtils.isBlank(sistemaPersonale))
+				dc4RichiestaDTO.setSistemaPersonale(sistemaPersonale);
+			else
+				dc4RichiestaDTO.setSistemaPersonale(null);
+
+			dc4RichiestaDTO.setAnno(anno);
+			dc4RichiestaDTO.setMese(mese);
+			dc4RichiestaDTO.setIdEnte(idEnte);
+			dc4RichiestaDTO.setIdOperatore(idOperatore);
+			dc4RichiestaDTO.setGiorno(giorno);
+		}
+		catch(Exception e)
+		{
+			logger.info("Si e' verificata un'eccezione", e);
+		}
+		
+		/* Invio FIle */
+		FileDC4DTO fileDC4DTO = reportService.downloadDC1Consumati(dc4RichiestaDTO);
+
+		headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileDC4DTO.getNomeFile());
+		headers.add(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION);
+
+		return ResponseEntity.ok().headers(headers).contentLength(fileDC4DTO.getFileDC4().length)
+				.contentType(MediaType.APPLICATION_OCTET_STREAM).body(new ByteArrayResource(fileDC4DTO.getFileDC4()));
+	}
+	
+	/* Richiesta documento DC1 Nominativo */
+	@PostMapping(value = "/richiestaDocumentoDC1Nominativo")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
+			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
+			@ApiResponse(code = 500, message = "Errore interno") })
+	public ResponseEntity<EsitoDTO> richiestaDocumentoDC1Nominativo(@RequestBody DC4RichiestaDTO dc4RichiestaDTO)
+	{
+		logger.info("Accesso al servizio richiestaDocumentoDC1Nominativo");
+		EsitoDTO esito = new EsitoDTO();
+		try
+		{	
+			FEDC1Nominativo feDc1Nominativo = reportService.richiestaDocumentoDC1Nominativo(dc4RichiestaDTO);
+			esito.setStatus(HttpStatus.OK.value());
+			esito.setMessaggio("DOCUMENTO CREATO CON SUCCESSO");
+			esito.setBody(feDc1Nominativo);
+		}
+		catch(GesevException gex)   
+		{
+			logger.info("Si e' verificata un'eccezione", gex);
+			esito.setStatus(gex.getStatus().value());
+			esito.setMessaggio(gex.getMessage());
+		}
+		catch(Exception ex)
+		{
+			logger.info("Si e' verificata un'eccezione interna", ex);
+			esito.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			esito.setMessaggio(MESSAGGIO_ERRORE_INTERNO);
+		}
+		return ResponseEntity.status(esito.getStatus()).body(esito);
 	}
 }
