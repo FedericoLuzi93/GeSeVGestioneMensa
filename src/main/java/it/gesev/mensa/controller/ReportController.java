@@ -625,4 +625,45 @@ public class ReportController
 		}
 		return ResponseEntity.status(esito.getStatus()).body(esito);
 	}
+	
+	/* Download documento DC1 Nominativo */
+	@GetMapping(value = "/downloadDC1Nominativo")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Richiesta download DC1 Nominativo andata a buon fine"),
+			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
+			@ApiResponse(code = 500, message = "Errore interno") })
+	public ResponseEntity<Resource> downloadDC1Nominativo(@RequestParam String anno, @RequestParam String mese, 
+			@RequestParam int idEnte, @RequestParam int idOperatore, @RequestParam String giorno, @RequestParam int tipoPasto, @RequestParam (required = false) String sistemaPersonale) throws ParseException, FileNotFoundException
+	{
+		logger.info("Accesso al servizio downloadDC1Nominativo");
+		HttpHeaders headers = new HttpHeaders();
+		DC4RichiestaDTO dc4RichiestaDTO = new DC4RichiestaDTO();
+
+		try
+		{			
+			if(!StringUtils.isBlank(sistemaPersonale))
+				dc4RichiestaDTO.setSistemaPersonale(sistemaPersonale);
+			else
+				dc4RichiestaDTO.setSistemaPersonale(null);
+			
+			dc4RichiestaDTO.setTipoPasto(tipoPasto);
+			dc4RichiestaDTO.setAnno(anno);
+			dc4RichiestaDTO.setMese(mese);
+			dc4RichiestaDTO.setIdEnte(idEnte);
+			dc4RichiestaDTO.setIdOperatore(idOperatore);
+			dc4RichiestaDTO.setGiorno(giorno);
+		}
+		catch(Exception e)
+		{
+			logger.info("Si e' verificata un'eccezione", e);
+		}
+		
+		/* Invio FIle */
+		FileDC4DTO fileDC4DTO = reportService.downloadDC1Nominativo(dc4RichiestaDTO);
+
+		headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileDC4DTO.getNomeFile());
+		headers.add(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION);
+
+		return ResponseEntity.ok().headers(headers).contentLength(fileDC4DTO.getFileDC4().length)
+				.contentType(MediaType.APPLICATION_OCTET_STREAM).body(new ByteArrayResource(fileDC4DTO.getFileDC4()));
+	}
 }
