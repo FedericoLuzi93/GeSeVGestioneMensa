@@ -46,6 +46,7 @@ public interface ReportService
 	public FileDC4DTO downloadDC1Consumati(DC4RichiestaDTO dc4RichiestaDTO) throws ParseException, FileNotFoundException;
 	
 	public FEDC1Nominativo richiestaDocumentoDC1Nominativo(DC4RichiestaDTO dc4RichiestaDTO) throws ParseException;
+	public FileDC4DTO downloadDC1Nominativo(DC4RichiestaDTO dc4RichiestaDTO) throws ParseException, FileNotFoundException;
 
 
 }
