@@ -37,8 +37,5 @@ public class DipendenteEsterno
 	
 	@OneToMany(mappedBy = "dipendenteEsterno")
 	private List<AssDipendenteRuolo> listaAssDipendenteRuolo;
-	
-	@OneToMany(mappedBy = "dipendenteEsterno")
-	private List<AttestazioneClient> listaAttestazioni;
 		
 }

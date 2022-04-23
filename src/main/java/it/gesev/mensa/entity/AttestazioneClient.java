@@ -28,29 +28,15 @@ public class AttestazioneClient
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer idAttestazioneClient;
 	
-	@Column(name = "codice_otp")
-	private String codiceOtp;
+	@ManyToOne
+	@JoinColumn(name = "codice_otp")
+	private CodiceOTP codiceOtp;
 	
 	@Column(name = "mac_address")
 	private String macAddress;
 	
 	@Column(name = "data_ultima_attivita")
 	private Date dataUltimaAttivita;
-	
-	@ManyToOne(cascade={CascadeType.PERSIST, CascadeType.DETACH,
-		 	CascadeType.MERGE, CascadeType.REFRESH})
-	@JoinColumn(name = "mensa_fk")
-	private Mensa mensa;
-	
-	@ManyToOne(cascade={CascadeType.PERSIST, CascadeType.DETACH,
-		 	CascadeType.MERGE, CascadeType.REFRESH})
-	@JoinColumn(name = "dipendente_fk")
-	private Dipendente dipendente;
-	
-	@ManyToOne(cascade={CascadeType.PERSIST, CascadeType.DETACH,
-		 	CascadeType.MERGE, CascadeType.REFRESH})
-	@JoinColumn(name = "dipendente_esterno_fk")
-	private DipendenteEsterno dipendenteEsterno;
 	
 	@ManyToOne(cascade={CascadeType.PERSIST, CascadeType.DETACH,
 		 	CascadeType.MERGE, CascadeType.REFRESH})

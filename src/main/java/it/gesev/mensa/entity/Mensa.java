@@ -121,9 +121,9 @@ public class Mensa
 	private List<Prenotazione> listaPrenotazioni;
 	
 	@OneToMany(mappedBy = "mensa", fetch = FetchType.LAZY)
-	private List<AttestazioneClient> listaAttestazioni;
+	private List<Menu> listaMenu;
 	
 	@OneToMany(mappedBy = "mensa", fetch = FetchType.LAZY)
-	private List<Menu> listaMenu;
+	private List<CodiceOTP> listaCodiciOTP;
 	
 }

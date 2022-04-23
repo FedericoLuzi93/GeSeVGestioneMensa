@@ -32,5 +32,5 @@ public interface RuoliDAO
 	public List<Dipendente> findDipendenteByIdEnte(Integer idMensa);
 	public List<AssDipendenteRuolo> findRuoliDipendentiEsterni(Integer codiceMensa);
 	public void updateRuoloDipendenteEsterno(AssDipendenteRuoloDTO associazione);
-	public void inserisciDatiAttestazione(String codiceOtp, Mensa mensa, Integer idDipendente, boolean isDipendente);
+//	public void inserisciDatiAttestazione(String codiceOtp, Mensa mensa, Integer idDipendente, boolean isDipendente);
 }

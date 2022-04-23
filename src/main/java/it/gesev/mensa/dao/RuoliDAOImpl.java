@@ -565,36 +565,36 @@ public class RuoliDAOImpl implements RuoliDAO
 	
 	}
 
-	@Override
-	public void inserisciDatiAttestazione(String codiceOtp, Mensa mensa, Integer idDipendente, boolean isDipendente) 
-	{
-		logger.info("Inserimento dati attestazione...");
-		AttestazioneClient attestazione = new AttestazioneClient();
-		attestazione.setCodiceOtp(codiceOtp);
-		attestazione.setMensa(mensa);
-		attestazione.setDataUltimaAttivita(new Date());
-		
-		if(isDipendente)
-		{
-			Optional<Dipendente> optDipendente = dipendenteRepository.findById(idDipendente);
-			if(!optDipendente.isPresent())
-				throw new GesevException("Impossibile trovare un dipendente con ID " + idDipendente, HttpStatus.BAD_REQUEST);
-			
-			attestazione.setDipendente(optDipendente.get());
-		}
-		
-		else
-		{
-			Optional<DipendenteEsterno> optDipendente = dipendenteEsternoRepository.findById(idDipendente);
-			if(!optDipendente.isPresent())
-				throw new GesevException("Impossibile trovare un dipendente esterno con ID " + idDipendente, HttpStatus.BAD_REQUEST);
-			
-			attestazione.setDipendenteEsterno(optDipendente.get());
-		}
-		
-		attestazioneReository.save(attestazione);
-		
-	}
+//	@Override
+//	public void inserisciDatiAttestazione(String codiceOtp, Mensa mensa, Integer idDipendente, boolean isDipendente) 
+//	{
+//		logger.info("Inserimento dati attestazione...");
+//		AttestazioneClient attestazione = new AttestazioneClient();
+//		attestazione.setCodiceOtp(codiceOtp);
+//		attestazione.setMensa(mensa);
+//		attestazione.setDataUltimaAttivita(new Date());
+//		
+//		if(isDipendente)
+//		{
+//			Optional<Dipendente> optDipendente = dipendenteRepository.findById(idDipendente);
+//			if(!optDipendente.isPresent())
+//				throw new GesevException("Impossibile trovare un dipendente con ID " + idDipendente, HttpStatus.BAD_REQUEST);
+//			
+//			attestazione.setDipendente(optDipendente.get());
+//		}
+//		
+//		else
+//		{
+//			Optional<DipendenteEsterno> optDipendente = dipendenteEsternoRepository.findById(idDipendente);
+//			if(!optDipendente.isPresent())
+//				throw new GesevException("Impossibile trovare un dipendente esterno con ID " + idDipendente, HttpStatus.BAD_REQUEST);
+//			
+//			attestazione.setDipendenteEsterno(optDipendente.get());
+//		}
+//		
+//		attestazioneReository.save(attestazione);
+//		
+//	}
 
 	
 }

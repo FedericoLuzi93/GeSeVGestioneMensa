@@ -82,8 +82,5 @@ public class Dipendente
 	@OneToMany(mappedBy = "dipendente", fetch = FetchType.LAZY)
 	private List<AssRepInviatiDipStatoRep> listaAssRepInviatiDipStatoRep;
 	
-	@OneToMany(mappedBy = "dipendente", fetch = FetchType.LAZY)
-	private List<AttestazioneClient> listaAttestazioni;
-	
 	
 }
