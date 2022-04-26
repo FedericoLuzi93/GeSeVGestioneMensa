@@ -2,33 +2,6 @@
 <!-- Created with Jaspersoft Studio version 6.18.1.final utlizzo versione della libreria JasperReports6.18.1-9d75d1969e774d4f179fb3be8401e98a0e6d1611  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Menu" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c1a78d1e-547e-4dd3-8e22-1a78026843cf">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
-	<style name="Table_TH" mode="Opaque" backcolor="#F0F8FF">
-		<box>
-			<pen lineWidth="0.5" lineColor="#000000"/>
-			<topPen lineWidth="0.5" lineColor="#000000"/>
-			<leftPen lineWidth="0.5" lineColor="#000000"/>
-			<bottomPen lineWidth="0.5" lineColor="#000000"/>
-			<rightPen lineWidth="0.5" lineColor="#000000"/>
-		</box>
-	</style>
-	<style name="Table_CH" mode="Opaque" backcolor="#BFE1FF">
-		<box>
-			<pen lineWidth="0.5" lineColor="#000000"/>
-			<topPen lineWidth="0.5" lineColor="#000000"/>
-			<leftPen lineWidth="0.5" lineColor="#000000"/>
-			<bottomPen lineWidth="0.5" lineColor="#000000"/>
-			<rightPen lineWidth="0.5" lineColor="#000000"/>
-		</box>
-	</style>
-	<style name="Table_TD" mode="Opaque" backcolor="#FFFFFF">
-		<box>
-			<pen lineWidth="0.5" lineColor="#000000"/>
-			<topPen lineWidth="0.5" lineColor="#000000"/>
-			<leftPen lineWidth="0.5" lineColor="#000000"/>
-			<bottomPen lineWidth="0.5" lineColor="#000000"/>
-			<rightPen lineWidth="0.5" lineColor="#000000"/>
-		</box>
-	</style>
 	<subDataset name="colazione" uuid="e8758945-f789-4a31-bbe6-30bff3043fd3">
 		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 		<queryString>
@@ -46,6 +19,15 @@
 	<parameter name="giorno" class="java.lang.String"/>
 	<parameter name="tipoDieta" class="java.lang.String"/>
 	<parameter name="tabPranzo" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
+	<parameter name="colazione" class="java.lang.String"/>
+	<parameter name="pranzoPrimo" class="java.lang.String"/>
+	<parameter name="pranzoSecondo" class="java.lang.String"/>
+	<parameter name="pranzoContorno" class="java.lang.String"/>
+	<parameter name="pranzoFrutta" class="java.lang.String"/>
+	<parameter name="cenaPrimo" class="java.lang.String"/>
+	<parameter name="cenaSecondo" class="java.lang.String"/>
+	<parameter name="cenaContorno" class="java.lang.String"/>
+	<parameter name="cenaFrutta" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -53,132 +35,124 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="128" splitType="Stretch">
+		<band height="140" splitType="Stretch">
 			<textField>
-				<reportElement x="20" y="30" width="120" height="30" uuid="8e569494-fe24-469a-b908-c7e85280d95e"/>
+				<reportElement x="20" y="30" width="220" height="30" uuid="8e569494-fe24-469a-b908-c7e85280d95e"/>
 				<textFieldExpression><![CDATA[$P{nomeMensa}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="390" y="30" width="100" height="30" uuid="55fe1c56-f505-437a-8ff4-e455ca9b536f"/>
+				<reportElement x="250" y="30" width="300" height="30" uuid="55fe1c56-f505-437a-8ff4-e455ca9b536f"/>
+				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$P{nomeEnte}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="96" y="60" width="100" height="30" uuid="f6d7046c-0533-4ad1-8491-4363f15d71a2"/>
+				<reportElement x="20" y="60" width="220" height="30" uuid="f6d7046c-0533-4ad1-8491-4363f15d71a2"/>
 				<textFieldExpression><![CDATA[$P{telefono}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="350" y="60" width="100" height="30" uuid="e919dd2f-b590-431d-8e9f-f427b88eb778"/>
+				<reportElement x="250" y="60" width="300" height="20" uuid="e919dd2f-b590-431d-8e9f-f427b88eb778"/>
+				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$P{email}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="196" y="90" width="163" height="30" uuid="4dab2f71-174f-44d3-b88f-235d4de038f5"/>
+				<reportElement x="20" y="90" width="530" height="30" uuid="4dab2f71-174f-44d3-b88f-235d4de038f5"/>
+				<textElement textAlignment="Center">
+					<font size="20"/>
+				</textElement>
 				<textFieldExpression><![CDATA["Menu del giorno " + $P{giorno}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
 	<detail>
-		<band height="277" splitType="Stretch">
+		<band height="350" splitType="Stretch">
 			<textField>
-				<reportElement x="20" y="10" width="200" height="30" uuid="41c1afd7-c3e3-4f51-b531-6ca039355ea0"/>
+				<reportElement x="20" y="10" width="360" height="30" uuid="41c1afd7-c3e3-4f51-b531-6ca039355ea0"/>
 				<textFieldExpression><![CDATA["Tipo dieta " + $P{tipoDieta}]]></textFieldExpression>
 			</textField>
-			<componentElement>
-				<reportElement x="20" y="50" width="170" height="69" uuid="4fafeb55-65e1-4288-b780-1749627bdc6f">
-					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.HorizontalRowLayout"/>
-					<property name="com.jaspersoft.studio.table.style.table_header" value="Table_TH"/>
-					<property name="com.jaspersoft.studio.table.style.column_header" value="Table_CH"/>
-					<property name="com.jaspersoft.studio.table.style.detail" value="Table_TD"/>
-				</reportElement>
-				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<datasetRun subDataset="colazione" uuid="bb4ac417-9b32-4186-b600-62d787c46504">
-						<dataSourceExpression><![CDATA[$P{tabPranzo}]]></dataSourceExpression>
-					</datasetRun>
-					<jr:column width="40" uuid="89406a49-6332-4b35-8f1a-a926cc78e3b8">
-						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonna1"/>
-						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
-							<staticText>
-								<reportElement x="0" y="0" width="40" height="30" uuid="0f98cfee-b25d-47a4-b76a-39681e50be90"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font size="8"/>
-								</textElement>
-								<text><![CDATA[Primo]]></text>
-							</staticText>
-						</jr:columnHeader>
-						<jr:detailCell style="Table_TD" height="30">
-							<textField>
-								<reportElement x="0" y="0" width="40" height="30" uuid="08602eb6-fc0e-4b54-93fa-b359530e4e8f"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font size="8"/>
-								</textElement>
-								<textFieldExpression><![CDATA[$F{primo}]]></textFieldExpression>
-							</textField>
-						</jr:detailCell>
-					</jr:column>
-					<jr:column width="40" uuid="08ff9c0e-d259-4f67-9201-4eecb793376a">
-						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonna2"/>
-						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
-							<staticText>
-								<reportElement x="0" y="0" width="40" height="30" uuid="47b04879-0fa9-44b0-bf8b-e105e58b2c64"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font size="8"/>
-								</textElement>
-								<text><![CDATA[Secondo]]></text>
-							</staticText>
-						</jr:columnHeader>
-						<jr:detailCell style="Table_TD" height="30">
-							<textField>
-								<reportElement x="0" y="0" width="40" height="30" uuid="7cd2e662-bc11-48d0-aadf-7f11163fe496"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font size="8"/>
-								</textElement>
-								<textFieldExpression><![CDATA[$F{secondo}]]></textFieldExpression>
-							</textField>
-						</jr:detailCell>
-					</jr:column>
-					<jr:column width="40" uuid="05a9e3a3-8faa-47c1-92b0-2c26d4aa51d5">
-						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonna3"/>
-						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
-							<staticText>
-								<reportElement x="0" y="0" width="40" height="30" uuid="e3ee8330-e5e2-4bdb-9cff-d03a27e01a12"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font size="8"/>
-								</textElement>
-								<text><![CDATA[Contorno]]></text>
-							</staticText>
-						</jr:columnHeader>
-						<jr:detailCell style="Table_TD" height="30">
-							<textField>
-								<reportElement x="0" y="0" width="40" height="30" uuid="1857f966-cca8-4129-aa6e-8105fd6022ea"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font size="8"/>
-								</textElement>
-								<textFieldExpression><![CDATA[$F{contorno}]]></textFieldExpression>
-							</textField>
-						</jr:detailCell>
-					</jr:column>
-					<jr:column width="40" uuid="0250c96f-cb19-43e6-abd9-e36ecd443f79">
-						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonna4"/>
-						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
-							<staticText>
-								<reportElement x="0" y="0" width="40" height="30" uuid="11b90543-1f02-418a-9a76-366663200710"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font size="8"/>
-								</textElement>
-								<text><![CDATA[Frutta]]></text>
-							</staticText>
-						</jr:columnHeader>
-						<jr:detailCell style="Table_TD" height="30">
-							<textField>
-								<reportElement x="0" y="0" width="40" height="30" uuid="4365da13-64ce-4a4d-a533-eb73470751fc"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font size="8"/>
-								</textElement>
-								<textFieldExpression><![CDATA[$F{frutta}]]></textFieldExpression>
-							</textField>
-						</jr:detailCell>
-					</jr:column>
-				</jr:table>
-			</componentElement>
+			<staticText>
+				<reportElement x="80" y="70" width="100" height="20" uuid="9b5ad677-98a7-4d64-a2c3-071fdea10047"/>
+				<textElement>
+					<font size="15"/>
+				</textElement>
+				<text><![CDATA[Colazione]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="80" y="90" width="450" height="20" uuid="ea407053-8309-4a41-9d7b-612be7b5179f"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{colazione}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="80" y="130" width="100" height="20" uuid="4fa99525-7381-4fab-a5af-833f6eb5d3aa"/>
+				<textElement>
+					<font size="15"/>
+				</textElement>
+				<text><![CDATA[Pranzo]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="80" y="150" width="450" height="20" uuid="d9836b1f-3eb9-46e6-9107-ad48c1eece69"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{pranzoPrimo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="80" y="170" width="450" height="20" uuid="06c4ff47-e9bc-4565-ae82-ef6b3522eefa"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{pranzoSecondo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="80" y="190" width="450" height="20" uuid="07af70f9-1025-40ef-9837-9f578991d415"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{pranzoContorno}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="80" y="210" width="450" height="20" uuid="7acf6c62-4b0c-4d44-b2c6-1d675825c6bd"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{pranzoFrutta}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="80" y="250" width="100" height="20" uuid="c7b465f1-049e-49d2-b368-c230227ce9c3"/>
+				<textElement>
+					<font size="15"/>
+				</textElement>
+				<text><![CDATA[Cena]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="80" y="270" width="450" height="18" uuid="4c2f6b7c-bd40-4168-a9a2-9ff1a2bf38e9"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cenaPrimo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="80" y="288" width="450" height="18" uuid="20285fc0-f3ef-4aa9-9ac7-2c4726449737"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cenaSecondo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="80" y="306" width="450" height="18" uuid="5113bcd0-2e60-4c1e-ba67-3058e6937ad5"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cenaContorno}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="80" y="324" width="450" height="18" uuid="61269755-fd88-4ff7-a33c-c47d63855787"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cenaFrutta}]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 	<pageFooter>

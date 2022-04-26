@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -45,6 +46,7 @@ import it.gesev.mensa.dto.SendListaDC1Prenotati;
 import it.gesev.mensa.entity.IdentificativoSistema;
 import it.gesev.mensa.entity.Mensa;
 import it.gesev.mensa.entity.Pietanza;
+import it.gesev.mensa.entity.TipoDieta;
 import it.gesev.mensa.jasper.DC1MilitariJasper;
 import it.gesev.mensa.jasper.DC1NomJasper;
 import it.gesev.mensa.jasper.DC1NomNumericaJasper;
@@ -1465,14 +1467,31 @@ public class ReportServiceImpl implements ReportService
 		File mockFile = ResourceUtils.getFile("classpath:Menu.jrxml");
 
 		String colazione = "";
-		String pranzoPrimo = "";
-		String pranzoSecondo = "";
-		String pranzoContorno = "";
-		String pranzoFrutta = "";
-		String cenaPrimo = "";
-		String cenaSecondo = "";
-		String cenaContorno = "";
-		String cenaFrutta = "";
+		String pranzoPrimo = "Primo: ";
+		String pranzoSecondo = "Secondo: ";
+		String pranzoContorno = "Controno: ";
+		String pranzoFrutta = "Frutta: ";
+		String cenaPrimo = "Primo: ";
+		String cenaSecondo = "Secondo: ";
+		String cenaContorno = "Controno: ";
+		String cenaFrutta = "Frutta: ";
+		String descrizioneTipoDieta = "";
+		
+		
+		String pranzo = "";
+		String cena = "";
+		for(Pietanza p : listaTuttePietanze)
+		{
+			if(p.getTipoPasto().getCodiceTipoPasto() == 2)
+				pranzo = pranzo.concat(p.getDescrizionePietanza() + " ");
+			if(p.getTipoPasto().getCodiceTipoPasto() == 3)
+				cena = cena.concat(p.getDescrizionePietanza()+ " ");
+
+		}
+		Map<String, String> mappaPranzo	= new HashMap<String, String>();
+		mappaPranzo.put("Pranzo", pranzo);
+		Map<String, String> mappaCena	= new HashMap<String, String>();
+		mappaPranzo.put("Cena", cena);
 
 		try
 		{
@@ -1526,32 +1545,40 @@ public class ReportServiceImpl implements ReportService
 			}
 			
 			Mensa mensa = mensaDAO.getSingolaMensa(menuLeggeroDTO.getIdMensa());
+			List<TipoDieta> listaTipoDieta = mensaDAO.getAllTipoDieta();
+			for(TipoDieta tp : listaTipoDieta)
+			{
+				if(tp.getIdTipoDieta() == menuLeggeroDTO.getTipoDieta());
+						descrizioneTipoDieta = tp.getDescrizioneTipoDieta();
+			}
+			
 			
 			//Assegnazione oggetti
 			Map<String, Object> parameters = new HashMap<>();
-			parameters.put("nomeMensa", mensa.getCodiceMensa().toString());
+			parameters.put("nomeMensa", mensa.getDescrizioneMensa());
 			parameters.put("nomeEnte", mensa.getEnte().getDescrizioneEnte());
 			parameters.put("telefono", mensa.getTelefono());
 			parameters.put("email", mensa.getEmail());
 			parameters.put("giorno", menuLeggeroDTO.getDataMenu());
+			parameters.put("tipoDieta", descrizioneTipoDieta);
 			
-			parameters.put("colazione", colazione);
-			parameters.put("pranzoPrimo", pranzoPrimo);
-			parameters.put("pranzoSecondo", pranzoSecondo);
-			parameters.put("pranzoContorno", pranzoContorno);
-			parameters.put("pranzoFrutta", pranzoFrutta);
+			parameters.put("colazione", colazione.substring(0, colazione.length() - 1));
+			parameters.put("pranzoPrimo", pranzoPrimo.substring(0, pranzoPrimo.length() - 1));
+			parameters.put("pranzoSecondo", pranzoSecondo.substring(0, pranzoSecondo.length() - 1));
+			parameters.put("pranzoContorno", pranzoContorno.substring(0, pranzoContorno.length() - 1));
+			parameters.put("pranzoFrutta", pranzoFrutta.substring(0, pranzoFrutta.length() - 1));
 			
-			parameters.put("cenaPrimo", cenaPrimo);
-			parameters.put("cenaSecondo", cenaSecondo);
-			parameters.put("cenaContorno", cenaContorno);
-			parameters.put("cenaFrutta", cenaFrutta);
+			parameters.put("cenaPrimo", cenaPrimo.substring(0, cenaPrimo.length() - 1));
+			parameters.put("cenaSecondo", cenaSecondo.substring(0, cenaSecondo.length() - 1));
+			parameters.put("cenaContorno", cenaContorno.substring(0, cenaContorno.length() - 1));
+			parameters.put("cenaFrutta", cenaFrutta.substring(0, cenaFrutta.length() - 1));
 			
 			//Stampa
 			JasperReport report = JasperCompileManager.compileReport(mockFile.getAbsolutePath());
 			JasperPrint print = JasperFillManager.fillReport(report, parameters, new JREmptyDataSource());
 			byte[] arrayb = JasperExportManager.exportReportToPdf(print);
 			fileDC4DTO.setFileDC4(arrayb);
-			fileDC4DTO.setNomeFile("Menu_del_Giorno" + ".pdf"); 
+			fileDC4DTO.setNomeFile("Menu_del_Giorno" + "_" + menuLeggeroDTO.getDataMenu() + ".pdf"); 
 
 
 		}
