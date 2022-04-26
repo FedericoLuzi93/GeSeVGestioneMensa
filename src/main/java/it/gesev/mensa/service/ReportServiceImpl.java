@@ -1557,10 +1557,40 @@ public class ReportServiceImpl implements ReportService
 			Map<String, Object> parameters = new HashMap<>();
 			parameters.put("nomeMensa", mensa.getDescrizioneMensa());
 			parameters.put("nomeEnte", mensa.getEnte().getDescrizioneEnte());
-			parameters.put("telefono", mensa.getTelefono());
-			parameters.put("email", mensa.getEmail());
+			
+			if(!StringUtils.isBlank(mensa.getTelefono()))
+				parameters.put("telefono", mensa.getTelefono());
+			else
+				parameters.put("telefono", "");
+			
+			if(!StringUtils.isBlank(mensa.getEmail()))
+				parameters.put("email", mensa.getEmail());
+			else
+				parameters.put("email", "");
+			
 			parameters.put("giorno", menuLeggeroDTO.getDataMenu());
 			parameters.put("tipoDieta", descrizioneTipoDieta);
+			
+			if(colazione.equalsIgnoreCase(" "))
+					colazione = "Non ci sono portate per la colazione";
+			if(pranzoPrimo.equalsIgnoreCase("Primo: "))
+				pranzoPrimo = "Non ci sono portate per il primo a pranzo";
+			if(pranzoSecondo.equalsIgnoreCase("Secondo: "))
+				pranzoSecondo = "Non ci sono portate per il secondo a pranzo";
+			if(pranzoContorno.equalsIgnoreCase("Controno: "))
+				pranzoContorno = "Non ci sono portate per il contorno a pranzo";
+			if(pranzoFrutta.equalsIgnoreCase("Frutta: "))
+				pranzoFrutta = "Non ci sono portate per la frutta a pranzo";
+			
+			if(cenaPrimo.equalsIgnoreCase("Primo: "))
+				cenaPrimo = "Non ci sono portate per il primo a cena";
+			if(cenaSecondo.equalsIgnoreCase("Secondo: "))
+				cenaSecondo = "Non ci sono portate per il secondo a cena";
+			if(cenaContorno.equalsIgnoreCase("Controno: "))
+				cenaContorno = "Non ci sono portate per il contorno a cena";
+			if(cenaFrutta.equalsIgnoreCase("Frutta: "))
+				cenaFrutta = "Non ci sono portate per la frutta a cena";
+
 			
 			parameters.put("colazione", colazione.substring(0, colazione.length() - 1));
 			parameters.put("pranzoPrimo", pranzoPrimo.substring(0, pranzoPrimo.length() - 1));
