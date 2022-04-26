@@ -33,6 +33,8 @@ import it.gesev.mensa.dto.FEPastiDC4Graduati;
 import it.gesev.mensa.dto.FEPastiDC4USC;
 import it.gesev.mensa.dto.FirmaQuotidianaDC4DTO;
 import it.gesev.mensa.dto.FirmeDC4;
+import it.gesev.mensa.dto.MenuDTO;
+import it.gesev.mensa.dto.MenuLeggeroDTO;
 import it.gesev.mensa.dto.PastiConsumatiDTO;
 import it.gesev.mensa.dto.SendListPastiDC4AllegatoC;
 import it.gesev.mensa.dto.SendListaDC1Prenotati;
@@ -43,6 +45,7 @@ import it.gesev.mensa.entity.ForzaEffettiva;
 import it.gesev.mensa.entity.IdentificativoSistema;
 import it.gesev.mensa.entity.Mensa;
 import it.gesev.mensa.entity.PastiConsumati;
+import it.gesev.mensa.entity.Pietanza;
 import it.gesev.mensa.entity.TipoPagamento;
 import it.gesev.mensa.entity.TipoPasto;
 import it.gesev.mensa.exc.GesevException;
@@ -55,6 +58,7 @@ import it.gesev.mensa.repository.ForzaEffettivaRepository;
 import it.gesev.mensa.repository.IdentificativoSistemaRepository;
 import it.gesev.mensa.repository.MensaRepository;
 import it.gesev.mensa.repository.PastiConsumatiRepository;
+import it.gesev.mensa.repository.PietanzaRepository;
 import it.gesev.mensa.repository.TipoPagamentoRepository;
 import it.gesev.mensa.repository.TipoPastoRepository;
 import it.gesev.mensa.utils.ControlloData;
@@ -97,6 +101,9 @@ public class ReportDAOImpl implements ReportDAO
 
 	@Autowired
 	private EnteRepository enteRepository;
+	
+	@Autowired
+	private PietanzaRepository pietanzaRepository;
 
 	@PersistenceContext
 	EntityManager entityManager;
@@ -1236,6 +1243,26 @@ public class ReportDAOImpl implements ReportDAO
 
 		logger.info("Assegnazione eseguita con successo");
 		return listaDC1NomJasper;
+	}
+
+	/* Richiesta Menu del giorno */
+	@Override
+	public List<Pietanza> richiestaMenuDelGiorno(MenuDTO menuDTO) throws ParseException 
+	{
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
+		Date data = simpleDateFormat.parse(menuDTO.getDataMenu());
+		List<Pietanza> listaPietanze = pietanzaRepository.findPietanzeByIdMenu(menuDTO.getIdMensa(), menuDTO.getTipoDieta(), menuDTO.getTipoPasto(), data);
+		return listaPietanze;
+	}
+
+	/* Download Menu del giorno */
+	@Override
+	public List<Pietanza> richiestaTuttePietanze(MenuLeggeroDTO menuLeggeroDTO) throws ParseException
+	{
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
+		Date data = simpleDateFormat.parse(menuLeggeroDTO.getDataMenu());
+		List<Pietanza> listaPietanze = pietanzaRepository.findAllPietanzeByIdMenu(menuLeggeroDTO.getIdMensa(), menuLeggeroDTO.getTipoDieta(),data);
+		return listaPietanze;
 	}
 
 }

@@ -24,6 +24,7 @@ import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import com.opencsv.bean.CsvToBeanBuilder;
 
+import it.gesev.mensa.dao.MensaDAO;
 import it.gesev.mensa.dao.ReportDAO;
 import it.gesev.mensa.dto.DC4RichiestaDTO;
 import it.gesev.mensa.dto.DC4TabellaAllegatoCDTO;
@@ -35,10 +36,15 @@ import it.gesev.mensa.dto.FileDC4DTO;
 import it.gesev.mensa.dto.FirmaQuotidianaDC4DTO;
 import it.gesev.mensa.dto.FirmeDC4;
 import it.gesev.mensa.dto.IdentificativoSistemaDTO;
+import it.gesev.mensa.dto.MenuDTO;
+import it.gesev.mensa.dto.MenuLeggeroDTO;
 import it.gesev.mensa.dto.PastiConsumatiDTO;
+import it.gesev.mensa.dto.PietanzaDTO;
 import it.gesev.mensa.dto.SendListPastiDC4AllegatoC;
 import it.gesev.mensa.dto.SendListaDC1Prenotati;
 import it.gesev.mensa.entity.IdentificativoSistema;
+import it.gesev.mensa.entity.Mensa;
+import it.gesev.mensa.entity.Pietanza;
 import it.gesev.mensa.jasper.DC1MilitariJasper;
 import it.gesev.mensa.jasper.DC1NomJasper;
 import it.gesev.mensa.jasper.DC1NomNumericaJasper;
@@ -65,6 +71,9 @@ public class ReportServiceImpl implements ReportService
 {
 	@Autowired
 	private ReportDAO reportDAO;
+	
+	@Autowired
+	private MensaDAO mensaDAO;
 
 	@Value("${gesev.data.format}")
 	private String dateFormat;
@@ -1378,7 +1387,7 @@ public class ReportServiceImpl implements ReportService
 	{
 		logger.info("Accesso a downloadDC1Nominativo classe ReportServiceImpl");
 		FileDC4DTO fileDC4DTO = new FileDC4DTO();
-		
+
 		DC1NomNumericaJasper dc1NomNum = reportDAO.richiestaDocumentoDC1NominativoNumerica(dc4RichiestaDTO);
 		List<DC1NomJasper> listaDC1Nom = reportDAO.richiestaDocumentoDC1Nominativo(dc4RichiestaDTO);
 		List<DC1NomNumericaJasper> listaDC1NomNumericaJasper = new ArrayList<>();
@@ -1389,16 +1398,16 @@ public class ReportServiceImpl implements ReportService
 		try
 		{
 			listaDC1NomNumericaJasper.add(dc1NomNum);
-	
+
 			for(DC1NomJasper dc : listaDC1Nom)
 			{
 				if(StringUtils.isBlank(dc.getGrado()))
 					dc.setGrado(" ");	
-				
+
 				if(StringUtils.isBlank(dc.getUnitaFunzionale()))
 					dc.setUnitaFunzionale(" ");
 			}
-			
+
 			//Riempimento tabella
 			JRBeanCollectionDataSource JRBlistaNumerica = new JRBeanCollectionDataSource(listaDC1NomNumericaJasper);
 			JRBeanCollectionDataSource JRBlistaNominativa = new JRBeanCollectionDataSource(listaDC1Nom);
@@ -1421,6 +1430,140 @@ public class ReportServiceImpl implements ReportService
 		}
 
 		logger.info("Report generato con successo");
+		return fileDC4DTO;
+	}
+
+	/* Richiesta Menu del giorno */
+	@Override
+	public MenuDTO richiestaMenuDelGiorno(MenuDTO menuDTO) throws ParseException 
+	{
+		List<Pietanza> listaPietanze = reportDAO.richiestaMenuDelGiorno(menuDTO);
+		List<PietanzaDTO> listaPietanzeDTO = new ArrayList<>();
+
+		for(Pietanza p : listaPietanze)
+		{
+			PietanzaDTO pietanzaDTO = new PietanzaDTO();
+			pietanzaDTO.setDescrizionePietanza(p.getDescrizionePietanza());
+			pietanzaDTO.setTipoPasto(p.getTipoPasto().getCodiceTipoPasto());
+			pietanzaDTO.setTipoPietanza(p.getTipoPietanza().getIdTipoPietanza());
+			pietanzaDTO.setIdPietanza(p.getIdPietanza());
+
+			listaPietanzeDTO.add(pietanzaDTO);
+		}
+
+		menuDTO.setListaPietanze(listaPietanzeDTO);
+		return menuDTO;
+	}
+
+	/* Download Menu del giorno */
+	@Override
+	public FileDC4DTO downloadMenuDelGiorno(MenuLeggeroDTO menuLeggeroDTO) throws ParseException, FileNotFoundException 
+	{
+		logger.info("Accesso a downloadMenuDelGiorno classe ReportServiceImpl");
+		FileDC4DTO fileDC4DTO = new FileDC4DTO();
+		List<Pietanza> listaTuttePietanze = reportDAO.richiestaTuttePietanze(menuLeggeroDTO);
+		File mockFile = ResourceUtils.getFile("classpath:Menu.jrxml");
+
+		String colazione = "";
+		String pranzoPrimo = "";
+		String pranzoSecondo = "";
+		String pranzoContorno = "";
+		String pranzoFrutta = "";
+		String cenaPrimo = "";
+		String cenaSecondo = "";
+		String cenaContorno = "";
+		String cenaFrutta = "";
+
+		try
+		{
+			for(Pietanza p : listaTuttePietanze)
+			{
+				//Colazione
+				if(p.getTipoPasto().getCodiceTipoPasto() == 1)
+				{
+					colazione += p.getDescrizionePietanza() + ",";
+				}
+
+				//Pranzo
+				if(p.getTipoPasto().getCodiceTipoPasto() == 2)
+				{
+					switch(p.getTipoPietanza().getIdTipoPietanza())
+					{
+					case 1:
+						pranzoPrimo += p.getDescrizionePietanza() + ",";
+						break;
+					case 2:
+						pranzoSecondo += p.getDescrizionePietanza() + ",";
+						break;
+					case 3:
+						pranzoContorno += p.getDescrizionePietanza() + ",";
+						break;
+					case 4:
+						pranzoFrutta += p.getDescrizionePietanza() + ",";
+						break;
+					}				
+				}
+
+				//Cena
+				if(p.getTipoPasto().getCodiceTipoPasto() == 3)
+				{
+					switch(p.getTipoPietanza().getIdTipoPietanza())
+					{
+					case 1:
+						cenaPrimo += p.getDescrizionePietanza() + ",";
+						break;
+					case 2:
+						cenaSecondo += p.getDescrizionePietanza() + ",";
+						break;
+					case 3:
+						cenaContorno += p.getDescrizionePietanza() + ",";
+						break;
+					case 4:
+						cenaFrutta += p.getDescrizionePietanza() + ",";
+						break;
+					}				
+				}	
+			}
+			
+			Mensa mensa = mensaDAO.getSingolaMensa(menuLeggeroDTO.getIdMensa());
+			
+			//Assegnazione oggetti
+			Map<String, Object> parameters = new HashMap<>();
+			parameters.put("nomeMensa", mensa.getCodiceMensa().toString());
+			parameters.put("nomeEnte", mensa.getEnte().getDescrizioneEnte());
+			parameters.put("telefono", mensa.getTelefono());
+			parameters.put("email", mensa.getEmail());
+			parameters.put("giorno", menuLeggeroDTO.getDataMenu());
+			
+			parameters.put("colazione", colazione);
+			parameters.put("pranzoPrimo", pranzoPrimo);
+			parameters.put("pranzoSecondo", pranzoSecondo);
+			parameters.put("pranzoContorno", pranzoContorno);
+			parameters.put("pranzoFrutta", pranzoFrutta);
+			
+			parameters.put("cenaPrimo", cenaPrimo);
+			parameters.put("cenaSecondo", cenaSecondo);
+			parameters.put("cenaContorno", cenaContorno);
+			parameters.put("cenaFrutta", cenaFrutta);
+			
+			//Stampa
+			JasperReport report = JasperCompileManager.compileReport(mockFile.getAbsolutePath());
+			JasperPrint print = JasperFillManager.fillReport(report, parameters, new JREmptyDataSource());
+			byte[] arrayb = JasperExportManager.exportReportToPdf(print);
+			fileDC4DTO.setFileDC4(arrayb);
+			fileDC4DTO.setNomeFile("Menu_del_Giorno" + ".pdf"); 
+
+
+		}
+		catch(Exception e)
+		{
+			logger.info("si è verificata un eccezione", e);
+		}
+
+		logger.info("Report generato con successo");
+
+
+
 		return fileDC4DTO;
 	}
 

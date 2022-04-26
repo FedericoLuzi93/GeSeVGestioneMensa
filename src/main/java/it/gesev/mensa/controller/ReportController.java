@@ -38,6 +38,8 @@ import it.gesev.mensa.dto.FESistemaEnteDTO;
 import it.gesev.mensa.dto.FileDC4DTO;
 import it.gesev.mensa.dto.FirmaQuotidianaDC4DTO;
 import it.gesev.mensa.dto.IdentificativoSistemaDTO;
+import it.gesev.mensa.dto.MenuDTO;
+import it.gesev.mensa.dto.MenuLeggeroDTO;
 import it.gesev.mensa.dto.PastiConsumatiDTO;
 import it.gesev.mensa.dto.SendListPastiDC4AllegatoC;
 import it.gesev.mensa.dto.SendListaDC1Prenotati;
@@ -666,4 +668,68 @@ public class ReportController
 		return ResponseEntity.ok().headers(headers).contentLength(fileDC4DTO.getFileDC4().length)
 				.contentType(MediaType.APPLICATION_OCTET_STREAM).body(new ByteArrayResource(fileDC4DTO.getFileDC4()));
 	}
+	
+	/* Richiesta Menu del giorno */
+	@PostMapping(value = "/richiestaMenuDelGiorno")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
+			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
+			@ApiResponse(code = 500, message = "Errore interno") })
+	public ResponseEntity<EsitoDTO> richiestaMenuDelGiorno(@RequestBody MenuDTO	menuDTO)
+	{
+		logger.info("Accesso al servizio richiestaMenuDelGiorno");
+		EsitoDTO esito = new EsitoDTO();
+		try
+		{	
+			MenuDTO menu = reportService.richiestaMenuDelGiorno(menuDTO);
+			esito.setStatus(HttpStatus.OK.value());
+			esito.setMessaggio("DOCUMENTO CREATO CON SUCCESSO");
+			esito.setBody(menu);
+		}
+		catch(GesevException gex)   
+		{
+			logger.info("Si e' verificata un'eccezione", gex);
+			esito.setStatus(gex.getStatus().value());
+			esito.setMessaggio(gex.getMessage());
+		}
+		catch(Exception ex)
+		{
+			logger.info("Si e' verificata un'eccezione interna", ex);
+			esito.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			esito.setMessaggio(MESSAGGIO_ERRORE_INTERNO);
+		}
+		return ResponseEntity.status(esito.getStatus()).body(esito);
+	}
+	
+	/* Download  Menu del giorno */
+	@GetMapping(value = "/downloadMenuDelGiorno")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Richiesta download Menu del giorno andata a buon fine"),
+			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
+			@ApiResponse(code = 500, message = "Errore interno") })
+	public ResponseEntity<Resource> downloadMenudelGiorno(@RequestParam Integer idMensa, @RequestParam String dataMenu, @RequestParam Integer tipoDieta, @RequestParam Integer tipoPasto) throws ParseException, FileNotFoundException
+	{
+		logger.info("Accesso al servizio downloadMenuDelGiorno");
+		HttpHeaders headers = new HttpHeaders();
+
+		MenuLeggeroDTO menuLeggeroDTO = new MenuLeggeroDTO();
+		menuLeggeroDTO.setIdMensa(idMensa);
+		menuLeggeroDTO.setDataMenu(dataMenu);
+		menuLeggeroDTO.setTipoDieta(tipoDieta);
+		menuLeggeroDTO.setTipoPasto(tipoPasto);
+		
+//		menuLeggeroDTO.setIdMensa(menuDTO.getIdMensa());
+//		menuLeggeroDTO.setDataMenu(menuDTO.getDataMenu());
+//		menuLeggeroDTO.setTipoDieta(menuDTO.getTipoDieta());
+//		menuLeggeroDTO.setTipoPasto(menuDTO.getTipoPasto());
+		
+		/* Invio FIle */
+		FileDC4DTO fileDC4DTO = reportService.downloadMenuDelGiorno(menuLeggeroDTO);
+
+		headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileDC4DTO.getNomeFile());
+		headers.add(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION);
+
+		return ResponseEntity.ok().headers(headers).contentLength(fileDC4DTO.getFileDC4().length)
+				.contentType(MediaType.APPLICATION_OCTET_STREAM).body(new ByteArrayResource(fileDC4DTO.getFileDC4()));
+	}
+	
+
 }

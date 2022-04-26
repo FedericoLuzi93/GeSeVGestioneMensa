@@ -10,15 +10,15 @@ import it.gesev.mensa.dto.FEPastiDC4Graduati;
 import it.gesev.mensa.dto.FEPastiDC4USC;
 import it.gesev.mensa.dto.FirmaQuotidianaDC4DTO;
 import it.gesev.mensa.dto.FirmeDC4;
+import it.gesev.mensa.dto.MenuDTO;
+import it.gesev.mensa.dto.MenuLeggeroDTO;
 import it.gesev.mensa.dto.PastiConsumatiDTO;
 import it.gesev.mensa.dto.SendListPastiDC4AllegatoC;
 import it.gesev.mensa.dto.SendListaDC1Prenotati;
 import it.gesev.mensa.entity.IdentificativoSistema;
+import it.gesev.mensa.entity.Pietanza;
 import it.gesev.mensa.jasper.DC1NomJasper;
 import it.gesev.mensa.jasper.DC1NomNumericaJasper;
-import it.gesev.mensa.jasper.NumeroPastiGraduatiJasper;
-import it.gesev.mensa.jasper.NumeroPastiUFCJasper;
-import it.gesev.mensa.jasper.TabellaDC4AllegatoCJasper;
 
 public interface ReportDAO 
 {
@@ -48,6 +48,9 @@ public interface ReportDAO
 
 	public DC1NomNumericaJasper richiestaDocumentoDC1NominativoNumerica(DC4RichiestaDTO dc4RichiestaDTO) throws ParseException;
 	public List<DC1NomJasper> richiestaDocumentoDC1Nominativo(DC4RichiestaDTO dc4RichiestaDTO) throws ParseException;
+
+	public List<Pietanza> richiestaMenuDelGiorno(MenuDTO menuDTO) throws ParseException;
+	public List<Pietanza> richiestaTuttePietanze(MenuLeggeroDTO menuLeggeroDTO) throws ParseException;
 
 
 
