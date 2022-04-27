@@ -13,6 +13,8 @@ import it.gesev.mensa.dto.FEDC1Nominativo;
 import it.gesev.mensa.dto.FileDC4DTO;
 import it.gesev.mensa.dto.FirmaQuotidianaDC4DTO;
 import it.gesev.mensa.dto.IdentificativoSistemaDTO;
+import it.gesev.mensa.dto.MenuDTO;
+import it.gesev.mensa.dto.MenuLeggeroDTO;
 import it.gesev.mensa.dto.PastiConsumatiDTO;
 import it.gesev.mensa.dto.SendListPastiDC4AllegatoC;
 import it.gesev.mensa.dto.SendListaDC1Prenotati;
@@ -47,6 +49,9 @@ public interface ReportService
 	
 	public FEDC1Nominativo richiestaDocumentoDC1Nominativo(DC4RichiestaDTO dc4RichiestaDTO) throws ParseException;
 	public FileDC4DTO downloadDC1Nominativo(DC4RichiestaDTO dc4RichiestaDTO) throws ParseException, FileNotFoundException;
+	
+	public MenuDTO richiestaMenuDelGiorno(MenuDTO menuDTO) throws ParseException;
+	public FileDC4DTO downloadMenuDelGiorno(MenuLeggeroDTO menuLeggeroDTO) throws ParseException, FileNotFoundException;
 
 
 }

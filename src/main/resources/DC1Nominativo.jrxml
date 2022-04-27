@@ -83,6 +83,11 @@
 	</subDataset>
 	<parameter name="TabNumerica" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
 	<parameter name="TabNominativa" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
+	<parameter name="ente" class="java.lang.String"/>
+	<parameter name="mese" class="java.lang.String"/>
+	<parameter name="anno" class="java.lang.String"/>
+	<parameter name="giorno" class="java.lang.String"/>
+	<parameter name="tipoPasto" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -90,7 +95,54 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="45" splitType="Stretch"/>
+		<band height="160" splitType="Stretch">
+			<staticText>
+				<reportElement x="32" y="60" width="490" height="20" uuid="fffa4d65-f7f6-493a-85b8-f01c85258dfb"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="15" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Rapportino giornaliero dei conviventi - Prenotati - Nominativo]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="320" y="90" width="203" height="30" uuid="f4faa963-972b-4533-bd24-988b3c3adb51"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["ENTE: " + $P{ente}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="40" y="90" width="90" height="30" uuid="adbb68b5-ed0c-4241-9742-96535ee7448b"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["ANNO: " + $P{anno}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="130" y="90" width="100" height="30" uuid="71606c52-2bff-40fa-9fc2-5062662b2612"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["MESE: " + $P{mese}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="230" y="90" width="90" height="30" uuid="bf09c59d-aef2-4c00-8bbc-35bbd891c77c"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["GIORNO: " + $P{giorno}]]></textFieldExpression>
+			</textField>
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="243" y="7" width="69" height="48" uuid="2779972d-a52f-4246-bf25-8488b6428de6"/>
+				<imageExpression><![CDATA["ministero-della-difesa-squarelogo-1567666677225.png"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="40" y="120" width="190" height="20" uuid="f87df247-ad71-49be-9b40-07810a60864c"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["TIPO PASTO: " + $P{tipoPasto}]]></textFieldExpression>
+			</textField>
+		</band>
 	</title>
 	<detail>
 		<band height="110" splitType="Stretch">
@@ -103,7 +155,7 @@
 				</reportElement>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 					<datasetRun subDataset="TabNominativo2" uuid="efc465b7-f480-4e8c-b08b-4060eb3a3c37">
-						<dataSourceExpression><![CDATA[$P{TabNumerica} ]]></dataSourceExpression>
+						<dataSourceExpression><![CDATA[$P{TabNumerica}]]></dataSourceExpression>
 					</datasetRun>
 					<jr:column width="70" uuid="13c85258-5fa3-412c-bbf5-e57ccdf18476">
 						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonna1"/>
@@ -245,7 +297,7 @@
 				</reportElement>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 					<datasetRun subDataset="TabNominativo" uuid="5f573b97-abd0-40ec-8bca-2f8eb4461873">
-						<dataSourceExpression><![CDATA[$P{TabNominativa} ]]></dataSourceExpression>
+						<dataSourceExpression><![CDATA[$P{TabNominativa}]]></dataSourceExpression>
 					</datasetRun>
 					<jr:column width="120" uuid="7db13876-c8b9-46c7-9142-7215c038b1ea">
 						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonna1"/>

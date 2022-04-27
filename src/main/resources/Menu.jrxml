@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.18.1.final utlizzo versione della libreria JasperReports6.18.1-9d75d1969e774d4f179fb3be8401e98a0e6d1611  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Menu" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c1a78d1e-547e-4dd3-8e22-1a78026843cf">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<subDataset name="colazione" uuid="e8758945-f789-4a31-bbe6-30bff3043fd3">
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+		<field name="primo" class="java.lang.String"/>
+		<field name="secondo" class="java.lang.String"/>
+		<field name="contorno" class="java.lang.String"/>
+		<field name="frutta" class="java.lang.String"/>
+	</subDataset>
+	<parameter name="nomeMensa" class="java.lang.String"/>
+	<parameter name="nomeEnte" class="java.lang.String"/>
+	<parameter name="telefono" class="java.lang.String"/>
+	<parameter name="email" class="java.lang.String"/>
+	<parameter name="giorno" class="java.lang.String"/>
+	<parameter name="tipoDieta" class="java.lang.String"/>
+	<parameter name="tabPranzo" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
+	<parameter name="colazione" class="java.lang.String"/>
+	<parameter name="pranzoPrimo" class="java.lang.String"/>
+	<parameter name="pranzoSecondo" class="java.lang.String"/>
+	<parameter name="pranzoContorno" class="java.lang.String"/>
+	<parameter name="pranzoFrutta" class="java.lang.String"/>
+	<parameter name="cenaPrimo" class="java.lang.String"/>
+	<parameter name="cenaSecondo" class="java.lang.String"/>
+	<parameter name="cenaContorno" class="java.lang.String"/>
+	<parameter name="cenaFrutta" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="140" splitType="Stretch">
+			<textField>
+				<reportElement x="20" y="30" width="530" height="20" forecolor="#1D2B44" uuid="55fe1c56-f505-437a-8ff4-e455ca9b536f"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[ "MENSA:  " + $P{nomeMensa} + " - ENTE: " + $P{nomeEnte}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="20" y="60" width="530" height="20" forecolor="#1D2B44" uuid="e919dd2f-b590-431d-8e9f-f427b88eb778"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$P{email} +  " - " + $P{telefono}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="20" y="90" width="530" height="30" forecolor="#1D2B44" uuid="4dab2f71-174f-44d3-b88f-235d4de038f5"/>
+				<textElement textAlignment="Center">
+					<font size="20"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Menu del giorno " + $P{giorno}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="350" splitType="Stretch">
+			<textField>
+				<reportElement x="20" y="10" width="360" height="30" forecolor="#1D2B44" uuid="41c1afd7-c3e3-4f51-b531-6ca039355ea0"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Tipo dieta: " + $P{tipoDieta}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="80" y="69" width="100" height="20" forecolor="#1D2B44" uuid="9b5ad677-98a7-4d64-a2c3-071fdea10047"/>
+				<textElement>
+					<font size="15"/>
+				</textElement>
+				<text><![CDATA[Colazione]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="142" y="90" width="370" height="20" uuid="ea407053-8309-4a41-9d7b-612be7b5179f"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{colazione}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="80" y="129" width="100" height="20" forecolor="#1D2B44" uuid="4fa99525-7381-4fab-a5af-833f6eb5d3aa"/>
+				<textElement>
+					<font size="15"/>
+				</textElement>
+				<text><![CDATA[Pranzo]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="142" y="150" width="390" height="20" uuid="d9836b1f-3eb9-46e6-9107-ad48c1eece69"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{pranzoPrimo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="142" y="170" width="390" height="20" uuid="06c4ff47-e9bc-4565-ae82-ef6b3522eefa"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{pranzoSecondo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="142" y="190" width="390" height="20" uuid="07af70f9-1025-40ef-9837-9f578991d415"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{pranzoContorno}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="142" y="210" width="390" height="20" uuid="7acf6c62-4b0c-4d44-b2c6-1d675825c6bd"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{pranzoFrutta}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="80" y="249" width="100" height="20" forecolor="#1D2B44" uuid="c7b465f1-049e-49d2-b368-c230227ce9c3"/>
+				<textElement>
+					<font size="15"/>
+				</textElement>
+				<text><![CDATA[Cena]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="143" y="271" width="390" height="18" uuid="4c2f6b7c-bd40-4168-a9a2-9ff1a2bf38e9"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cenaPrimo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="142" y="290" width="390" height="20" uuid="20285fc0-f3ef-4aa9-9ac7-2c4726449737"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cenaSecondo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="142" y="311" width="390" height="19" uuid="5113bcd0-2e60-4c1e-ba67-3058e6937ad5"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cenaContorno}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="142" y="330" width="390" height="20" uuid="61269755-fd88-4ff7-a33c-c47d63855787"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cenaFrutta}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="80" y="150" width="62" height="20" forecolor="#8DB2DF" uuid="6290288a-daf6-46b2-b47f-1a02964afabc"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Primo:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="80" y="170" width="62" height="20" forecolor="#8DB2DF" uuid="c62f0b17-d017-482c-8fdd-a4b14981beaa"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Secondo:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="80" y="190" width="62" height="20" forecolor="#8DB2DF" uuid="ebfd9df8-0f7a-4b7c-8ff2-049cc660940c"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Controno:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="80" y="210" width="62" height="20" forecolor="#8DB2DF" uuid="153ff8a3-cb80-4b6f-8e9c-80695be7d5fc"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Frutta:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="80" y="90" width="62" height="20" forecolor="#8DB2DF" uuid="2a0a2db8-f0c9-4f88-9351-7f92287f1efd"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Colazione:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="80" y="290" width="62" height="20" forecolor="#8DB2DF" uuid="94fadcec-6087-4f9f-a25a-a5b61255a373"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Secondo:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="80" y="310" width="62" height="20" forecolor="#8DB2DF" uuid="4125d8bb-a090-4f19-adc2-b6de7d8c4b57"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Controno:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="80" y="270" width="62" height="20" forecolor="#8DB2DF" uuid="8b719618-abeb-497a-82d3-4b8bc277f637"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Primo:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="80" y="330" width="62" height="20" forecolor="#8DB2DF" uuid="b640ffb8-2f7e-48cf-a81a-3f98f04c7cc0"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Frutta:]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>
