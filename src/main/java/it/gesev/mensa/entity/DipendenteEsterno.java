@@ -35,6 +35,9 @@ public class DipendenteEsterno
 	@Column(name = "email_dipendente_esterno")
 	private String emailDipendenteEsterno;
 	
+	@Column(name = "cf_dipendente_esterno")
+	private String codiceFiscale;
+	
 	@OneToMany(mappedBy = "dipendenteEsterno")
 	private List<AssDipendenteRuolo> listaAssDipendenteRuolo;
 		

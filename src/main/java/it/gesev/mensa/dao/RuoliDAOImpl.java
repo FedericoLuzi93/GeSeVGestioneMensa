@@ -1,3 +1,4 @@
+
 package it.gesev.mensa.dao;
 
 import java.text.ParseException;
@@ -178,7 +179,7 @@ public class RuoliDAOImpl implements RuoliDAO
 	}
 
 	@Override
-	public void aggiungiRuoloDipendente(Integer idDipendente,  String emailDipendente, Integer idRuolo, Integer idOrganoDirettivo, Integer idMensa, Integer idFornitore) throws ParseException 
+	public void aggiungiRuoloDipendente(Integer idDipendente,  String emailDipendente, Integer idRuolo, Integer idOrganoDirettivo, Integer idMensa, Integer idFornitore, String codiceFiscale) throws ParseException 
 	{
 		logger.info("Aggiunta nuovo ruolo...");
 		
@@ -211,12 +212,16 @@ public class RuoliDAOImpl implements RuoliDAO
 		if(!optionalDipendente.isPresent() || !optionalRuolo.isPresent())
 			throw new GesevException("Dipendente o ruolo indicati non sono presenti sulla base dati", HttpStatus.BAD_REQUEST);
 		
-		if(StringUtils.isNotBlank(emailDipendente))
+		if(StringUtils.isNotBlank(emailDipendente) || StringUtils.isNoneBlank(codiceFiscale))
 		{
 			logger.info("Aggiornamento email dipendente");
 			optionalDipendente.get().setEmail(emailDipendente);
+			optionalDipendente.get().setCodiceFiscale(codiceFiscale);
+			
 			dipendenteRepository.save(optionalDipendente.get());
+			
 		}
+		
 		
 		logger.info("Controllo della presenza dell'associazione richiesta...");
 		int associazioneCounter = assRuoloDipendenteRepository.findAssociazioneByDipendenteAndRuolo(idDipendente, idRuolo);
@@ -458,7 +463,7 @@ public class RuoliDAOImpl implements RuoliDAO
 	}
 
 	@Override
-	public void aggiungiRuoloDipendenteEsterno(String nome, String cognome, String email, Integer idRuolo, Integer idMensa, Integer idFornitore) throws ParseException 
+	public void aggiungiRuoloDipendenteEsterno(String nome, String cognome, String email, Integer idRuolo, Integer idMensa, Integer idFornitore, String codiceFiscale) throws ParseException 
 	{
 		logger.info("Aggiunta ruolo per dipendente esterno...");
 		
@@ -470,7 +475,10 @@ public class RuoliDAOImpl implements RuoliDAO
 			throw new GesevException("Il nome e' obbligatorio", HttpStatus.BAD_REQUEST);
 		
 		if(StringUtils.isBlank(cognome))
-			throw new GesevException("Il cognome e' obbligatoria", HttpStatus.BAD_REQUEST);
+			throw new GesevException("Il cognome e' obbligatorio", HttpStatus.BAD_REQUEST);
+		
+		if(StringUtils.isBlank(codiceFiscale))
+			throw new GesevException("Il codice fiscale e' obbligatorio", HttpStatus.BAD_REQUEST);
 		
 		logger.info("Controllo ruolo...");
 		if(idRuolo == null)
@@ -493,6 +501,7 @@ public class RuoliDAOImpl implements RuoliDAO
 		dipendente.setCognomeDipendenteEsterno(cognome.toUpperCase());
 		dipendente.setEmailDipendenteEsterno(email.toUpperCase());
 		dipendente.setNomeDipendenteEsterno(nome.toUpperCase());
+		dipendente.setCodiceFiscale(codiceFiscale);
 		
 		DipendenteEsterno dipendenteSalvato = dipendenteEsternoRepository.save(dipendente);
 		
@@ -551,6 +560,7 @@ public class RuoliDAOImpl implements RuoliDAO
 		if(associazione.getDipendente() != null)
 		{
 			optAssociazione.get().getDipendente().setEmail(associazione.getDipendente().getEmail());
+			optAssociazione.get().getDipendente().setCodiceFiscale(associazione.getDipendente().getCodiceFiscale());
 			
 		}
 		
@@ -559,6 +569,7 @@ public class RuoliDAOImpl implements RuoliDAO
 			optAssociazione.get().getDipendenteEsterno().setCognomeDipendenteEsterno(associazione.getCognomeEsterno());
 			optAssociazione.get().getDipendenteEsterno().setNomeDipendenteEsterno(associazione.getNomeEsterno());
 			optAssociazione.get().getDipendenteEsterno().setEmailDipendenteEsterno(associazione.getEmailEsterno());
+			optAssociazione.get().getDipendenteEsterno().setCodiceFiscale(associazione.getCodiceFiscale());
 		}
 		
 		assRuoloDipendenteRepository.save(optAssociazione.get());
