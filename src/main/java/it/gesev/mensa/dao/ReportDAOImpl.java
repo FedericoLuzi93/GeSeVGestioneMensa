@@ -101,7 +101,7 @@ public class ReportDAOImpl implements ReportDAO
 
 	@Autowired
 	private EnteRepository enteRepository;
-	
+
 	@Autowired
 	private PietanzaRepository pietanzaRepository;
 
@@ -766,8 +766,27 @@ public class ReportDAOImpl implements ReportDAO
 		String dataCorretta = dc4RichiestaDTO.getAnno().concat("-" + dc4RichiestaDTO.getMese().concat("-" + dc4RichiestaDTO.getGiorno()));
 		Date giornoDatato = simpleDateFormat.parse(dataCorretta);
 
-		int aventiDiritto = 10;
-		//forzaEffettivaRepository.aventiDiritto(dc4RichiestaDTO.getIdEnte(), giornoDatato);
+		//Aventi Diritto Militari e Non
+		String queryAventiDirittoMilitari = "select\r\n"
+				+ "sum(case when d.tipo_personale = 'M' then 1 else 0 end) as NUM_MIL,\r\n"
+				+ "count(*) as TOT_DIP\r\n"
+				+ "from dipendente d\r\n"
+				+ "where ente_appartenenza  = :idEnte ";
+
+
+		logger.info("Esecuzione query: " + queryAventiDirittoMilitari); 
+		Query aventiDirittoMilitariQuery = entityManager.createNativeQuery(queryAventiDirittoMilitari);
+
+		aventiDirittoMilitariQuery = aventiDirittoMilitariQuery.setParameter("idEnte", dc4RichiestaDTO.getIdEnte());
+
+		List<Object[]> listAventiDirittoMilitari = aventiDirittoMilitariQuery.getResultList();
+		for(Object[] obj : listAventiDirittoMilitari)
+		{
+			Integer aventiDirittoMilitari = ((BigInteger) obj[0]).intValue();
+			sDc1.setAventiDirittoMilitari(aventiDirittoMilitari == null ? 0 : aventiDirittoMilitari);
+			Integer aventiDiritto = ((BigInteger) obj[1]).intValue();
+			sDc1.setAventiDiritto(aventiDiritto == null ? 0 : aventiDiritto);
+		}
 
 		if(StringUtils.isBlank(dataTotale))
 			throw new GesevException("Impossibile generare il documento DC4, mese non valido", HttpStatus.BAD_REQUEST);
@@ -802,7 +821,13 @@ public class ReportDAOImpl implements ReportDAO
 				+ "sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 1 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as PES_COL_TO,\r\n"
 				+ "sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 2 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as PES_PRA_TO,\r\n"
 				+ "sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 3 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as PES_CEN_TO,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'C' and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as CBT_TO\r\n"
+				+ "sum(case when (p.tipo_razione_fk = 'C' and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as CBT_TO,\r\n"
+				+ "sum(case when p.specchio_flag = 'Y' and p.tipo_personale = 'M' then 1 else 0 end) SPECCHIO_MIL,\r\n"
+				+ "sum(case when p.col_obbligatoria_flag  = 'Y' and p.tipo_personale = 'M' then 1 else 0 end) COL_OBBL_MIL,\r\n"
+				+ "sum(case when p.specchio_flag = 'Y' and p.tipo_pagamento_fk = 'TG' then 1 else 0 end) SPECCHIO_TG,\r\n"
+				+ "sum(case when p.col_obbligatoria_flag  = 'Y' and p.tipo_pagamento_fk = 'TG' then 1 else 0 end) COL_OBBL_TG,\r\n"
+				+ "sum(case when p.specchio_flag = 'Y' and p.tipo_pagamento_fk = 'TO' then 1 else 0 end) SPECCHIO_TO,\r\n"
+				+ "sum(case when p.col_obbligatoria_flag  = 'Y' and p.tipo_pagamento_fk = 'TO' then 1 else 0 end) COL_OBBL_TO "
 				+ "from prenotazione p left join mensa m on p.identificativo_mensa_fk = m.codice_mensa\r\n"
 				+ "where m.ente_fk = :idEnte and p.data_prenotazione = :giornoDatato ";
 
@@ -894,9 +919,20 @@ public class ReportDAOImpl implements ReportDAO
 			sDc1.setPesCenTo(pesCenTo == null ? 0 : pesCenTo);
 			Integer cbtTo = ((BigInteger) obj[29]).intValue();
 			sDc1.setCbtTo(cbtTo == null ? 0 : cbtTo);
-
-			sDc1.setAventiDiritto(aventiDiritto);
-
+			
+			Integer specchioMil = ((BigInteger) obj[30]).intValue();
+			sDc1.setSpecchioMil(specchioMil == null ? 0 : specchioMil);
+			Integer colazioneObblMil= ((BigInteger) obj[31]).intValue();
+			sDc1.setColazioneObblMil(colazioneObblMil == null ? 0 : colazioneObblMil);
+			Integer specchioTg = ((BigInteger) obj[32]).intValue();
+			sDc1.setSpecchioTg(specchioTg == null ? 0 : specchioTg);
+			Integer colazioneObblTg= ((BigInteger) obj[33]).intValue();
+			sDc1.setColazioneObblTg(colazioneObblTg == null ? 0 : colazioneObblTg);		
+			Integer specchioTo = ((BigInteger) obj[34]).intValue();
+			sDc1.setSpecchioTo(specchioTo == null ? 0 : specchioTo);
+			Integer colazioneObblTo= ((BigInteger) obj[35]).intValue();
+			sDc1.setColazioneObblTo(colazioneObblTo == null ? 0 : colazioneObblTo);
+			
 			listaDC1Prenotati.add(sDc1);
 		}
 
@@ -960,8 +996,25 @@ public class ReportDAOImpl implements ReportDAO
 		String dataCorretta = dc4RichiestaDTO.getAnno().concat("-" + dc4RichiestaDTO.getMese().concat("-" + dc4RichiestaDTO.getGiorno()));
 		Date giornoDatato = simpleDateFormat.parse(dataCorretta);
 
-		int aventiDiritto = 10;
-		//forzaEffettivaRepository.aventiDiritto(dc4RichiestaDTO.getIdEnte(), giornoDatato);
+		//Aventi Diritto Militari
+		String queryAventiDirittoMilitari = "select distinct fe.num_dipendenti \r\n"
+				+ "from forza_effettiva fe \r\n"
+				+ "left join dipendente d \r\n"
+				+ "on fe.ente_fk = :idEnte \r\n"
+				+ "and fe.data_riferimento = :giornoDatato \r\n"
+				+ "where d.tipo_personale = 'M'";
+
+
+		logger.info("Esecuzione query: " + queryAventiDirittoMilitari); 
+		Query aventiDirittoMilitariQuery = entityManager.createNativeQuery(queryAventiDirittoMilitari);
+
+		aventiDirittoMilitariQuery = aventiDirittoMilitariQuery.setParameter("idEnte", dc4RichiestaDTO.getIdEnte());
+		aventiDirittoMilitariQuery = aventiDirittoMilitariQuery.setParameter("giornoDatato", giornoDatato);
+
+		Integer aventiDirittoMilitari = (Integer) aventiDirittoMilitariQuery.getSingleResult();
+		sDc1.setAventiDirittoMilitari(aventiDirittoMilitari);
+
+		int aventiDiritto = forzaEffettivaRepository.aventiDiritto(dc4RichiestaDTO.getIdEnte(), giornoDatato);
 
 		if(StringUtils.isBlank(dataTotale))
 			throw new GesevException("Impossibile generare il documento DC4, mese non valido", HttpStatus.BAD_REQUEST);
@@ -1090,6 +1143,7 @@ public class ReportDAOImpl implements ReportDAO
 			sDc1.setCbtTo(cbtTo == null ? 0 : cbtTo);
 
 			sDc1.setAventiDiritto(aventiDiritto);
+			
 
 			listaDC1Prenotati.add(sDc1);
 		}
@@ -1135,8 +1189,8 @@ public class ReportDAOImpl implements ReportDAO
 
 		if(!StringUtils.isBlank(dc4RichiestaDTO.getSistemaPersonale()))
 			queryDC1Prenotati = queryDC1Prenotati + " and p.identificativo_sistema_fk = :idPersonale ";
-		
-			queryDC1Prenotati = queryDC1Prenotati + "group by p.identificativo_sistema_fk";
+
+		queryDC1Prenotati = queryDC1Prenotati + "group by p.identificativo_sistema_fk";
 
 		logger.info("Esecuzione query: " + queryDC1Prenotati); 
 		Query dc1PrenotatiQuery = entityManager.createNativeQuery(queryDC1Prenotati);
@@ -1167,9 +1221,9 @@ public class ReportDAOImpl implements ReportDAO
 			dc1NomNum.setGraduati(graduati);
 			dc1NomNum.setCivili(civili);
 			dc1NomNum.setCestini(cestini);
-			dc1NomNum.setTotale(totale);
+			dc1NomNum.setTotale(totale - cestini);
 		}
-		
+
 		logger.info("Assegnazione eseguita con successo");
 		return dc1NomNum;
 	}
@@ -1179,7 +1233,7 @@ public class ReportDAOImpl implements ReportDAO
 	public List<DC1NomJasper> richiestaDocumentoDC1Nominativo(DC4RichiestaDTO dc4RichiestaDTO) throws ParseException 
 	{
 		logger.info("Accesso a richiestaDocumentoDC1Nominativo classe ReportDAOImpl");
-		
+
 		//Controllo Ente
 		Optional<Ente> optionalEnte = enteRepository.findById(dc4RichiestaDTO.getIdEnte());
 
@@ -1196,7 +1250,7 @@ public class ReportDAOImpl implements ReportDAO
 			throw new GesevException("Impossibile generare il documento DC1 Nominativo, data non valida", HttpStatus.BAD_REQUEST);
 
 		List<DC1NomJasper> listaDC1NomJasper = new ArrayList<>();
-		
+
 		String queryDC1Prenotati = "select\r\n"
 				+ "e.descrizione_ente,\r\n"
 				+ "p.denominazione_unita_funzionale,\r\n"
@@ -1208,7 +1262,7 @@ public class ReportDAOImpl implements ReportDAO
 				+ "from prenotazione p left join mensa m on p.identificativo_mensa_fk = m.codice_mensa\r\n"
 				+ "left join ente e on e.id_ente = m.ente_fk\r\n"
 				+ "left join grado g on g.shsgra_cod_uid_pk = p.grado_fk\r\n"
-				+ "where p.data_prenotazione = :giornoDatato and m.ente_fk = :idEnte ";
+				+ "where p.data_prenotazione = :giornoDatato and m.ente_fk = :idEnte and p.tipo_pasto_fk = :tipoPasto ";
 
 		if(!StringUtils.isBlank(dc4RichiestaDTO.getSistemaPersonale()))
 			queryDC1Prenotati = queryDC1Prenotati + " and p.identificativo_sistema_fk = :idPersonale ";
@@ -1219,6 +1273,7 @@ public class ReportDAOImpl implements ReportDAO
 		//Parametri
 		dc1PrenotatiQuery = dc1PrenotatiQuery.setParameter("idEnte", dc4RichiestaDTO.getIdEnte());
 		dc1PrenotatiQuery = dc1PrenotatiQuery.setParameter("giornoDatato", giornoDatato);
+		dc1PrenotatiQuery = dc1PrenotatiQuery.setParameter("tipoPasto", dc4RichiestaDTO.getTipoPasto());
 
 		if(!StringUtils.isBlank(dc4RichiestaDTO.getSistemaPersonale()))
 			dc1PrenotatiQuery = dc1PrenotatiQuery.setParameter("idPersonale", dc4RichiestaDTO.getSistemaPersonale());
@@ -1229,7 +1284,7 @@ public class ReportDAOImpl implements ReportDAO
 		for(Object[] obj : listOfResultsDC1Prenotati)
 		{
 			DC1NomJasper dc1Nom = new DC1NomJasper();
-			
+
 			dc1Nom.setEnte((String) obj[0]);
 			dc1Nom.setUnitaFunzionale((String) obj[1]);
 			dc1Nom.setTipoPagamento((String) obj[2]);
@@ -1237,7 +1292,7 @@ public class ReportDAOImpl implements ReportDAO
 			dc1Nom.setNome((String) obj[4]);
 			dc1Nom.setCognome((String) obj[5]);
 			dc1Nom.setPersonaleEsterno((String) obj[6]);
-			
+
 			listaDC1NomJasper.add(dc1Nom);
 		}
 

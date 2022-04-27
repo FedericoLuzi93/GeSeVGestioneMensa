@@ -12,6 +12,7 @@ public class SendListaDC1Prenotati
 	String colonnaUno;
 	String descrizioneEnte;
 	Integer aventiDiritto;
+	Integer aventiDirittoMilitari;
 	
 	Integer ordColMil;
 	Integer ordPraMil;
@@ -47,8 +48,12 @@ public class SendListaDC1Prenotati
 	Integer cbtTo;
 
 	
-	Integer specchio;
-	Integer colazioneObbl;
+	Integer specchioMil;
+	Integer colazioneObblMil;
+	Integer specchioTg;
+	Integer colazioneObblTg;
+	Integer specchioTo;
+	Integer colazioneObblTo;
 	
 	
 }
