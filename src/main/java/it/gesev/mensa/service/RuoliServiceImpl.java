@@ -134,7 +134,7 @@ public class RuoliServiceImpl implements RuoliService
 				                         associazione.getOrganoDirettivo() != null ? associazione.getOrganoDirettivo().getCodiceOrganoDirettivo() : null, 
 				                         associazione.getIdMensa(),
 				                         associazione.getIdFornitore(), 
-				                         associazione.getCodiceFiscale());
+				                         associazione.getCodiceFiscaleEsterno());
 		
 	}
 
@@ -332,7 +332,7 @@ public class RuoliServiceImpl implements RuoliService
 		if(adrd == null || adrd.getRuolo() == null || adrd.getIdMensa() == null)
 			throw new GesevException("Dati forniti per l'associazione non validi", HttpStatus.BAD_REQUEST);
 		
-		ruoliDAO.aggiungiRuoloDipendenteEsterno(adrd.getNomeEsterno(), adrd.getCognomeEsterno(), adrd.getEmailEsterno(), adrd.getRuolo().getCodiceRuoloMensa(), adrd.getIdMensa(), adrd.getIdFornitore(), adrd.getCodiceFiscale());
+		ruoliDAO.aggiungiRuoloDipendenteEsterno(adrd.getNomeEsterno(), adrd.getCognomeEsterno(), adrd.getEmailEsterno(), adrd.getRuolo().getCodiceRuoloMensa(), adrd.getIdMensa(), adrd.getIdFornitore(), adrd.getCodiceFiscaleEsterno());
 		
 	}
 
@@ -365,7 +365,7 @@ public class RuoliServiceImpl implements RuoliService
 					ruoloDTO.setNomeEsterno(ruolo.getDipendenteEsterno().getNomeDipendenteEsterno());
 					ruoloDTO.setCognomeEsterno(ruolo.getDipendenteEsterno().getCognomeDipendenteEsterno());
 					ruoloDTO.setEmailEsterno(ruolo.getDipendenteEsterno().getEmailDipendenteEsterno());
-					ruoloDTO.setCodiceFiscale(ruolo.getDipendenteEsterno().getCodiceFiscale());
+					ruoloDTO.setCodiceFiscaleEsterno(ruolo.getDipendenteEsterno().getCodiceFiscale());
 				}
 				
 				listaRuoliDTO.add(ruoloDTO);

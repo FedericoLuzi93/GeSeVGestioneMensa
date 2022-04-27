@@ -569,7 +569,7 @@ public class RuoliDAOImpl implements RuoliDAO
 			optAssociazione.get().getDipendenteEsterno().setCognomeDipendenteEsterno(associazione.getCognomeEsterno());
 			optAssociazione.get().getDipendenteEsterno().setNomeDipendenteEsterno(associazione.getNomeEsterno());
 			optAssociazione.get().getDipendenteEsterno().setEmailDipendenteEsterno(associazione.getEmailEsterno());
-			optAssociazione.get().getDipendenteEsterno().setCodiceFiscale(associazione.getCodiceFiscale());
+			optAssociazione.get().getDipendenteEsterno().setCodiceFiscale(associazione.getCodiceFiscaleEsterno());
 		}
 		
 		assRuoloDipendenteRepository.save(optAssociazione.get());

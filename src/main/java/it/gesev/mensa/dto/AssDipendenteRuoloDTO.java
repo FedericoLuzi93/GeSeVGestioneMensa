@@ -21,6 +21,6 @@ public class AssDipendenteRuoloDTO implements Serializable
 	private String emailEsterno;
 	private String nomeEsterno;
 	private String cognomeEsterno;
-	private String codiceFiscale;
+	private String codiceFiscaleEsterno;
 	private Integer idFornitore;
 }
