@@ -100,7 +100,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="15" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Rapportino giornaliero dei conviventi - prenotati - nominativo]]></text>
+				<text><![CDATA[Rapportino giornaliero dei conviventi - Prenotati - Nominativo]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="320" y="90" width="203" height="30" uuid="f4faa963-972b-4533-bd24-988b3c3adb51"/>
