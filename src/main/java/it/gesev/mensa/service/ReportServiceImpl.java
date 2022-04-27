@@ -12,7 +12,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -45,6 +44,7 @@ import it.gesev.mensa.dto.PastiConsumatiDTO;
 import it.gesev.mensa.dto.PietanzaDTO;
 import it.gesev.mensa.dto.SendListPastiDC4AllegatoC;
 import it.gesev.mensa.dto.SendListaDC1Prenotati;
+import it.gesev.mensa.entity.Ente;
 import it.gesev.mensa.entity.IdentificativoSistema;
 import it.gesev.mensa.entity.Mensa;
 import it.gesev.mensa.entity.Pietanza;
@@ -1412,6 +1412,14 @@ public class ReportServiceImpl implements ReportService
 		DC1NomNumericaJasper dc1NomNum = reportDAO.richiestaDocumentoDC1NominativoNumerica(dc4RichiestaDTO);
 		List<DC1NomJasper> listaDC1Nom = reportDAO.richiestaDocumentoDC1Nominativo(dc4RichiestaDTO);
 		List<DC1NomNumericaJasper> listaDC1NomNumericaJasper = new ArrayList<>();
+		
+		List<Ente> listaEnti = mensaDAO.getAllEnti();
+		String descrizioneEnte = "";
+		for(Ente e : listaEnti)
+		{
+			if(e.getIdEnte() == dc4RichiestaDTO.getIdEnte())
+				descrizioneEnte = e.getDescrizioneEnte();
+		}
 
 		File mockFile = ResourceUtils.getFile("classpath:DC1Nominativo.jrxml");
 
@@ -1436,7 +1444,13 @@ public class ReportServiceImpl implements ReportService
 			//Assegnazione oggetti
 			Map<String, Object> parameters = new HashMap<>();
 			parameters.put("TabNumerica", JRBlistaNumerica);
-			parameters.put("TabNominativa", JRBlistaNominativa);
+			parameters.put("TabNominativa", JRBlistaNominativa);			
+			parameters.put("ente", descrizioneEnte);
+			String mese = MensaUtils.convertiMese(dc4RichiestaDTO.getMese());
+			parameters.put("mese", mese);
+			parameters.put("anno", dc4RichiestaDTO.getAnno());
+			parameters.put("giorno", dc4RichiestaDTO.getGiorno());
+			
 
 			//Stampa
 			JasperReport report = JasperCompileManager.compileReport(mockFile.getAbsolutePath());
