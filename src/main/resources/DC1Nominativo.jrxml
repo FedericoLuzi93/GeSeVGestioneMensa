@@ -87,6 +87,7 @@
 	<parameter name="mese" class="java.lang.String"/>
 	<parameter name="anno" class="java.lang.String"/>
 	<parameter name="giorno" class="java.lang.String"/>
+	<parameter name="tipoPasto" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -94,7 +95,7 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="126" splitType="Stretch">
+		<band height="160" splitType="Stretch">
 			<staticText>
 				<reportElement x="32" y="60" width="490" height="20" uuid="fffa4d65-f7f6-493a-85b8-f01c85258dfb"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -107,7 +108,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{ente}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["ENTE: " + $P{ente}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="40" y="90" width="90" height="30" uuid="adbb68b5-ed0c-4241-9742-96535ee7448b"/>
@@ -134,6 +135,13 @@
 				<reportElement x="243" y="7" width="69" height="48" uuid="2779972d-a52f-4246-bf25-8488b6428de6"/>
 				<imageExpression><![CDATA["ministero-della-difesa-squarelogo-1567666677225.png"]]></imageExpression>
 			</image>
+			<textField>
+				<reportElement x="40" y="120" width="190" height="20" uuid="f87df247-ad71-49be-9b40-07810a60864c"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["TIPO PASTO: " + $P{tipoPasto}]]></textFieldExpression>
+			</textField>
 		</band>
 	</title>
 	<detail>

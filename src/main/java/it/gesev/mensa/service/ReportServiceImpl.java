@@ -49,6 +49,7 @@ import it.gesev.mensa.entity.IdentificativoSistema;
 import it.gesev.mensa.entity.Mensa;
 import it.gesev.mensa.entity.Pietanza;
 import it.gesev.mensa.entity.TipoDieta;
+import it.gesev.mensa.entity.TipoPasto;
 import it.gesev.mensa.jasper.DC1MilitariJasper;
 import it.gesev.mensa.jasper.DC1NomJasper;
 import it.gesev.mensa.jasper.DC1NomNumericaJasper;
@@ -1420,6 +1421,14 @@ public class ReportServiceImpl implements ReportService
 			if(e.getIdEnte() == dc4RichiestaDTO.getIdEnte())
 				descrizioneEnte = e.getDescrizioneEnte();
 		}
+		
+		List<TipoPasto> listaTipoPasto = mensaDAO.getAllTipoPasto();
+		String descrizioneTipoPasto = "";
+		for(TipoPasto tp : listaTipoPasto)
+		{
+			if(tp.getCodiceTipoPasto() == dc4RichiestaDTO.getTipoPasto())
+				descrizioneTipoPasto = tp.getDescrizione();
+		}
 
 		File mockFile = ResourceUtils.getFile("classpath:DC1Nominativo.jrxml");
 
@@ -1450,6 +1459,7 @@ public class ReportServiceImpl implements ReportService
 			parameters.put("mese", mese);
 			parameters.put("anno", dc4RichiestaDTO.getAnno());
 			parameters.put("giorno", dc4RichiestaDTO.getGiorno());
+			parameters.put("tipoPasto", descrizioneTipoPasto);
 			
 
 			//Stampa
