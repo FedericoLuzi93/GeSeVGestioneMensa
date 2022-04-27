@@ -132,7 +132,7 @@
 			</textField>
 			<image hAlign="Center" vAlign="Middle">
 				<reportElement x="243" y="7" width="69" height="48" uuid="2779972d-a52f-4246-bf25-8488b6428de6"/>
-				<imageExpression><![CDATA["C:/Users/alien/OneDrive/Desktop/ministero-della-difesa-squarelogo-1567666677225.png"]]></imageExpression>
+				<imageExpression><![CDATA["ministero-della-difesa-squarelogo-1567666677225.png"]]></imageExpression>
 			</image>
 		</band>
 	</title>
