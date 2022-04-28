@@ -29,4 +29,7 @@ public class TipoRazione
 	
 	@OneToMany(mappedBy= "tipoRazione", fetch = FetchType.LAZY)
 	private List<Prenotazione> listaPrenotazioni;
+	
+	@OneToMany(mappedBy= "tipoRazione", fetch = FetchType.LAZY)
+	private List<PastiConsumati> listaPastiConsumati;
 }

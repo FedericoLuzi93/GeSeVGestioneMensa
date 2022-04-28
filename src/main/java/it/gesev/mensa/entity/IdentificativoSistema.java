@@ -29,4 +29,8 @@ public class IdentificativoSistema
 	
 	@OneToMany(mappedBy = "identificativoSistema", fetch = FetchType.LAZY)
 	List<Prenotazione> listaPrenotazioni;
+	
+	@OneToMany(mappedBy = "identificativoSistema", fetch = FetchType.LAZY)
+	List<PastiConsumati> listaPastiConsumati;
 }
+

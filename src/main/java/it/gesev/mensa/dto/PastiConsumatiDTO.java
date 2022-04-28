@@ -42,6 +42,11 @@ public class PastiConsumatiDTO
 	@CsvBindByPosition(position = 0)
 	private int mensa;
 	
+	@CsvBindByPosition(position = 11)
+	private String identificativoSistema;
+	
+	@CsvBindByPosition(position = 10)
+	private String tipoRazione;
 	
 
 }

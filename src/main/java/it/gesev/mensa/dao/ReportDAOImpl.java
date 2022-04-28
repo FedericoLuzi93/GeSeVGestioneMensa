@@ -48,6 +48,7 @@ import it.gesev.mensa.entity.PastiConsumati;
 import it.gesev.mensa.entity.Pietanza;
 import it.gesev.mensa.entity.TipoPagamento;
 import it.gesev.mensa.entity.TipoPasto;
+import it.gesev.mensa.entity.TipoRazione;
 import it.gesev.mensa.exc.GesevException;
 import it.gesev.mensa.jasper.DC1NomJasper;
 import it.gesev.mensa.jasper.DC1NomNumericaJasper;
@@ -61,6 +62,7 @@ import it.gesev.mensa.repository.PastiConsumatiRepository;
 import it.gesev.mensa.repository.PietanzaRepository;
 import it.gesev.mensa.repository.TipoPagamentoRepository;
 import it.gesev.mensa.repository.TipoPastoRepository;
+import it.gesev.mensa.repository.TipoRazioneRepository;
 import it.gesev.mensa.utils.ControlloData;
 
 @Repository
@@ -104,6 +106,10 @@ public class ReportDAOImpl implements ReportDAO
 
 	@Autowired
 	private PietanzaRepository pietanzaRepository;
+	
+
+	@Autowired
+	private TipoRazioneRepository tipoRazioneRepository;
 
 	@PersistenceContext
 	EntityManager entityManager;
@@ -149,6 +155,16 @@ public class ReportDAOImpl implements ReportDAO
 			if(!optionalTipoPasto.isPresent())
 				throw new GesevException("Impossibile caricare i pasti consumati, tipo pasto non valido", HttpStatus.BAD_REQUEST);
 			pc.setTipoPasto(optionalTipoPasto.get());
+			
+			Optional<IdentificativoSistema> optionalIdSistema = identificativoSistemaRepository.findById(pcCSV.getIdentificativoSistema());
+			if(!optionalIdSistema.isPresent())
+				throw new GesevException("Impossibile caricare i pasti consumati, identificativo sistema non valido", HttpStatus.BAD_REQUEST);
+			pc.setIdentificativoSistema(optionalIdSistema.get());
+			
+			Optional<TipoRazione> optionalTipoRazione = tipoRazioneRepository.findByIdTipoRazione(pcCSV.getTipoRazione());
+			if(!optionalTipoRazione.isPresent())
+				throw new GesevException("Impossibile caricare i pasti consumati, tipo razione non valido", HttpStatus.BAD_REQUEST);
+			pc.setTipoRazione(optionalTipoRazione.get());
 
 			pc.setOraIngresso(ControlloData.controlloTempo(pcCSV.getOraIngresso()));
 

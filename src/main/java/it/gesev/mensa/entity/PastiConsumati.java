@@ -63,4 +63,11 @@ public class PastiConsumati
 	@JoinColumn(name="mensa_fk")
 	private Mensa mensa;
 
+	@ManyToOne
+	@JoinColumn(name = "identificativo_sistema_fk")
+	private IdentificativoSistema identificativoSistema;
+	
+	@ManyToOne
+	@JoinColumn(name = "tipo_razione_fk")
+	private TipoRazione tipoRazione;
 }
