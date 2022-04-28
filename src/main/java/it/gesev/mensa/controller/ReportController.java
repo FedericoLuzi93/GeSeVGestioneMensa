@@ -39,6 +39,7 @@ import it.gesev.mensa.dto.IdentificativoSistemaDTO;
 import it.gesev.mensa.dto.MenuDTO;
 import it.gesev.mensa.dto.MenuLeggeroDTO;
 import it.gesev.mensa.dto.PastiConsumatiDTO;
+import it.gesev.mensa.dto.PastiPrenotatiDTO;
 import it.gesev.mensa.dto.SendListPastiDC4AllegatoC;
 import it.gesev.mensa.dto.SendListaDC1Prenotati;
 import it.gesev.mensa.exc.GesevException;
@@ -744,6 +745,37 @@ public class ReportController
 			esito.setStatus(HttpStatus.OK.value());
 			esito.setMessaggio("LISTA CREATA CON SUCCESSO");
 			esito.setBody(listaPastiConsumati);
+		}
+		catch(GesevException gex)   
+		{
+			logger.info("Si e' verificata un'eccezione", gex);
+			esito.setStatus(gex.getStatus().value());
+			esito.setMessaggio(gex.getMessage());
+		}
+		catch(Exception ex)
+		{
+			logger.info("Si e' verificata un'eccezione interna", ex);
+			esito.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			esito.setMessaggio(MESSAGGIO_ERRORE_INTERNO);
+		}
+		return ResponseEntity.status(esito.getStatus()).body(esito);
+	}
+	
+	/* Lista Pasti prenotati filtrata */
+	@PostMapping(value = "/getListaPastiPrenotatiFiltrata")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
+			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
+			@ApiResponse(code = 500, message = "Errore interno") })
+	public ResponseEntity<EsitoDTO> getListaPastiPrenotatiFiltrata(@RequestBody DC4RichiestaDTO dc4RichiestaDTO)
+	{
+		logger.info("Accesso al servizio getListaPastiPrenotatiFiltrata");
+		EsitoDTO esito = new EsitoDTO();
+		try
+		{	
+			List<PastiPrenotatiDTO> listaPastiPrenotati = reportService.getListaPastiPrenotatiFiltrata(dc4RichiestaDTO);
+			esito.setStatus(HttpStatus.OK.value());
+			esito.setMessaggio("LISTA CREATA CON SUCCESSO");
+			esito.setBody(listaPastiPrenotati);
 		}
 		catch(GesevException gex)   
 		{

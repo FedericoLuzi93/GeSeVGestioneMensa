@@ -42,6 +42,7 @@ import it.gesev.mensa.dto.IdentificativoSistemaDTO;
 import it.gesev.mensa.dto.MenuDTO;
 import it.gesev.mensa.dto.MenuLeggeroDTO;
 import it.gesev.mensa.dto.PastiConsumatiDTO;
+import it.gesev.mensa.dto.PastiPrenotatiDTO;
 import it.gesev.mensa.dto.PietanzaDTO;
 import it.gesev.mensa.dto.SendListPastiDC4AllegatoC;
 import it.gesev.mensa.dto.SendListaDC1Prenotati;
@@ -50,6 +51,7 @@ import it.gesev.mensa.entity.IdentificativoSistema;
 import it.gesev.mensa.entity.Mensa;
 import it.gesev.mensa.entity.PastiConsumati;
 import it.gesev.mensa.entity.Pietanza;
+import it.gesev.mensa.entity.Prenotazione;
 import it.gesev.mensa.entity.TipoDieta;
 import it.gesev.mensa.entity.TipoPasto;
 import it.gesev.mensa.jasper.DC1MilitariJasper;
@@ -66,6 +68,7 @@ import it.gesev.mensa.jasper.PastoOrdinatoJasper;
 import it.gesev.mensa.utils.IdentificativoSistemaMapper;
 import it.gesev.mensa.utils.MensaUtils;
 import it.gesev.mensa.utils.PastiConsumatiMapper;
+import it.gesev.mensa.utils.PrenotazioneMapper;
 import net.sf.jasperreports.engine.JREmptyDataSource;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperExportManager;
@@ -1667,6 +1670,7 @@ public class ReportServiceImpl implements ReportService
 		return fileDC4DTO;
 	}
 
+	/* Lista Pasti consumati filtrata */
 	@Override
 	public List<PastiConsumatiDTO> getListaPastiConsumatiFiltrata(DC4RichiestaDTO dc4RichiestaDTO) throws ParseException 
 	{
@@ -1682,5 +1686,24 @@ public class ReportServiceImpl implements ReportService
 		}
 		logger.info("Fine getListaPastiConsumatiFiltrata classe ReportServiceImpl");
 		return listaPastiCosnumatiDTO;
+	}
+
+	/* Lista Pasti prenotati filtrata */
+	@Override
+	public List<PastiPrenotatiDTO> getListaPastiPrenotatiFiltrata(DC4RichiestaDTO dc4RichiestaDTO) throws ParseException 
+	{
+		logger.info("Accesso a getListaPastiPrenotatiFiltrata, classe ReportServiceImpl");
+		List<Prenotazione> listaPrenotazioni = reportDAO.getListaPastiPrenotatiFiltrata(dc4RichiestaDTO);
+		List<PastiPrenotatiDTO> listaPastiPrenotatiDTO = new ArrayList<>();
+		logger.info("Inizio ciclo For in getListaPastiPrenotatiFiltrata classe ReportServiceImpl");
+		for(Prenotazione p : listaPrenotazioni)
+		{
+			PastiPrenotatiDTO pDTO = new PastiPrenotatiDTO();
+			pDTO = PrenotazioneMapper.mapToDTO(p, dateFormat);
+			
+			listaPastiPrenotatiDTO.add(pDTO);
+		}
+		logger.info("Fine getListaPastiPrenotatiFiltrata classe ReportServiceImpl");
+		return listaPastiPrenotatiDTO;
 	}
 }

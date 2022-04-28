@@ -18,6 +18,7 @@ import it.gesev.mensa.dto.SendListaDC1Prenotati;
 import it.gesev.mensa.entity.IdentificativoSistema;
 import it.gesev.mensa.entity.PastiConsumati;
 import it.gesev.mensa.entity.Pietanza;
+import it.gesev.mensa.entity.Prenotazione;
 import it.gesev.mensa.jasper.DC1NomJasper;
 import it.gesev.mensa.jasper.DC1NomNumericaJasper;
 
@@ -57,6 +58,7 @@ public interface ReportDAO
 	//Menu del Giorno
 	public List<Pietanza> richiestaMenuDelGiorno(MenuDTO menuDTO) throws ParseException;
 	public List<Pietanza> richiestaTuttePietanze(MenuLeggeroDTO menuLeggeroDTO) throws ParseException;
+	public List<Prenotazione> getListaPastiPrenotatiFiltrata(DC4RichiestaDTO dc4RichiestaDTO) throws ParseException;
 
 
 

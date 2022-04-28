@@ -46,6 +46,7 @@ import it.gesev.mensa.entity.IdentificativoSistema;
 import it.gesev.mensa.entity.Mensa;
 import it.gesev.mensa.entity.PastiConsumati;
 import it.gesev.mensa.entity.Pietanza;
+import it.gesev.mensa.entity.Prenotazione;
 import it.gesev.mensa.entity.TipoPagamento;
 import it.gesev.mensa.entity.TipoPasto;
 import it.gesev.mensa.entity.TipoRazione;
@@ -60,6 +61,7 @@ import it.gesev.mensa.repository.IdentificativoSistemaRepository;
 import it.gesev.mensa.repository.MensaRepository;
 import it.gesev.mensa.repository.PastiConsumatiRepository;
 import it.gesev.mensa.repository.PietanzaRepository;
+import it.gesev.mensa.repository.PrenotazioneRepository;
 import it.gesev.mensa.repository.TipoPagamentoRepository;
 import it.gesev.mensa.repository.TipoPastoRepository;
 import it.gesev.mensa.repository.TipoRazioneRepository;
@@ -106,10 +108,12 @@ public class ReportDAOImpl implements ReportDAO
 
 	@Autowired
 	private PietanzaRepository pietanzaRepository;
-	
 
 	@Autowired
 	private TipoRazioneRepository tipoRazioneRepository;
+	
+	@Autowired
+	private PrenotazioneRepository prenotazioneRepository;
 
 	@PersistenceContext
 	EntityManager entityManager;
@@ -1349,6 +1353,21 @@ public class ReportDAOImpl implements ReportDAO
 
 		List<PastiConsumati> listaPc = pastiConsumatiRepository.getListaFiltrata(dc4RichiestaDTO.getIdEnte(), giornoDatato, dc4RichiestaDTO.getTipoPasto(), dc4RichiestaDTO.getSistemaPersonale());
 		return listaPc;
+	}
+
+	/* Lista Pasti Prenotati filtrata */
+	@Override
+	public List<Prenotazione> getListaPastiPrenotatiFiltrata(DC4RichiestaDTO dc4RichiestaDTO) throws ParseException 
+	{
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
+		String dataCorretta = dc4RichiestaDTO.getAnno().concat("-" + dc4RichiestaDTO.getMese().concat("-" + dc4RichiestaDTO.getGiorno()));
+		Date giornoDatato = simpleDateFormat.parse(dataCorretta);
+
+		if(StringUtils.isBlank(dataCorretta))
+			throw new GesevException("Impossibile generare il documento DC1 Nominativo, data non valida", HttpStatus.BAD_REQUEST);
+
+		List<Prenotazione> listaPrenotati = prenotazioneRepository.getListaFiltrata(dc4RichiestaDTO.getIdEnte(), giornoDatato, dc4RichiestaDTO.getTipoPasto(), dc4RichiestaDTO.getSistemaPersonale());
+		return listaPrenotati;
 	}
 
 }

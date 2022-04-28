@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import it.gesev.mensa.dto.CaricamentoPastiConsumatiDTO;
 import it.gesev.mensa.dto.DC4RichiestaDTO;
 import it.gesev.mensa.dto.DC4TabellaDTO;
 import it.gesev.mensa.dto.FEDC1Nominativo;
@@ -16,7 +17,7 @@ import it.gesev.mensa.dto.IdentificativoSistemaDTO;
 import it.gesev.mensa.dto.MenuDTO;
 import it.gesev.mensa.dto.MenuLeggeroDTO;
 import it.gesev.mensa.dto.PastiConsumatiDTO;
-import it.gesev.mensa.dto.CaricamentoPastiConsumatiDTO;
+import it.gesev.mensa.dto.PastiPrenotatiDTO;
 import it.gesev.mensa.dto.SendListPastiDC4AllegatoC;
 import it.gesev.mensa.dto.SendListaDC1Prenotati;
 import it.gesev.mensa.jasper.DC1MilitariJasper;
@@ -60,5 +61,6 @@ public interface ReportService
 	//Chiamate
 	public List<PastiConsumatiDTO> getListaPastiConsumatiFiltrata(DC4RichiestaDTO dc4RichiestaDTO) throws ParseException;
 	public List<IdentificativoSistemaDTO> getAllIdentificativiSistema();
+	public List<PastiPrenotatiDTO> getListaPastiPrenotatiFiltrata(DC4RichiestaDTO dc4RichiestaDTO) throws ParseException;
 
 }
