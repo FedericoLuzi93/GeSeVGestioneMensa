@@ -22,7 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import it.gesev.mensa.dto.CaricamentoPrenotazioniDTO;
-import it.gesev.mensa.dto.PastiConsumatiDTO;
+import it.gesev.mensa.dto.CaricamentoPastiConsumatiDTO;
 import it.gesev.mensa.dto.PrenotazioneDTO;
 import it.gesev.mensa.entity.Dipendente;
 import it.gesev.mensa.entity.Grado;

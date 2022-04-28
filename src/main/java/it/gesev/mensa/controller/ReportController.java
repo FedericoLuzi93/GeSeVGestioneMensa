@@ -23,9 +23,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -729,6 +727,37 @@ public class ReportController
 
 		return ResponseEntity.ok().headers(headers).contentLength(fileDC4DTO.getFileDC4().length)
 				.contentType(MediaType.APPLICATION_OCTET_STREAM).body(new ByteArrayResource(fileDC4DTO.getFileDC4()));
+	}
+	
+	/* Lista Pasti consumati filtrata */
+	@PostMapping(value = "/getListaPastiConsumatiFiltrata")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
+			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
+			@ApiResponse(code = 500, message = "Errore interno") })
+	public ResponseEntity<EsitoDTO> getListaPastiConsumatiFiltrata(@RequestBody DC4RichiestaDTO dc4RichiestaDTO)
+	{
+		logger.info("Accesso al servizio getListaPastiConsumatiFiltrata");
+		EsitoDTO esito = new EsitoDTO();
+		try
+		{	
+			List<PastiConsumatiDTO> listaPastiConsumati = reportService.getListaPastiConsumatiFiltrata(dc4RichiestaDTO);
+			esito.setStatus(HttpStatus.OK.value());
+			esito.setMessaggio("LISTA CREATA CON SUCCESSO");
+			esito.setBody(listaPastiConsumati);
+		}
+		catch(GesevException gex)   
+		{
+			logger.info("Si e' verificata un'eccezione", gex);
+			esito.setStatus(gex.getStatus().value());
+			esito.setMessaggio(gex.getMessage());
+		}
+		catch(Exception ex)
+		{
+			logger.info("Si e' verificata un'eccezione interna", ex);
+			esito.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			esito.setMessaggio(MESSAGGIO_ERRORE_INTERNO);
+		}
+		return ResponseEntity.status(esito.getStatus()).body(esito);
 	}
 	
 

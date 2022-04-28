@@ -16,6 +16,7 @@ import it.gesev.mensa.dto.IdentificativoSistemaDTO;
 import it.gesev.mensa.dto.MenuDTO;
 import it.gesev.mensa.dto.MenuLeggeroDTO;
 import it.gesev.mensa.dto.PastiConsumatiDTO;
+import it.gesev.mensa.dto.CaricamentoPastiConsumatiDTO;
 import it.gesev.mensa.dto.SendListPastiDC4AllegatoC;
 import it.gesev.mensa.dto.SendListaDC1Prenotati;
 import it.gesev.mensa.jasper.DC1MilitariJasper;
@@ -23,9 +24,11 @@ import it.gesev.mensa.jasper.DC1MilitariJasper;
 public interface ReportService 
 {
 
+	//Caricamento File
 	public void caricaPastiConsumatiCSV(MultipartFile multipartFile) throws IllegalStateException, FileNotFoundException, IOException, ParseException, org.apache.el.parser.ParseException;
-	public int caricaPastiConsumatiJson(List<PastiConsumatiDTO> listaPastiConsumatiCSV) throws ParseException, org.apache.el.parser.ParseException;
+	public int caricaPastiConsumatiJson(List<CaricamentoPastiConsumatiDTO> listaPastiConsumatiCSV) throws ParseException, org.apache.el.parser.ParseException;
 
+	//DC4
 	public List<DC4TabellaDTO> richiestaDocumentoDC4(DC4RichiestaDTO dc4RichiestaDTO) throws ParseException;
 	public FileDC4DTO downloadDC4(DC4RichiestaDTO dc4RichiestaDTO) throws ParseException, FileNotFoundException;
 
@@ -34,11 +37,11 @@ public interface ReportService
 	public FileDC4DTO downloadDC4AllegatoCUfficiali(DC4RichiestaDTO dc4RichiestaDTO) throws FileNotFoundException;
 	public FileDC4DTO downloadDC4AllegatoCGraduati(DC4RichiestaDTO dc4RichiestaDTO) throws FileNotFoundException;
 	
-	public List<IdentificativoSistemaDTO> getAllIdentificativiSistema();
-	
+	//Firme
 	public int createNuovaFirma(FirmaQuotidianaDC4DTO firmaQuotidianaDC4DTO) throws ParseException;
 	public int deleteFirma(FirmaQuotidianaDC4DTO firmaQuotidianaDC4DTO) throws ParseException;
 	
+	//DC1
 	public List<DC1MilitariJasper> richiestaDocumentoDC1Prenotati(DC4RichiestaDTO dc4RichiestaDTO,
 			SendListaDC1Prenotati sendObjList) throws ParseException;
 	FileDC4DTO downloadDC1Prenotati(DC4RichiestaDTO dc4RichiestaDTO) throws ParseException, FileNotFoundException;
@@ -50,8 +53,12 @@ public interface ReportService
 	public FEDC1Nominativo richiestaDocumentoDC1Nominativo(DC4RichiestaDTO dc4RichiestaDTO) throws ParseException;
 	public FileDC4DTO downloadDC1Nominativo(DC4RichiestaDTO dc4RichiestaDTO) throws ParseException, FileNotFoundException;
 	
+	//Menu del Giorno
 	public MenuDTO richiestaMenuDelGiorno(MenuDTO menuDTO) throws ParseException;
 	public FileDC4DTO downloadMenuDelGiorno(MenuLeggeroDTO menuLeggeroDTO) throws ParseException, FileNotFoundException;
-
+	
+	//Chiamate
+	public List<PastiConsumatiDTO> getListaPastiConsumatiFiltrata(DC4RichiestaDTO dc4RichiestaDTO) throws ParseException;
+	public List<IdentificativoSistemaDTO> getAllIdentificativiSistema();
 
 }

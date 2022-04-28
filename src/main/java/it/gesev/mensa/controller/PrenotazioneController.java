@@ -22,7 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import it.gesev.mensa.dto.EsitoDTO;
-import it.gesev.mensa.dto.PastiConsumatiDTO;
+import it.gesev.mensa.dto.CaricamentoPastiConsumatiDTO;
 import it.gesev.mensa.exc.GesevException;
 import it.gesev.mensa.service.MensaService;
 import it.gesev.mensa.service.PrenotazioneService;
@@ -156,7 +156,7 @@ public class PrenotazioneController
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
 			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
 			@ApiResponse(code = 500, message = "Errore interno") })
-	public ResponseEntity<EsitoDTO> caricaPastiConsumatiJson(@RequestBody List<PastiConsumatiDTO> listaPastiConsumatiCSV)
+	public ResponseEntity<EsitoDTO> caricaPastiConsumatiJson(@RequestBody List<CaricamentoPastiConsumatiDTO> listaPastiConsumatiCSV)
 	{
 		logger.info("Accesso al servizio caricaPastiConsumatiJson");
 		EsitoDTO esito = new EsitoDTO();
@@ -180,4 +180,6 @@ public class PrenotazioneController
 		}
 		return ResponseEntity.status(esito.getStatus()).body(esito);
 	}
+	
+	
 }

@@ -21,7 +21,7 @@ import com.opencsv.bean.CsvToBeanBuilder;
 
 import it.gesev.mensa.dao.PrenotazioneDAO;
 import it.gesev.mensa.dto.CaricamentoPrenotazioniDTO;
-import it.gesev.mensa.dto.PastiConsumatiDTO;
+import it.gesev.mensa.dto.CaricamentoPastiConsumatiDTO;
 import it.gesev.mensa.dto.PrenotazioneDTO;
 import it.gesev.mensa.exc.GesevException;
 

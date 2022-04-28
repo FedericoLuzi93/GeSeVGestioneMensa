@@ -28,6 +28,7 @@ import com.opencsv.bean.CsvToBeanBuilder;
 
 import it.gesev.mensa.dao.MensaDAO;
 import it.gesev.mensa.dao.ReportDAO;
+import it.gesev.mensa.dto.CaricamentoPastiConsumatiDTO;
 import it.gesev.mensa.dto.DC4RichiestaDTO;
 import it.gesev.mensa.dto.DC4TabellaAllegatoCDTO;
 import it.gesev.mensa.dto.DC4TabellaDTO;
@@ -47,6 +48,7 @@ import it.gesev.mensa.dto.SendListaDC1Prenotati;
 import it.gesev.mensa.entity.Ente;
 import it.gesev.mensa.entity.IdentificativoSistema;
 import it.gesev.mensa.entity.Mensa;
+import it.gesev.mensa.entity.PastiConsumati;
 import it.gesev.mensa.entity.Pietanza;
 import it.gesev.mensa.entity.TipoDieta;
 import it.gesev.mensa.entity.TipoPasto;
@@ -63,6 +65,7 @@ import it.gesev.mensa.jasper.PastoConsumatoJasper;
 import it.gesev.mensa.jasper.PastoOrdinatoJasper;
 import it.gesev.mensa.utils.IdentificativoSistemaMapper;
 import it.gesev.mensa.utils.MensaUtils;
+import it.gesev.mensa.utils.PastiConsumatiMapper;
 import net.sf.jasperreports.engine.JREmptyDataSource;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperExportManager;
@@ -96,8 +99,8 @@ public class ReportServiceImpl implements ReportService
 		Reader reader = new InputStreamReader(multipartFile.getInputStream());
 		CSVReader csvReader = new CSVReaderBuilder(reader).build();
 
-		List<PastiConsumatiDTO> listaPastiConsumatiCSV = new CsvToBeanBuilder(csvReader)
-				.withType(PastiConsumatiDTO.class)
+		List<CaricamentoPastiConsumatiDTO> listaPastiConsumatiCSV = new CsvToBeanBuilder(csvReader)
+				.withType(CaricamentoPastiConsumatiDTO.class)
 				.build()
 				.parse();
 
@@ -106,7 +109,7 @@ public class ReportServiceImpl implements ReportService
 
 	/* Carica pasti consumati JSON */ 
 	@Override
-	public int caricaPastiConsumatiJson(List<PastiConsumatiDTO> listaPastiConsumatiCSV) throws ParseException, org.apache.el.parser.ParseException
+	public int caricaPastiConsumatiJson(List<CaricamentoPastiConsumatiDTO> listaPastiConsumatiCSV) throws ParseException, org.apache.el.parser.ParseException
 	{
 		logger.info("Accesso a caricaPastiConsumatiJson classe ReportServiceImpl");
 		reportDAO.caricaPastiConsumati(listaPastiConsumatiCSV);
@@ -1662,5 +1665,22 @@ public class ReportServiceImpl implements ReportService
 
 		logger.info("Report generato con successo");
 		return fileDC4DTO;
+	}
+
+	@Override
+	public List<PastiConsumatiDTO> getListaPastiConsumatiFiltrata(DC4RichiestaDTO dc4RichiestaDTO) throws ParseException 
+	{
+		logger.info("Accesso a getListaPastiConsumatiFiltrata, classe ReportServiceImpl");
+		List<PastiConsumati> listaPastiCosnumati = reportDAO.getListaPastiConsumatiFiltrata(dc4RichiestaDTO);
+		List<PastiConsumatiDTO> listaPastiCosnumatiDTO = new ArrayList<>();
+		logger.info("Inizio ciclo For in getListaPastiConsumatiFiltrata classe ReportServiceImpl");
+		for(PastiConsumati pc : listaPastiCosnumati)
+		{
+			PastiConsumatiDTO pcDTO = new PastiConsumatiDTO();
+			pcDTO = PastiConsumatiMapper.mapToDTO(pc, dateFormat);
+			listaPastiCosnumatiDTO.add(pcDTO);
+		}
+		logger.info("Fine getListaPastiConsumatiFiltrata classe ReportServiceImpl");
+		return listaPastiCosnumatiDTO;
 	}
 }
