@@ -22,10 +22,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import it.gesev.mensa.dto.CaricamentoPrenotazioniDTO;
+import it.gesev.mensa.dto.PastiConsumatiDTO;
 import it.gesev.mensa.dto.PrenotazioneDTO;
+import it.gesev.mensa.entity.Dipendente;
 import it.gesev.mensa.entity.Grado;
 import it.gesev.mensa.entity.IdentificativoSistema;
 import it.gesev.mensa.entity.Mensa;
+import it.gesev.mensa.entity.PastiConsumati;
 import it.gesev.mensa.entity.Prenotazione;
 import it.gesev.mensa.entity.StrutturaOrganizzativa;
 import it.gesev.mensa.entity.TipoDieta;
@@ -44,63 +47,66 @@ import it.gesev.mensa.repository.TipoGradoRepository;
 import it.gesev.mensa.repository.TipoPagamentoRepository;
 import it.gesev.mensa.repository.TipoPastoRepository;
 import it.gesev.mensa.repository.TipoRazioneRepository;
+import it.gesev.mensa.utils.ControlloData;
 
 @Component
 public class PrenotazioneDAOImpl implements PrenotazioneDAO 
 {
 	private static Logger logger = LoggerFactory.getLogger(PrenotazioneDAOImpl.class);
-	
+
 	@Value("${gesev.data.format}")
 	private String dateFormat;
-	
+
 	@Value("${gesev.batch.size}")
 	private Integer batchSize;
-	
+
 	@Autowired
 	private IdentificativoSistemaRepository identificativoRepository;
-	
+
 	@Autowired
 	private TipoPastoRepository tipoPastoRepository;
-	
+
 	@Autowired
 	private TipoDietaRepository tipoDietaRepository;
-	
+
 	@Autowired
 	private TipoRazioneRepository tipoRazioneRepository;
-	
+
 	@Autowired
 	private PrenotazioneRepository prenotazioneRepository;
-	
+
 	@Autowired
 	private MensaRepository mensaRepository;
-	
+
 	@Autowired
 	private GradoRepositoory gradoRepository;
-	
+
 	@Autowired
 	private TipoGradoRepository tipoGradoRepository;
-	
+
 	@Autowired
 	private TipoPagamentoRepository tipoPagamentoRepository;
-	
+
 	@Autowired
 	private StrutturaOrganizzativaReposittory strutturaOrganizzativaRepository;
-	
+
+
+
 	@PersistenceContext
 	EntityManager entityManager;
-	
+
 	@Override
 	@Transactional
 	public void insertPrenotazione(List<CaricamentoPrenotazioniDTO> listaPrenotazioni) 
 	{
 		logger.info("Inserimento prenotazioni...");
-		
+
 		if(listaPrenotazioni == null || listaPrenotazioni.size() == 0)
 			return;
-		
+
 		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
 		int rowCounter = 0;
-		
+
 		Map<String, IdentificativoSistema> mappaIdSistema = new HashMap<>();
 		Map<Integer, Mensa> mappaMense = new HashMap<>();
 		Map<String, Grado> mappaGrado = new HashMap<>();
@@ -110,7 +116,7 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO
 		Map<Integer, TipoPasto> mappaTipoPasto = new HashMap<>();
 		Map<Integer, TipoDieta> mappaTipoDieta = new HashMap<>();
 		Map<String, TipoRazione> mappaTipoRazione = new HashMap<>();
-				
+
 		for(CaricamentoPrenotazioniDTO prenotazione : listaPrenotazioni)
 		{
 			if(rowCounter % this.batchSize == 0)
@@ -118,65 +124,65 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO
 				entityManager.flush();
 				entityManager.clear();
 			}
-			
+
 			logger.info("Analisi riga " + (++rowCounter));
-			
+
 			/* identificativo sistema */
 			if(StringUtils.isBlank(prenotazione.getIdentificativoSistema()))
 				throw new GesevException("Dati del sistema identificativo non validi", HttpStatus.BAD_REQUEST);
-			
+
 			IdentificativoSistema sistema = mappaIdSistema.get(prenotazione.getIdentificativoSistema());
 			if(sistema == null)
 			{
 				Optional<IdentificativoSistema> optIdentificativo = identificativoRepository.findById(prenotazione.getIdentificativoSistema());
 				if(!optIdentificativo.isPresent())
 					throw new GesevException("Nessun identificativo di sistema trovato con l'ID " + prenotazione.getIdentificativoSistema(), HttpStatus.BAD_REQUEST);
-				
+
 				sistema = optIdentificativo.get();
 				mappaIdSistema.put(prenotazione.getIdentificativoSistema(), optIdentificativo.get());
 			}
-			
+
 			/* mensa */
 			if(StringUtils.isBlank(prenotazione.getMensa()) || !prenotazione.getMensa().matches("^[0-9]+$"))
 				throw new GesevException("Dati della mensa non validi", HttpStatus.BAD_REQUEST);
-			
+
 			Mensa mensa = mappaMense.get(Integer.valueOf(prenotazione.getMensa()));
 			if(mensa == null)
 			{
 				Optional<Mensa> optMensa = mensaRepository.findById(Integer.valueOf(prenotazione.getMensa()));
 				if(!optMensa.isPresent())
-						throw new GesevException("Dati della mensa non validi", HttpStatus.BAD_REQUEST);
-				
+					throw new GesevException("Dati della mensa non validi", HttpStatus.BAD_REQUEST);
+
 				mensa = optMensa.get();
 				mappaMense.put(Integer.valueOf(prenotazione.getMensa()), mensa);
 			}
-			
+
 			/* data prenotazione */
 			if(StringUtils.isBlank(prenotazione.getDataPrenotazione()))
 				throw new GesevException("La data di prenotazione non e' corretta", HttpStatus.BAD_REQUEST);
-			
+
 			Date dataPrenotazione = null;
 			try
 			{
 				dataPrenotazione = formatter.parse(prenotazione.getDataPrenotazione());
 			}
-			
+
 			catch(Exception ex)
 			{
 				throw new GesevException("Il valore della data di prenotazione " + prenotazione.getDataPrenotazione() + " non e' valido", HttpStatus.BAD_REQUEST);
 			}
-			
+
 			/* codice fiscale */
 			if(StringUtils.isBlank(prenotazione.getCodiceFiscale()) || prenotazione.getCodiceFiscale().length() != 16)
 				throw new GesevException("Codice fiscale non valido", HttpStatus.BAD_REQUEST);
-			
+
 			/* nome e cognome */
 			if(StringUtils.isBlank(prenotazione.getNome()) || StringUtils.isBlank(prenotazione.getCognome()))
 				throw new GesevException("Dati nome/cognome non validi", HttpStatus.BAD_REQUEST);
-			
-//			if(StringUtils.isBlank(prenotazione.getTipoPersonale()))
-//				throw new GesevException("Dati nome/cognome non validi", HttpStatus.BAD_REQUEST);
-			
+
+			//			if(StringUtils.isBlank(prenotazione.getTipoPersonale()))
+			//				throw new GesevException("Dati nome/cognome non validi", HttpStatus.BAD_REQUEST);
+
 			/* grado */
 			Grado grado = null;
 			if(StringUtils.isNotBlank(prenotazione.getGrado()))
@@ -187,12 +193,12 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO
 					Optional<Grado> optGrado = gradoRepository.findById(prenotazione.getGrado());
 					if(!optGrado.isPresent())
 						throw new GesevException("Dati grado non validi", HttpStatus.BAD_REQUEST);
-					
+
 					grado = optGrado.get();
 					mappaGrado.put(prenotazione.getGrado(), grado);
 				}
 			}
-		
+
 			/* tipo grado */
 			TipoGrado tipoGrado = null;
 			if(StringUtils.isNotBlank(prenotazione.getTipoGrado()))
@@ -203,12 +209,12 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO
 					Optional<TipoGrado> optTipoGrado = tipoGradoRepository.findById(prenotazione.getTipoGrado());
 					if(!optTipoGrado.isPresent())
 						throw new GesevException("Dati tipo grado non validi", HttpStatus.BAD_REQUEST);
-					
+
 					tipoGrado = optTipoGrado.get();
 					mappaTipoGrado.put(prenotazione.getTipoGrado(), tipoGrado);
 				}
 			}
-			
+
 			/* struttura organizzativa */
 			StrutturaOrganizzativa strutturaOrganizzattiva = null;
 			if(StringUtils.isNotBlank(prenotazione.getStrutturaOrganizzativa()))
@@ -219,86 +225,101 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO
 					Optional<StrutturaOrganizzativa> optStrutturaOrganizzativa = strutturaOrganizzativaRepository.findById(prenotazione.getStrutturaOrganizzativa());
 					if(!optStrutturaOrganizzativa.isPresent())
 						throw new GesevException("Dati struttura organizzativa non validi", HttpStatus.BAD_REQUEST);
-					
+
 					strutturaOrganizzattiva = optStrutturaOrganizzativa.get();
 					mappaStrutturaOrganizzativa.put(prenotazione.getStrutturaOrganizzativa(), strutturaOrganizzattiva);
 				}
 			}
-			
-			
-//			if(StringUtils.isBlank(prenotazione.getDenominazioneUnitaFunzionale()))
-//				throw new GesevException("Dati deenominazione unita' funzionali non validi", HttpStatus.BAD_REQUEST);
-			
+
+
+			//			if(StringUtils.isBlank(prenotazione.getDenominazioneUnitaFunzionale()))
+			//				throw new GesevException("Dati deenominazione unita' funzionali non validi", HttpStatus.BAD_REQUEST);
+
 			/* commensale esterno */
 			if(StringUtils.isBlank(prenotazione.getCommensaleEsterno()))
 				throw new GesevException("Dati commensale non validi", HttpStatus.BAD_REQUEST);
-			
+
 			/* tipo pagamento */
 			if(StringUtils.isAllBlank(prenotazione.getTipoPagamento()))
 				throw new GesevException("Dati tipo pagamento non validi", HttpStatus.BAD_REQUEST);
-			
+
 			TipoPagamento tipoPagamento = mappaTipoPagamento.get(prenotazione.getTipoPagamento());
 			if(tipoPagamento == null)
 			{
 				Optional<TipoPagamento> optTipoPagamento = tipoPagamentoRepository.findById(prenotazione.getTipoPagamento());
 				if(!optTipoPagamento.isPresent())
 					throw new GesevException("Dati tipo pagamento non validi", HttpStatus.BAD_REQUEST);
-				
+
 				tipoPagamento = optTipoPagamento.get();
 				mappaTipoPagamento.put(prenotazione.getTipoPagamento(), tipoPagamento);
 			}
-			
+
 			/* tipo pasto */
 			if(StringUtils.isBlank(prenotazione.getTipoPasto()) || !prenotazione.getTipoPasto().matches("^[0-9]+$"))
 				throw new GesevException("I dati del tipo pasto non sono validi", HttpStatus.BAD_REQUEST);
-			
+
 			TipoPasto tipoPasto = mappaTipoPasto.get(Integer.valueOf(prenotazione.getTipoPasto()));
 			if(tipoPasto == null)
 			{
 				Optional<TipoPasto> optTipoPasto = tipoPastoRepository.findById(Integer.valueOf(prenotazione.getTipoPasto()));
 				if(!optTipoPasto.isPresent())
 					throw new GesevException("Nessun tipo pasto trovato con ID " + prenotazione.getTipoPasto(), HttpStatus.BAD_REQUEST);
-				
+
 				tipoPasto = optTipoPasto.get();
 				mappaTipoPasto.put(Integer.valueOf(prenotazione.getTipoPasto()), tipoPasto);
 			}
-			
+
 			/* flag cestino */
 			if(StringUtils.isBlank(prenotazione.getFlagCestino()) || prenotazione.getFlagCestino().length() != 1 || 
-					  (!prenotazione.getFlagCestino().equalsIgnoreCase("Y") && !prenotazione.getFlagCestino().equalsIgnoreCase("N")))
-						throw new GesevException("Flag cestino non valido", HttpStatus.BAD_REQUEST);
-			
+					(!prenotazione.getFlagCestino().equalsIgnoreCase("Y") && !prenotazione.getFlagCestino().equalsIgnoreCase("N")))
+				throw new GesevException("Flag cestino non valido", HttpStatus.BAD_REQUEST);
+
 			/* tipo dieta */
 			if(StringUtils.isBlank(prenotazione.getTipoDieta()) || !prenotazione.getTipoDieta().matches("^[0-9]+$"))
 				throw new GesevException("I dati del tipo dieta non sono validi", HttpStatus.BAD_REQUEST);
-			
+
 			TipoDieta tipoDieta = mappaTipoDieta.get(Integer.valueOf(prenotazione.getTipoDieta()));
 			if(tipoDieta == null)
 			{
 				Optional<TipoDieta> optTipoDieta = tipoDietaRepository.findById(Integer.valueOf(prenotazione.getTipoDieta()));
 				if(!optTipoDieta.isPresent())
 					throw new GesevException("Nessun tipo pasto trovato con l'ID " + prenotazione.getTipoDieta(), HttpStatus.BAD_REQUEST);
-				
+
 				tipoDieta = optTipoDieta.get();
 				mappaTipoDieta.put(Integer.valueOf(prenotazione.getTipoDieta()), tipoDieta);
 			}
-			
+
 			/* tipo razione */
 			if(StringUtils.isBlank(prenotazione.getTipoRazione()))
 				throw new GesevException("Nessun tipo razione trovato con l'ID " + prenotazione.getTipoRazione(), HttpStatus.BAD_REQUEST);
-			
+
+			/* flag cestino */
+			if(StringUtils.isBlank(prenotazione.getFlagCestino()) || prenotazione.getFlagCestino().length() != 1 || 
+					(!prenotazione.getFlagCestino().equalsIgnoreCase("Y") && !prenotazione.getFlagCestino().equalsIgnoreCase("N")))
+				throw new GesevException("Flag cestino non valido", HttpStatus.BAD_REQUEST);
+
 			TipoRazione tipoRazione = mappaTipoRazione.get(prenotazione.getTipoRazione());
 			if(tipoRazione == null)
 			{
 				Optional<TipoRazione> optTipoRazione = tipoRazioneRepository.findByIdTipoRazione(prenotazione.getTipoRazione());
 				if(!optTipoRazione.isPresent())
 					throw new GesevException("Nessun tipo razione trovato con l'ID " + prenotazione.getTipoRazione(), HttpStatus.BAD_REQUEST);
-				
+
 				tipoRazione = optTipoRazione.get();
 				mappaTipoRazione.put(prenotazione.getTipoRazione(), tipoRazione);
 			}
-			
-				
+
+			/* flag specchio */
+			if(StringUtils.isBlank(prenotazione.getSpecchioFlag()) || prenotazione.getSpecchioFlag().length() != 1 || 
+					(!prenotazione.getSpecchioFlag().equalsIgnoreCase("Y") && !prenotazione.getSpecchioFlag().equalsIgnoreCase("N")))
+				throw new GesevException("Flag specchio non valido", HttpStatus.BAD_REQUEST);
+
+			/* flag col Obbligatoria */
+			if(StringUtils.isBlank(prenotazione.getColObbligatoriaFlag()) || prenotazione.getColObbligatoriaFlag().length() != 1 || 
+					(!prenotazione.getColObbligatoriaFlag().equalsIgnoreCase("Y") && !prenotazione.getColObbligatoriaFlag().equalsIgnoreCase("N")))
+				throw new GesevException("Flag col Obbligatoria non valido", HttpStatus.BAD_REQUEST);
+
+
 			Prenotazione nuovaPrenotazione = new Prenotazione();
 			nuovaPrenotazione.setIdentificativoSistema(sistema);
 			nuovaPrenotazione.setMensa(mensa);
@@ -317,10 +338,12 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO
 			nuovaPrenotazione.setFlagCestino(prenotazione.getFlagCestino());
 			nuovaPrenotazione.setTipoDieta(tipoDieta);
 			nuovaPrenotazione.setTipoRazione(tipoRazione);
-			
+			nuovaPrenotazione.setSpecchioFlag(prenotazione.getSpecchioFlag());
+			nuovaPrenotazione.setColObbligatoriaFlag(prenotazione.getColObbligatoriaFlag());
+
 			prenotazioneRepository.save(nuovaPrenotazione);
 		}
-		
+
 		logger.info("Fine salvataggio prenotazioni");
 
 	}
@@ -329,7 +352,7 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO
 	public List<PrenotazioneDTO> getListaPrenotazioni(Date dataPrenotazione) 
 	{
 		logger.info("Ricerca lista prenotazioni...");
-		
+
 		List<PrenotazioneDTO> listaPrenotazioni = new ArrayList<>();
 		String query = "select sistema.descrizione_sistema, m.descrizione_mensa, TO_CHAR(p.data_prenotazione, 'DD-MM-YYYY'), p.codice_fiscale, "
 				+ "p.nome || ' ' || p.cognome as NOME_COGNOME, "
@@ -337,7 +360,9 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO
 				+ "grado.descb_grado, tp.descrizione as tipo_pasto, "
 				+ "case when p.flag_cestino = 'Y' then 'SI' else 'NO' end FLAG_CESTINO, "
 				+ "td.descrizione_tipo_dieta, "
-				+ "tr.descrizione_tipo_razione "
+				+ "tr.descrizione_tipo_razione, "
+				+ "p.specchio_flag, "
+				+ "p.col_obbligatoria_flag "
 				+ "from prenotazione p "
 				+ "left join identificativo_sistema sistema on p.identificativo_sistema_fk = sistema.id_sistema "
 				+ "left join tipo_pasto tp on tp.codice_tipo_pasto = p.tipo_pasto_fk "
@@ -346,11 +371,11 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO
 				+ "left join mensa m on p.identificativo_mensa_fk = m.codice_mensa "
 				+ "left join grado on p.grado_fk = grado.shsgra_cod_uid_pk "
 				+ "where p.data_prenotazione = :dataPrenotazione";
-		
+
 		Query selectQuery = entityManager.createNativeQuery(query).setParameter("dataPrenotazione", dataPrenotazione);
 		@SuppressWarnings("unchecked")
 		List<Object[]> results = selectQuery.getResultList();
-		
+
 		for(Object[] record : results)
 		{
 			PrenotazioneDTO prenotazione = new PrenotazioneDTO();
@@ -365,10 +390,12 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO
 			prenotazione.setFlagCestino((String)record[8]);
 			prenotazione.setTipoDieta((String)record[9]);
 			prenotazione.setTipoRazione((String)record[10]);
-			
+			prenotazione.setSpecchioFlag((String)record[11]);;
+			prenotazione.setColObbligatoriaFlag((String)record[12]);;
+
 			listaPrenotazioni.add(prenotazione);
 		}
-		
+
 		return listaPrenotazioni;
 	}
 

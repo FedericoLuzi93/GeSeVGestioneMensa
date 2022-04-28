@@ -21,4 +21,6 @@ public class PrenotazioneDTO
 	private String flagCestino;
 	private String tipoDieta;
 	private String tipoRazione;
+	private String specchioFlag;
+	private String colObbligatoriaFlag;
 }

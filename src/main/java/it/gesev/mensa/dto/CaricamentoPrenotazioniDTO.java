@@ -62,5 +62,11 @@ public class CaricamentoPrenotazioniDTO
 	@CsvBindByPosition(position = 16)
 	private String tipoRazione;
 	
+	@CsvBindByPosition(position = 17)
+	private String specchioFlag;
+	
+	@CsvBindByPosition(position = 18)
+	private String colObbligatoriaFlag;
+	
 	
 }

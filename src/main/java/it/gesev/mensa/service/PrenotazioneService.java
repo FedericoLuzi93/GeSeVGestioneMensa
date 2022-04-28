@@ -11,4 +11,5 @@ public interface PrenotazioneService
 {
 	public void insertPrenotazioni(MultipartFile file) throws IOException;
 	public List<PrenotazioneDTO> getListaPrenotazioni(String dataPrenotazione);
+	
 }

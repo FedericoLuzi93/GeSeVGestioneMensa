@@ -87,4 +87,10 @@ public class Prenotazione
 	@ManyToOne
 	@JoinColumn(name = "tipo_razione_fk")
 	private TipoRazione tipoRazione;
+	
+	@Column(name = "specchio_flag")
+	private String specchioFlag;
+	
+	@Column(name = "col_obbligatoria_flag")
+	private String colObbligatoriaFlag;
 }

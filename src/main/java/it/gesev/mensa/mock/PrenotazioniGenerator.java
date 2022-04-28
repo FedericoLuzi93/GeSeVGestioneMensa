@@ -3,7 +3,6 @@ package it.gesev.mensa.mock;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -152,18 +151,17 @@ public class PrenotazioniGenerator
 		List<String> struttureOrganizzative = letturaRighe("struttura_organizzativa.csv");
 		List<String> tipoRazione = Arrays.asList("O", "M", "P", "C");
 		
-		
 		Integer idMensa = 265;
 		String idSistema = "GPS";
 		Integer idTipoPasto = 3;
 		
 		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
 		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(formatter.parse("01-03-2022"));
+		calendar.setTime(formatter.parse("01-05-2022"));
 		
 		BufferedWriter writer = new BufferedWriter(new FileWriter("prenotazioni_" + idTipoPasto + ".csv"));
 		
-		while(calendar.get(Calendar.MONTH) == Calendar.MARCH)
+		while(calendar.get(Calendar.MONTH) == Calendar.MAY)
 		{
 			
 			System.out.println(formatter.format(calendar.getTime()));
@@ -233,7 +231,13 @@ public class PrenotazioniGenerator
 				buffer.append(RandomUtils.nextInt(1, 7) + ",");	
 				
 				/* tipo razione */
-				buffer.append(tipoRazione.get(RandomUtils.nextInt(0, tipoRazione.size())));
+				buffer.append(tipoRazione.get(RandomUtils.nextInt(0, tipoRazione.size())) + ",");
+				
+				/* flag specchio */
+				buffer.append(RandomUtils.nextBoolean() ? "Y," : "N,");
+				
+				/* flag col obbligatoria */
+				buffer.append(RandomUtils.nextBoolean() ? "Y" : "N");
 				
 				buffer.append("\n");
 				
@@ -278,7 +282,13 @@ public class PrenotazioniGenerator
 				buffer.append(RandomUtils.nextInt(1, 7) + ",");	
 				
 				/* tipo razione */
-				buffer.append(tipoRazione.get(RandomUtils.nextInt(0, tipoRazione.size())));
+				buffer.append(tipoRazione.get(RandomUtils.nextInt(0, tipoRazione.size())) + ",");
+				
+				/* flag specchioFlag */
+				buffer.append(RandomUtils.nextBoolean() ? "Y," : "N,");
+				
+				/* flag colObbligatoriaFlag */
+				buffer.append(RandomUtils.nextBoolean() ? "Y" : "N");
 				
 				buffer.append("\n");
 				

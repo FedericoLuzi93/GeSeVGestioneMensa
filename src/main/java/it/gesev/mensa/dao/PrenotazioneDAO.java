@@ -10,4 +10,5 @@ public interface PrenotazioneDAO
 {
 	public void insertPrenotazione(List<CaricamentoPrenotazioniDTO> listaPrenotazioni);
 	public List<PrenotazioneDTO> getListaPrenotazioni(Date dataPrenotazione);
+	
 }

@@ -9,5 +9,7 @@ import it.gesev.mensa.entity.TipoRazione;
 public interface TipoRazioneRepository extends JpaRepository<TipoRazione, Integer> {
 	
 	public Optional<TipoRazione> findByIdTipoRazione(String idTipoRazione);
+	
+	
 
 }
