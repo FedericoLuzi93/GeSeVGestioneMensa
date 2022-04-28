@@ -1419,7 +1419,7 @@ public class ReportServiceImpl implements ReportService
 		DC1NomNumericaJasper dc1NomNum = reportDAO.richiestaDocumentoDC1NominativoNumerica(dc4RichiestaDTO);
 		List<DC1NomJasper> listaDC1Nom = reportDAO.richiestaDocumentoDC1Nominativo(dc4RichiestaDTO);
 		List<DC1NomNumericaJasper> listaDC1NomNumericaJasper = new ArrayList<>();
-		
+
 		List<Ente> listaEnti = mensaDAO.getAllEnti();
 		String descrizioneEnte = "";
 		for(Ente e : listaEnti)
@@ -1427,7 +1427,7 @@ public class ReportServiceImpl implements ReportService
 			if(e.getIdEnte() == dc4RichiestaDTO.getIdEnte())
 				descrizioneEnte = e.getDescrizioneEnte();
 		}
-		
+
 		List<TipoPasto> listaTipoPasto = mensaDAO.getAllTipoPasto();
 		String descrizioneTipoPasto = "";
 		for(TipoPasto tp : listaTipoPasto)
@@ -1466,7 +1466,7 @@ public class ReportServiceImpl implements ReportService
 			parameters.put("anno", dc4RichiestaDTO.getAnno());
 			parameters.put("giorno", dc4RichiestaDTO.getGiorno());
 			parameters.put("tipoPasto", descrizioneTipoPasto);
-			
+
 
 			//Stampa
 			JasperReport report = JasperCompileManager.compileReport(mockFile.getAbsolutePath());
@@ -1695,12 +1695,42 @@ public class ReportServiceImpl implements ReportService
 		logger.info("Accesso a getListaPastiPrenotatiFiltrata, classe ReportServiceImpl");
 		List<Prenotazione> listaPrenotazioni = reportDAO.getListaPastiPrenotatiFiltrata(dc4RichiestaDTO);
 		List<PastiPrenotatiDTO> listaPastiPrenotatiDTO = new ArrayList<>();
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
 		logger.info("Inizio ciclo For in getListaPastiPrenotatiFiltrata classe ReportServiceImpl");
 		for(Prenotazione p : listaPrenotazioni)
 		{
 			PastiPrenotatiDTO pDTO = new PastiPrenotatiDTO();
-			pDTO = PrenotazioneMapper.mapToDTO(p, dateFormat);
-			
+			if(p.getIdentificativoSistema() != null)
+				pDTO.setIdentificativoSistema(p.getIdentificativoSistema().getDescrizioneSistema());
+
+			pDTO.setDescrizioneMensa(p.getMensa().getDescrizioneMensa());
+			pDTO.setCodiceFiscale(p.getCodiceFiscale());
+			pDTO.setDataPrenotazione(simpleDateFormat.format(p.getDataPrenotazione()));
+			pDTO.setNome(p.getNome());
+			pDTO.setCognome(p.getCognome());
+			pDTO.setTipoPersonale(p.getTipoPersonale());
+
+			if(p.getGrado() != null)
+				pDTO.setGrado(p.getGrado().getDescrGrado());
+
+			if(p.getTipoGrado() != null)
+				pDTO.setTipoGrado(p.getTipoGrado().getDescrizioneTipoGrado());
+
+			if(p.getStrutturaOrganizzativa() != null)
+				pDTO.setStrutturaOrganizzativa(p.getStrutturaOrganizzativa().getDescrizioneStrutturaOrganizzativaB());
+
+			if(p.getDenominazioneUnitaFunzionale() != null)
+				pDTO.setDenominazioneUnitaFunzionale(p.getDenominazioneUnitaFunzionale());
+
+			pDTO.setCommensaleEsterno(p.getCommensaleEsterno());
+			pDTO.setTipoPagamento(p.getTipoPagamento().getDescrizioneTipoPagamento());
+			pDTO.setTipoPasto(p.getTipoPasto().getDescrizione());
+			pDTO.setFlagCestino(p.getFlagCestino());
+			pDTO.setTipoDieta(p.getTipoDieta().getDescrizioneTipoDieta());
+			pDTO.setTipoRazione(p.getTipoRazione().getDescrizioneTipoRazione());
+			pDTO.setSpecchioFlag(p.getSpecchioFlag());			
+			pDTO.setColObbligatoriaFlag(p.getColObbligatoriaFlag());
+
 			listaPastiPrenotatiDTO.add(pDTO);
 		}
 		logger.info("Fine getListaPastiPrenotatiFiltrata classe ReportServiceImpl");
