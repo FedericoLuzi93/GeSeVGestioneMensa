@@ -18,4 +18,7 @@ public interface AssRuoloDipendenteRepository extends JpaRepository<AssDipendent
 	
 	@Query("select adr from AssDipendenteRuolo adr where adr.ruolo.flagPersonaleEsterno = 'Y' and adr.mensa.codiceMensa = :codiceMensa")
 	public List<AssDipendenteRuolo> findRuoliDipendentiEsterni(@Param("codiceMensa") Integer codiceMensa);
+	
+	@Query("select adr from AssDipendenteRuolo adr where adr.ruolo.descrizioneRuoloMensa = :ruolo and adr.mensa.codiceMensa = :codiceMensa and adr.dipendente is not null")
+	public List<AssDipendenteRuolo> findDipendentiByRuoloAndMensa(@Param("ruolo") String descRuolo, @Param("codiceMensa") Integer codiceMensa);
 }

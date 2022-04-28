@@ -1,6 +1,8 @@
 package it.gesev.mensa.dao;
 
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
@@ -10,9 +12,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
 import org.springframework.stereotype.Component;
 
+import it.gesev.mensa.entity.AttestazioneClient;
 import it.gesev.mensa.entity.CodiceOTP;
 import it.gesev.mensa.entity.Mensa;
 import it.gesev.mensa.exc.GesevException;
+import it.gesev.mensa.repository.AttestazioneClientRepository;
 import it.gesev.mensa.repository.CodiceOTPRepository;
 import it.gesev.mensa.repository.MensaRepository;
 
@@ -25,6 +29,8 @@ public class AttestazioneClientDAOImpl implements AttestazioneClientDAO
 	private CodiceOTPRepository codiceRepository;
 	@Autowired
 	private MensaRepository mensaRepository;
+	@Autowired
+	private AttestazioneClientRepository attestazioneClientRepository;
 	
 	/**
 	 * @param Integer idMensa
@@ -83,5 +89,36 @@ public class AttestazioneClientDAOImpl implements AttestazioneClientDAO
 		}
 		return generatedString;
 	}
+
+	/**
+	 * Esegue il controllo del mac address, se corretto, salva l'attestazione su db
+	 */
+	@Override
+	public void eseguiAttestazioneClient(AttestazioneClient attestazioneClient) throws GesevException {
+		try {
+			logger.info("Inizio eseguiAttestazioneClient");
+			if (Objects.isNull(attestazioneClient.getMacAddress()) || "".equalsIgnoreCase(attestazioneClient.getMacAddress())) {
+				logger.error("Errore nell'attestazione del client: Mac Address vuoto");
+				throw new GesevException("Errore nell'attestazione del client: Mac Address vuoto", HttpStatus.BAD_REQUEST);
+			}
+			String regex = "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})|([0-9a-fA-F]{4}\\.[0-9a-fA-F]{4}\\.[0-9a-fA-F]{4})$";
+			Pattern p = Pattern.compile(regex);
+			Matcher m = p.matcher(attestazioneClient.getMacAddress());
+			if (!m.matches()) {
+				logger.error("Errore nell'attestazione del client: formato Mac Address errato");
+				throw new GesevException("Errore nell'attestazione del client: formato Mac Address errato", HttpStatus.BAD_REQUEST);
+			}
+			
+			attestazioneClientRepository.save(attestazioneClient);
+			logger.info("Fine eseguiAttestazioneClient, operazione correttamente eseguita");
+		} catch (GesevException gex) {
+			throw gex;
+		} catch (Exception ex) {
+			logger.error("Errore nell'attestazione del client: " + attestazioneClient.toString());
+			throw new GesevException("Errore nell'attestazione del client", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	
 
 }

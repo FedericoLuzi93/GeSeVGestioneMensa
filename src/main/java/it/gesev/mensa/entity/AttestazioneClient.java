@@ -1,6 +1,6 @@
 package it.gesev.mensa.entity;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -36,7 +36,7 @@ public class AttestazioneClient
 	private String macAddress;
 	
 	@Column(name = "data_ultima_attivita")
-	private Date dataUltimaAttivita;
+	private LocalDate dataUltimaAttivita;
 	
 	@ManyToOne(cascade={CascadeType.PERSIST, CascadeType.DETACH,
 		 	CascadeType.MERGE, CascadeType.REFRESH})

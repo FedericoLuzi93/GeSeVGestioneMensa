@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import it.gesev.mensa.dto.AttestazioneClientDTO;
+import it.gesev.mensa.dto.AttestazioneClientInputDTO;
 import it.gesev.mensa.dto.CodiceOTPDTO;
 import it.gesev.mensa.dto.EsitoDTO;
 import it.gesev.mensa.exc.GesevException;
@@ -43,6 +45,40 @@ public class AttestazioneClientController {
 		{
 			CodiceOTPDTO codiceOTPDTO2 = attestazioneClientService.getCodiceOtp(codiceOTPDTO.getCodiceMensa());
 			esito.setBody(codiceOTPDTO2);
+			status = HttpStatus.OK;
+		}
+		
+		catch(GesevException gex)
+		{
+			logger.info("Si e' verificata un'eccezione", gex);
+			esito.setMessaggio(gex.getMessage());
+			status = gex.getStatus();
+		}
+		
+		catch(Exception ex)
+		{
+			logger.info("Si e' verificata un'eccezione interna", ex);
+			esito.setMessaggio(MESSAGGIO_ERRORE_INTERNO);
+			status = HttpStatus.INTERNAL_SERVER_ERROR;	
+		}
+		
+		esito.setStatus(status.value());
+		return ResponseEntity.status(status).headers(new HttpHeaders()).body(esito);
+	}
+	
+	@PostMapping("/eseguiAttestazione")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
+			@ApiResponse(code = 400, message = "Dati in ingresso non validi"),
+			@ApiResponse(code = 500, message = "Errore interno") })
+	public ResponseEntity<EsitoDTO> generaAttestazioneMensa(@RequestBody(required = true) AttestazioneClientInputDTO attestazioneClientInputDTO ){
+		logger.info("Accesso al servizio generaCOdiceOtp");
+		EsitoDTO esito = new EsitoDTO();
+		HttpStatus status = null;
+		
+		try
+		{
+			AttestazioneClientDTO attestazioneClientDTO = attestazioneClientService.eseguiAttestazione(attestazioneClientInputDTO.fromClientInputDtoToClientDto());
+			esito.setBody(attestazioneClientDTO);
 			status = HttpStatus.OK;
 		}
 		
