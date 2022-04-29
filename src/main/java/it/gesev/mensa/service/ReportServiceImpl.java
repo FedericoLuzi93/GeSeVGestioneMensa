@@ -1515,7 +1515,7 @@ public class ReportServiceImpl implements ReportService
 		List<Pietanza> listaTuttePietanze = reportDAO.richiestaTuttePietanze(menuLeggeroDTO);
 		File mockFile = ResourceUtils.getFile("classpath:Menu.jrxml");
 
-		String colazione = "";
+		String colazione = " ";
 		String pranzoPrimo = " ";
 		String pranzoSecondo = " ";
 		String pranzoContorno = " ";
