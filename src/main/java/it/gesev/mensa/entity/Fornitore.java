@@ -35,6 +35,12 @@ public class Fornitore implements Serializable
 	@Column(name="DESCRIZIONE")
 	private String descrizione;
 	
+	@Column(name = "recapito")
+	private String recapito;
+	
+	@Column(name = "pi_cf")
+	private String piCf;
+	
 	@OneToMany(mappedBy="fornitore", cascade={CascadeType.PERSIST, CascadeType.DETACH,
 		 	CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
 	private List<TestataMovimento> testataMovimento;
@@ -42,6 +48,10 @@ public class Fornitore implements Serializable
 	@OneToMany(mappedBy="fornitore", cascade={CascadeType.PERSIST, CascadeType.DETACH,
 		 	CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
 	private List<AssDipendenteRuolo> listaAssDipendenteRuolo;
+	
+	@OneToMany(mappedBy="fornitore", cascade={CascadeType.PERSIST, CascadeType.DETACH,
+		 	CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
+	private List<Mensa> mensa;
 	
 	
 }

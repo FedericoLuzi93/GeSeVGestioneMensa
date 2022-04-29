@@ -38,4 +38,10 @@ public class MensaDTO
 	private boolean presenzaFile;
 	private String descrizioneEnte;
 	private int idEnte;
+	
+	//Fornitore
+	private int idFornitore;
+	private String descrizioneFornitore;
+	private String recapitoFornitore;
+	private String partitaIvaCFFornitore;
 }

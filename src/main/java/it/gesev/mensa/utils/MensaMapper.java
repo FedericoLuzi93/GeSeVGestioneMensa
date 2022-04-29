@@ -3,6 +3,7 @@ package it.gesev.mensa.utils;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,6 +45,14 @@ public class MensaMapper
 			mensaDTO.setPresenzaFile(true);
 		else
 			mensaDTO.setPresenzaFile(false);
+		
+		// Controllo presenza fornitore
+		if (Objects.nonNull(mensa.getFornitore())){
+			mensaDTO.setIdFornitore(mensa.getFornitore().getCodice());
+			mensaDTO.setDescrizioneFornitore(mensa.getFornitore().getDescrizione());
+			mensaDTO.setRecapitoFornitore(mensa.getFornitore().getRecapito());
+			mensaDTO.setPartitaIvaCFFornitore(mensa.getFornitore().getPiCf());
+		}
 
 		//LocalTime a String
 		//		mensaDTO.setOrarioAl(mensa.getOrarioAl().toString());

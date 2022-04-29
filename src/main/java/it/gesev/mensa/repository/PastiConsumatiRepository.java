@@ -16,5 +16,5 @@ public interface PastiConsumatiRepository extends JpaRepository<PastiConsumati, 
 
 	@Query("select p from PastiConsumati p where p.mensa.ente.idEnte = :idEnte and p.dataPasto = :dataPasto and "
 			+ "p.tipoPasto.codiceTipoPasto = :codiceTipoPasto ")
-	List<PastiConsumati> getListaFiltrataNoSistema(int idEnte, Date giornoDatato, int tipoPasto);
+	List<PastiConsumati> getListaFiltrataNoSistema(int idEnte, Date dataPasto, int codiceTipoPasto);
 }

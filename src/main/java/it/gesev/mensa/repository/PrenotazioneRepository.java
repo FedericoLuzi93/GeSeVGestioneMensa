@@ -16,6 +16,6 @@ public interface PrenotazioneRepository extends JpaRepository<Prenotazione, Inte
 
 	@Query("select p from Prenotazione p where p.mensa.ente.idEnte = :idEnte and p.dataPrenotazione = :dataPrenotazione and "
 			+ "p.tipoPasto.codiceTipoPasto = :codiceTipoPasto ")
-	List<Prenotazione> getListaFiltrataNoSistema(int idEnte, Date giornoDatato, int tipoPasto);
+	List<Prenotazione> getListaFiltrataNoSistema(int idEnte, Date dataPrenotazione, int codiceTipoPasto);
 
 }

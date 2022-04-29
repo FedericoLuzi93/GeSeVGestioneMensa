@@ -126,4 +126,8 @@ public class Mensa
 	@OneToMany(mappedBy = "mensa", fetch = FetchType.LAZY)
 	private List<CodiceOTP> listaCodiciOTP;
 	
+	@ManyToOne
+	@JoinColumn(name = "fornitore_fk")
+	private Fornitore fornitore;
+	
 }
