@@ -1351,7 +1351,13 @@ public class ReportDAOImpl implements ReportDAO
 		if(StringUtils.isBlank(dataCorretta))
 			throw new GesevException("Impossibile generare il documento DC1 Nominativo, data non valida", HttpStatus.BAD_REQUEST);
 
-		List<PastiConsumati> listaPc = pastiConsumatiRepository.getListaFiltrata(dc4RichiestaDTO.getIdEnte(), giornoDatato, dc4RichiestaDTO.getTipoPasto(), dc4RichiestaDTO.getSistemaPersonale());
+		List<PastiConsumati> listaPc = new ArrayList<>();
+		
+		if(!StringUtils.isBlank(dc4RichiestaDTO.getSistemaPersonale()))
+			listaPc = pastiConsumatiRepository.getListaFiltrata(dc4RichiestaDTO.getIdEnte(), giornoDatato, dc4RichiestaDTO.getTipoPasto(), dc4RichiestaDTO.getSistemaPersonale());
+		else
+			listaPc = pastiConsumatiRepository.getListaFiltrataNoSistema(dc4RichiestaDTO.getIdEnte(), giornoDatato, dc4RichiestaDTO.getTipoPasto());
+		
 		return listaPc;
 	}
 
@@ -1366,7 +1372,12 @@ public class ReportDAOImpl implements ReportDAO
 		if(StringUtils.isBlank(dataCorretta))
 			throw new GesevException("Impossibile generare il documento DC1 Nominativo, data non valida", HttpStatus.BAD_REQUEST);
 
-		List<Prenotazione> listaPrenotati = prenotazioneRepository.getListaFiltrata(dc4RichiestaDTO.getIdEnte(), giornoDatato, dc4RichiestaDTO.getTipoPasto(), dc4RichiestaDTO.getSistemaPersonale());
+		List<Prenotazione> listaPrenotati = new ArrayList<>();
+		if(!StringUtils.isBlank(dc4RichiestaDTO.getSistemaPersonale()))
+			listaPrenotati = prenotazioneRepository.getListaFiltrata(dc4RichiestaDTO.getIdEnte(), giornoDatato, dc4RichiestaDTO.getTipoPasto(), dc4RichiestaDTO.getSistemaPersonale());
+		else
+			listaPrenotati = prenotazioneRepository.getListaFiltrataNoSistema(dc4RichiestaDTO.getIdEnte(), giornoDatato, dc4RichiestaDTO.getTipoPasto());
+		
 		return listaPrenotati;
 	}
 
