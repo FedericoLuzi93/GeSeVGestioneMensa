@@ -1,10 +1,12 @@
 package it.gesev.mensa.dao;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +16,12 @@ import org.springframework.stereotype.Component;
 
 import it.gesev.mensa.entity.AttestazioneClient;
 import it.gesev.mensa.entity.CodiceOTP;
+import it.gesev.mensa.entity.Grado;
 import it.gesev.mensa.entity.Mensa;
 import it.gesev.mensa.exc.GesevException;
 import it.gesev.mensa.repository.AttestazioneClientRepository;
 import it.gesev.mensa.repository.CodiceOTPRepository;
+import it.gesev.mensa.repository.GradoRepository;
 import it.gesev.mensa.repository.MensaRepository;
 
 @Component
@@ -31,6 +35,9 @@ public class AttestazioneClientDAOImpl implements AttestazioneClientDAO
 	private MensaRepository mensaRepository;
 	@Autowired
 	private AttestazioneClientRepository attestazioneClientRepository;
+	
+	@Autowired
+	private GradoRepository gradoRepository;
 	
 	/**
 	 * @param Integer idMensa
@@ -117,6 +124,18 @@ public class AttestazioneClientDAOImpl implements AttestazioneClientDAO
 			logger.error("Errore nell'attestazione del client: " + attestazioneClient.toString());
 			throw new GesevException("Errore nell'attestazione del client", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+	}
+
+	@Override
+	public Grado getGrado(String codiceGrado) 
+	{
+		logger.info("Ricerca grado ...");
+		if(StringUtils.isBlank(codiceGrado))
+			throw new GesevException("Codice grado non valido", HttpStatus.BAD_REQUEST);
+		
+		Optional<Grado> optGrado = gradoRepository.findById(codiceGrado);
+		
+		return optGrado.isPresent() ? optGrado.get() : null;
 	}
 	
 	

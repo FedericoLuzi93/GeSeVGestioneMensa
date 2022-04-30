@@ -238,17 +238,17 @@ public class RuoliDAOImpl implements RuoliDAO
 		associazione.setDataFineRuolo(formatter.parse("9999-12-31"));
 		associazione.setMensa(optionalMensa.get());
 		
-		if(optionalRuolo.get().getFlagPersonaleEsterno().equalsIgnoreCase("Y"))
-		{
-			if(idFornitore == null)
-				throw new GesevException("ID fornitore non valido", HttpStatus.BAD_REQUEST);
-			
-			Optional<Fornitore> optFornitore = fornitoreRepository.findById(idFornitore);
-			if(!optFornitore.isPresent())
-				throw new GesevException("ID fornitore non valido", HttpStatus.BAD_REQUEST);
-			
-			associazione.setFornitore(optFornitore.get());
-		}
+//		if(optionalRuolo.get().getFlagPersonaleEsterno().equalsIgnoreCase("Y"))
+//		{
+//			if(idFornitore == null)
+//				throw new GesevException("ID fornitore non valido", HttpStatus.BAD_REQUEST);
+//			
+//			Optional<Fornitore> optFornitore = fornitoreRepository.findById(idFornitore);
+//			if(!optFornitore.isPresent())
+//				throw new GesevException("ID fornitore non valido", HttpStatus.BAD_REQUEST);
+//			
+//			associazione.setFornitore(optFornitore.get());
+//		}
 		
 		assRuoloDipendenteRepository.save(associazione);
 		

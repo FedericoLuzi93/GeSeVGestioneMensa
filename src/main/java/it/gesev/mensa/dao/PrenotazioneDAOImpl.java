@@ -37,7 +37,7 @@ import it.gesev.mensa.entity.TipoPagamento;
 import it.gesev.mensa.entity.TipoPasto;
 import it.gesev.mensa.entity.TipoRazione;
 import it.gesev.mensa.exc.GesevException;
-import it.gesev.mensa.repository.GradoRepositoory;
+import it.gesev.mensa.repository.GradoRepository;
 import it.gesev.mensa.repository.IdentificativoSistemaRepository;
 import it.gesev.mensa.repository.MensaRepository;
 import it.gesev.mensa.repository.PrenotazioneRepository;
@@ -79,7 +79,7 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO
 	private MensaRepository mensaRepository;
 
 	@Autowired
-	private GradoRepositoory gradoRepository;
+	private GradoRepository gradoRepository;
 
 	@Autowired
 	private TipoGradoRepository tipoGradoRepository;

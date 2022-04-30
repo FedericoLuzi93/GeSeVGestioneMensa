@@ -3,10 +3,8 @@ package it.gesev.mensa.service;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 
 import javax.transaction.Transactional;
 
@@ -18,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import it.gesev.mensa.dao.AttestazioneClientDAO;
-import it.gesev.mensa.dao.MensaDAO;
 import it.gesev.mensa.dto.AttestazioneClientDTO;
 import it.gesev.mensa.dto.CodiceOTPDTO;
 import it.gesev.mensa.dto.OperatoreDTO;
@@ -29,8 +26,8 @@ import it.gesev.mensa.entity.AssMensaTipoDieta;
 import it.gesev.mensa.entity.AssTipoPastoMensa;
 import it.gesev.mensa.entity.AttestazioneClient;
 import it.gesev.mensa.entity.CodiceOTP;
+import it.gesev.mensa.entity.Grado;
 import it.gesev.mensa.entity.StatoClient;
-import it.gesev.mensa.entity.TipoPasto;
 import it.gesev.mensa.enums.RuoloMensaEnum;
 import it.gesev.mensa.enums.StatoClientEnum;
 import it.gesev.mensa.exc.GesevException;
@@ -158,13 +155,34 @@ public class AttestazioneClientServiceImpl implements AttestazioneClientService 
 		while(iteratorDipendente.hasNext()) {
 			OperatoreDTO operatoreDTO = new OperatoreDTO();
 			AssDipendenteRuolo assDipendenteRuolo = iteratorDipendente.next();
-			operatoreDTO.setNome(assDipendenteRuolo.getDipendente().getNome());
-			operatoreDTO.setCognome(assDipendenteRuolo.getDipendente().getCognome());
-			operatoreDTO.setCodiceFiscale(assDipendenteRuolo.getDipendente().getCodiceFiscale());
-			operatoreDTO.setEmail(assDipendenteRuolo.getDipendente().getEmail());
-			operatoreDTO.setGrado(assDipendenteRuolo.getDipendente().getGrado());
-			operatoreDTO.setNumeroCMD(assDipendenteRuolo.getDipendente().getCmd());
-			operatoreDTO.setTipoPersonale(assDipendenteRuolo.getDipendente().getTipoPersonale());
+			
+			if(assDipendenteRuolo.getDipendente() != null)
+			{
+				operatoreDTO.setNome(assDipendenteRuolo.getDipendente().getNome());
+				operatoreDTO.setCognome(assDipendenteRuolo.getDipendente().getCognome());
+				operatoreDTO.setCodiceFiscale(assDipendenteRuolo.getDipendente().getCodiceFiscale());
+				operatoreDTO.setEmail(assDipendenteRuolo.getDipendente().getEmail());
+				
+				if(assDipendenteRuolo.getDipendente().getGrado() != null)
+				{
+					Grado grado = attestazioneClientDAO.getGrado(assDipendenteRuolo.getDipendente().getGrado());
+					if(grado != null)
+						operatoreDTO.setGrado(grado.getDescbGrado());
+				}
+				
+				operatoreDTO.setNumeroCMD(assDipendenteRuolo.getDipendente().getCmd());
+				operatoreDTO.setTipoPersonale(assDipendenteRuolo.getDipendente().getTipoPersonale());
+			}
+			
+			else
+			{
+				operatoreDTO.setNome(assDipendenteRuolo.getDipendenteEsterno().getNomeDipendenteEsterno());
+				operatoreDTO.setCognome(assDipendenteRuolo.getDipendenteEsterno().getCognomeDipendenteEsterno());
+				operatoreDTO.setCodiceFiscale(assDipendenteRuolo.getDipendenteEsterno().getCodiceFiscale());
+				operatoreDTO.setEmail(assDipendenteRuolo.getDipendenteEsterno().getEmailDipendenteEsterno());
+				
+			}
+			
 			operatoreDTOs.add(operatoreDTO);
 		}
 		attestazioneClientDTO.setElencoOperatori(operatoreDTOs);
