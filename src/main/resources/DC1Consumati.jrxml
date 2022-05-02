@@ -298,9 +298,9 @@ truppa]]></text>
 							<staticText>
 								<reportElement x="0" y="0" width="30" height="20" uuid="9e1e993d-5019-4e30-b0a6-e7b9aa4c2e9c"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font size="7"/>
+									<font size="6"/>
 								</textElement>
-								<text><![CDATA[Prenotati]]></text>
+								<text><![CDATA[Consumati]]></text>
 							</staticText>
 						</jr:tableHeader>
 						<jr:detailCell style="Table_TD" height="20">
@@ -340,11 +340,11 @@ truppa]]></text>
 						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonna4"/>
 						<jr:tableHeader style="Table_TH" height="20" rowSpan="1">
 							<staticText>
-								<reportElement x="0" y="0" width="30" height="20" uuid="25b6f804-778b-4b60-8962-967dfbfbc917"/>
+								<reportElement x="0" y="0" width="30" height="20" uuid="f35a0334-d843-462b-baac-635391ae478d"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font size="7"/>
+									<font size="6"/>
 								</textElement>
-								<text><![CDATA[Prenotati]]></text>
+								<text><![CDATA[Consumati]]></text>
 							</staticText>
 						</jr:tableHeader>
 						<jr:detailCell style="Table_TD" height="20">
@@ -383,11 +383,11 @@ truppa]]></text>
 						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonna6"/>
 						<jr:tableHeader style="Table_TH" height="20" rowSpan="1">
 							<staticText>
-								<reportElement x="0" y="0" width="30" height="20" uuid="dc572aed-43e6-446b-a28e-b9e84210aba3"/>
+								<reportElement x="0" y="0" width="30" height="20" uuid="d16b21b5-2046-43a7-b306-64213808c9e8"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font size="7"/>
+									<font size="6"/>
 								</textElement>
-								<text><![CDATA[Prenotati]]></text>
+								<text><![CDATA[Consumati]]></text>
 							</staticText>
 						</jr:tableHeader>
 						<jr:detailCell style="Table_TD" height="20">
@@ -428,11 +428,11 @@ truppa]]></text>
 						<jr:tableHeader style="Table_TH" height="20" rowSpan="1">
 							<property name="com.jaspersoft.studio.unit.width" value="px"/>
 							<staticText>
-								<reportElement x="0" y="0" width="30" height="20" uuid="25c7ff0c-0e0e-4983-a3ec-314c8d74f1f6"/>
+								<reportElement x="0" y="0" width="30" height="20" uuid="d665d2d7-e5d5-4459-b70a-97b2840f9bcd"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font size="7"/>
+									<font size="6"/>
 								</textElement>
-								<text><![CDATA[Prenotati]]></text>
+								<text><![CDATA[Consumati]]></text>
 							</staticText>
 						</jr:tableHeader>
 						<jr:detailCell style="Table_TD" height="20">
@@ -474,11 +474,11 @@ truppa]]></text>
 						<jr:tableHeader style="Table_TH" height="20" rowSpan="1">
 							<property name="com.jaspersoft.studio.unit.width" value="px"/>
 							<staticText>
-								<reportElement x="0" y="0" width="30" height="20" uuid="c162fd8f-b28c-4d3b-8330-61348d5b5053"/>
+								<reportElement x="0" y="0" width="30" height="20" uuid="507dfb26-beb3-45af-aaac-f8e91c7e1a11"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font size="7"/>
+									<font size="6"/>
 								</textElement>
-								<text><![CDATA[Prenotati]]></text>
+								<text><![CDATA[Consumati]]></text>
 							</staticText>
 						</jr:tableHeader>
 						<jr:detailCell style="Table_TD" height="20">
@@ -520,11 +520,11 @@ truppa]]></text>
 						<jr:tableHeader style="Table_TH" height="20" rowSpan="1">
 							<property name="com.jaspersoft.studio.unit.width" value="px"/>
 							<staticText>
-								<reportElement x="0" y="0" width="30" height="20" uuid="65615de1-3386-4242-8406-a9160eb956ac"/>
+								<reportElement x="0" y="0" width="30" height="20" uuid="b588b214-c9bc-4b2f-8285-9458f12c22ce"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font size="7"/>
+									<font size="6"/>
 								</textElement>
-								<text><![CDATA[Prenotati]]></text>
+								<text><![CDATA[Consumati]]></text>
 							</staticText>
 						</jr:tableHeader>
 						<jr:detailCell style="Table_TD" height="20">
@@ -566,11 +566,11 @@ truppa]]></text>
 						<jr:tableHeader style="Table_TH" height="20" rowSpan="1">
 							<property name="com.jaspersoft.studio.unit.width" value="px"/>
 							<staticText>
-								<reportElement x="0" y="0" width="30" height="20" uuid="abd4681b-44a5-4e5b-ab6c-bd47386db9dc"/>
+								<reportElement x="0" y="0" width="30" height="20" uuid="0da9abd3-f66c-43ca-80a7-065cf7c70819"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font size="7"/>
+									<font size="6"/>
 								</textElement>
-								<text><![CDATA[Prenotati]]></text>
+								<text><![CDATA[Consumati]]></text>
 							</staticText>
 						</jr:tableHeader>
 						<jr:detailCell style="Table_TD" height="20">
@@ -612,11 +612,11 @@ truppa]]></text>
 						<jr:tableHeader style="Table_TH" height="20" rowSpan="1">
 							<property name="com.jaspersoft.studio.unit.width" value="px"/>
 							<staticText>
-								<reportElement x="0" y="0" width="30" height="20" uuid="a2fa0ee3-635f-476e-b20e-9b4a2377f728"/>
+								<reportElement x="0" y="0" width="30" height="20" uuid="d3b1a563-1ed9-480b-84ff-347864b1b1d9"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font size="7"/>
+									<font size="6"/>
 								</textElement>
-								<text><![CDATA[Prenotati]]></text>
+								<text><![CDATA[Consumati]]></text>
 							</staticText>
 						</jr:tableHeader>
 						<jr:detailCell style="Table_TD" height="20">
@@ -658,11 +658,11 @@ truppa]]></text>
 						<jr:tableHeader style="Table_TH" height="20" rowSpan="1">
 							<property name="com.jaspersoft.studio.unit.width" value="px"/>
 							<staticText>
-								<reportElement x="0" y="0" width="30" height="20" uuid="85558e02-3fd1-47ae-bd3f-e01ea9d38dba"/>
+								<reportElement x="0" y="0" width="30" height="20" uuid="4c911968-10b4-4386-9a7f-5091b665614d"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font size="7"/>
+									<font size="6"/>
 								</textElement>
-								<text><![CDATA[Prenotati]]></text>
+								<text><![CDATA[Consumati]]></text>
 							</staticText>
 						</jr:tableHeader>
 						<jr:detailCell style="Table_TD" height="20">
@@ -877,7 +877,7 @@ truppa]]></text>
 				<text><![CDATA[PESANTI]]></text>
 			</staticText>
 		</band>
-		<band height="50">
+		<band height="42">
 			<componentElement>
 				<reportElement x="5" y="10" width="792" height="30" uuid="1e203b3a-1584-41c2-8842-9361015ad982">
 					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
@@ -908,7 +908,7 @@ truppa]]></text>
 		</band>
 	</detail>
 	<pageFooter>
-		<band height="55" splitType="Stretch"/>
+		<band height="21" splitType="Stretch"/>
 	</pageFooter>
 	<summary>
 		<band height="19" splitType="Stretch"/>
