@@ -13,6 +13,7 @@ import it.gesev.mensa.dto.DC4TabellaDTO;
 import it.gesev.mensa.dto.FEDC1Nominativo;
 import it.gesev.mensa.dto.FileDC4DTO;
 import it.gesev.mensa.dto.FirmaQuotidianaDC4DTO;
+import it.gesev.mensa.dto.Ges2ComunicazionePastiDTO;
 import it.gesev.mensa.dto.IdentificativoSistemaDTO;
 import it.gesev.mensa.dto.MenuDTO;
 import it.gesev.mensa.dto.MenuLeggeroDTO;
@@ -62,5 +63,8 @@ public interface ReportService
 	public List<PastiConsumatiDTO> getListaPastiConsumatiFiltrata(DC4RichiestaDTO dc4RichiestaDTO) throws ParseException;
 	public List<IdentificativoSistemaDTO> getAllIdentificativiSistema();
 	public List<PastiPrenotatiDTO> getListaPastiPrenotatiFiltrata(DC4RichiestaDTO dc4RichiestaDTO) throws ParseException;
+	
+	// Pasti giornalieri
+	public Ges2ComunicazionePastiDTO comunicazionePastiDaApprontare(DC4RichiestaDTO dc4RichiestaDTO) throws ParseException;
 
 }
