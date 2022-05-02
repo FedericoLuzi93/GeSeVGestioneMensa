@@ -877,11 +877,9 @@ truppa]]></text>
 				<text><![CDATA[PESANTI]]></text>
 			</staticText>
 		</band>
-	</detail>
-	<pageFooter>
-		<band height="55" splitType="Stretch">
+		<band height="50">
 			<componentElement>
-				<reportElement x="5" y="8" width="792" height="30" uuid="1e203b3a-1584-41c2-8842-9361015ad982">
+				<reportElement x="5" y="10" width="792" height="30" uuid="1e203b3a-1584-41c2-8842-9361015ad982">
 					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
 					<property name="com.jaspersoft.studio.table.style.table_header" value="Table 1_TH"/>
 					<property name="com.jaspersoft.studio.table.style.column_header" value="Table 1_CH"/>
@@ -908,6 +906,9 @@ truppa]]></text>
 				</jr:table>
 			</componentElement>
 		</band>
+	</detail>
+	<pageFooter>
+		<band height="55" splitType="Stretch"/>
 	</pageFooter>
 	<summary>
 		<band height="19" splitType="Stretch"/>
