@@ -629,8 +629,8 @@ public class ReportServiceImpl implements ReportService
 		parziale.setPeCePrenotati(so.getPesCenTo() + so.getPesCenTg());
 
 		parziale.setCbt(so.getCbtTg() + so.getCbtTo());
-		parziale.setSpecchio(so.getSpecchioMil() + so.getSpecchioTg() + so.getSpecchioTo());
-		parziale.setColObb(so.getColazioneObblMil() + so.getColazioneObblTg() + so.getColazioneObblTo());
+		parziale.setSpecchio(so.getSpecchioTg() + so.getSpecchioTo());
+		parziale.setColObb(so.getColazioneObblTg() + so.getColazioneObblTo());
 
 		listaDC1Prenotati.add(parziale);
 
@@ -688,15 +688,14 @@ public class ReportServiceImpl implements ReportService
 		totale.setPeCeAventiDiritto(so.getAventiDiritto());
 		totale.setPeCePrenotati(so.getPesCenTo() + so.getPesCenMil() + so.getPesCenTg());
 
-		totale.setCbt(so.getCbtMil() + so.getCbtTg() + so.getCbtTo());
-		totale.setSpecchio(so.getSpecchioMil() + so.getSpecchioTg() + so.getSpecchioTo());
-		totale.setColObb(so.getColazioneObblMil() + so.getColazioneObblTg() + so.getColazioneObblTo());
+		totale.setCbt( so.getCbtTg() + so.getCbtTo());
+		totale.setSpecchio(so.getSpecchioTg() + so.getSpecchioTo());
+		totale.setColObb(so.getColazioneObblTg() + so.getColazioneObblTo());
 
 		listaDC1Prenotati.add(totale);
 
 		return listaDC1Prenotati;
 	}
-
 
 	/* Download documento DC1 Prenotati */
 	@Override
@@ -827,8 +826,8 @@ public class ReportServiceImpl implements ReportService
 			parziale.setPeCePrenotati(so.getPesCenTo() + so.getPesCenTg());
 
 			parziale.setCbt(so.getCbtTg() + so.getCbtTo());
-			parziale.setSpecchio(so.getSpecchioMil() + so.getSpecchioTg() + so.getSpecchioTo());
-			parziale.setColObb(so.getColazioneObblMil() + so.getColazioneObblTg() + so.getColazioneObblTo());
+			parziale.setSpecchio(so.getSpecchioTg() + so.getSpecchioTo());
+			parziale.setColObb(so.getColazioneObblTg() + so.getColazioneObblTo());
 
 			listaDC1Ordinarie.add(parziale);
 
@@ -885,8 +884,8 @@ public class ReportServiceImpl implements ReportService
 			totale.setPeCePrenotati(so.getPesCenTo() + so.getPesCenTg());
 
 			totale.setCbt(so.getCbtTg() + so.getCbtTo());
-			totale.setSpecchio(so.getSpecchioMil() + so.getSpecchioTg() + so.getSpecchioTo());
-			totale.setColObb(so.getColazioneObblMil() + so.getColazioneObblTg() + so.getColazioneObblTo());
+			totale.setSpecchio(so.getSpecchioTg() + so.getSpecchioTo());
+			totale.setColObb(so.getColazioneObblTg() + so.getColazioneObblTo());
 
 			listaDC1Ordinarie.add(totale);
 
@@ -1042,29 +1041,29 @@ public class ReportServiceImpl implements ReportService
 		DC1MilitariJasper parziale = new DC1MilitariJasper();
 		parziale.setNome("PARZIALE");
 		parziale.setOrCoAventiDiritto(so.getAventiDiritto());
-		parziale.setOrCoPrenotati(so.getOrdColTo() + so.getOrdColMil() + so.getOrdColTg());
+		parziale.setOrCoPrenotati(so.getOrdColTo() + so.getOrdColTg());
 		parziale.setOrPrAventiDiritto(so.getAventiDiritto());
-		parziale.setOrPrPrenotati(so.getOrdPraTo() + so.getOrdPraMil() + so.getOrdPraTg());
+		parziale.setOrPrPrenotati(so.getOrdPraTo() + so.getOrdPraTg());
 		parziale.setOrCeAventiDiritto(so.getAventiDiritto());
-		parziale.setOrCePrenotati(so.getOrdCenTo() + so.getOrdCenMil() + so.getOrdCenTg());
+		parziale.setOrCePrenotati(so.getOrdCenTo() + so.getOrdCenTg());
 
 		parziale.setMeCoAventiDiritto(so.getAventiDiritto());
-		parziale.setMeCoPrenotati(so.getMedColTo() + so.getMedColMil() + so.getMedColTg());
+		parziale.setMeCoPrenotati(so.getMedColTo() + so.getMedColTg());
 		parziale.setMePrAventiDiritto(so.getAventiDiritto());
-		parziale.setMePrPrenotati(so.getMedPraTo() + so.getMedPraMil() + so.getMedPraTg());
+		parziale.setMePrPrenotati(so.getMedPraTo() + so.getMedPraTg());
 		parziale.setMeCeAventiDiritto(so.getAventiDiritto());
-		parziale.setMeCePrenotati(so.getMedCenTo() + so.getMedCenMil() + so.getMedCenTg());
+		parziale.setMeCePrenotati(so.getMedCenTo() + so.getMedCenTg());
 
 		parziale.setPeCoAventiDiritto(so.getAventiDiritto());
-		parziale.setPeCoPrenotati(so.getPesColTo() + so.getPesColMil() + so.getPesColTg());
+		parziale.setPeCoPrenotati(so.getPesColTo() + so.getPesColTg());
 		parziale.setPePrAventiDiritto(so.getAventiDiritto());
-		parziale.setPePrPrenotati(so.getPesPraTo() + so.getPesPraMil() + so.getPesPraTg());
+		parziale.setPePrPrenotati(so.getPesPraTo() + so.getPesPraTg());
 		parziale.setPeCeAventiDiritto(so.getAventiDiritto());
-		parziale.setPeCePrenotati(so.getPesCenTo() + so.getPesCenMil() + so.getPesCenTg());
+		parziale.setPeCePrenotati(so.getPesCenTo() + so.getPesCenTg());
 
-		parziale.setCbt(so.getCbtMil() + so.getCbtTg() + so.getCbtTo());
-		parziale.setSpecchio(0);
-		parziale.setColObb(0);
+		parziale.setCbt(so.getCbtTg() + so.getCbtTo());
+		parziale.setSpecchio(so.getSpecchioTg() + so.getSpecchioTo());
+		parziale.setColObb(so.getSpecchioTg() + so.getSpecchioTo());
 
 		listaDC1Prenotati.add(parziale);
 
@@ -1102,29 +1101,29 @@ public class ReportServiceImpl implements ReportService
 		DC1MilitariJasper totale = new DC1MilitariJasper();
 		totale.setNome("TOTALE");
 		totale.setOrCoAventiDiritto(so.getAventiDiritto());
-		totale.setOrCoPrenotati(so.getOrdColTo() + so.getOrdColMil() + so.getOrdColTg());
-		totale.setOrPrAventiDiritto(so.getAventiDiritto() + campionatura.getOrPrAventiDiritto());
-		totale.setOrPrPrenotati(so.getOrdPraTo() + so.getOrdPraMil() + so.getOrdPraTg());
+		totale.setOrCoPrenotati(so.getOrdColTo() + so.getOrdColTg());
+		totale.setOrPrAventiDiritto(so.getAventiDiritto());
+		totale.setOrPrPrenotati(so.getOrdPraTo() + so.getOrdPraTg());
 		totale.setOrCeAventiDiritto(so.getAventiDiritto());
-		totale.setOrCePrenotati(so.getOrdCenTo() + so.getOrdCenMil() + so.getOrdCenTg());
+		totale.setOrCePrenotati(so.getOrdCenTo() + so.getOrdCenTg());
 
 		totale.setMeCoAventiDiritto(so.getAventiDiritto());
-		totale.setMeCoPrenotati(so.getMedColTo() + so.getMedColMil() + so.getMedColTg());
+		totale.setMeCoPrenotati(so.getMedColTo() + so.getMedColTg());
 		totale.setMePrAventiDiritto(so.getAventiDiritto());
-		totale.setMePrPrenotati(so.getMedPraTo() + so.getMedPraMil() + so.getMedPraTg());
+		totale.setMePrPrenotati(so.getMedPraTo() + so.getMedPraTg());
 		totale.setMeCeAventiDiritto(so.getAventiDiritto());
-		totale.setMeCePrenotati(so.getMedCenTo() + so.getMedCenMil() + so.getMedCenTg());
+		totale.setMeCePrenotati(so.getMedCenTo() + so.getMedCenTg());
 
 		totale.setPeCoAventiDiritto(so.getAventiDiritto());
-		totale.setPeCoPrenotati(so.getPesColTo() + so.getPesColMil() + so.getPesColTg());
+		totale.setPeCoPrenotati(so.getPesColTo() + so.getPesColTg());
 		totale.setPePrAventiDiritto(so.getAventiDiritto());
-		totale.setPePrPrenotati(so.getPesPraTo() + so.getPesPraMil() + so.getPesPraTg());
+		totale.setPePrPrenotati(so.getPesPraTo() + so.getPesPraTg());
 		totale.setPeCeAventiDiritto(so.getAventiDiritto());
-		totale.setPeCePrenotati(so.getPesCenTo() + so.getPesCenMil() + so.getPesCenTg());
+		totale.setPeCePrenotati(so.getPesCenTo() + so.getPesCenTg());
 
-		totale.setCbt(so.getCbtMil() + so.getCbtTg() + so.getCbtTo());
-		totale.setSpecchio(0);
-		totale.setColObb(0);
+		totale.setCbt(so.getCbtTg() + so.getCbtTo());
+		totale.setSpecchio(so.getSpecchioTg() + so.getSpecchioTo());
+		totale.setColObb(so.getSpecchioTg() + so.getSpecchioTo());
 
 		listaDC1Prenotati.add(totale);
 
@@ -1151,30 +1150,30 @@ public class ReportServiceImpl implements ReportService
 		{
 			//Militari
 			DC1MilitariJasper dc1M = new DC1MilitariJasper();
-			dc1M.setOrCoAventiDiritto(so.getAventiDiritto());
+			dc1M.setOrCoAventiDiritto(so.getAventiDirittoMilitari());
 			dc1M.setOrCoPrenotati(so.getOrdColMil());
-			dc1M.setOrPrAventiDiritto(so.getAventiDiritto());
+			dc1M.setOrPrAventiDiritto(so.getAventiDirittoMilitari());
 			dc1M.setOrPrPrenotati(so.getOrdPraMil());
-			dc1M.setOrCeAventiDiritto(so.getAventiDiritto());
+			dc1M.setOrCeAventiDiritto(so.getAventiDirittoMilitari());
 			dc1M.setOrCePrenotati(so.getOrdCenMil());
 
-			dc1M.setMeCoAventiDiritto(so.getAventiDiritto());
+			dc1M.setMeCoAventiDiritto(so.getAventiDirittoMilitari());
 			dc1M.setMeCoPrenotati(so.getMedColMil());
-			dc1M.setMePrAventiDiritto(so.getAventiDiritto());
+			dc1M.setMePrAventiDiritto(so.getAventiDirittoMilitari());
 			dc1M.setMePrPrenotati(so.getMedPraMil());
-			dc1M.setMeCeAventiDiritto(so.getAventiDiritto());
+			dc1M.setMeCeAventiDiritto(so.getAventiDirittoMilitari());
 			dc1M.setMeCePrenotati(so.getMedCenMil());
 
-			dc1M.setPeCoAventiDiritto(so.getAventiDiritto());
+			dc1M.setPeCoAventiDiritto(so.getAventiDirittoMilitari());
 			dc1M.setPeCoPrenotati(so.getPesColMil());
-			dc1M.setPePrAventiDiritto(so.getAventiDiritto());
+			dc1M.setPePrAventiDiritto(so.getAventiDirittoMilitari());
 			dc1M.setPePrPrenotati(so.getPesPraMil());
-			dc1M.setPeCeAventiDiritto(so.getAventiDiritto());
+			dc1M.setPeCeAventiDiritto(so.getAventiDirittoMilitari());
 			dc1M.setPeCePrenotati(so.getPesCenMil());
 
 			dc1M.setCbt(so.getCbtMil());
-			dc1M.setSpecchio(0);
-			dc1M.setColObb(0);
+			dc1M.setSpecchio(so.getSpecchioMil());
+			dc1M.setColObb(so.getColazioneObblMil());
 
 			listaDC1Ordinarie.add(dc1M);
 
@@ -1202,8 +1201,8 @@ public class ReportServiceImpl implements ReportService
 			dc1P.setPeCePrenotati(so.getPesCenTg());
 
 			dc1P.setCbt(so.getCbtTg());
-			dc1P.setSpecchio(0);
-			dc1P.setColObb(0);
+			dc1P.setSpecchio(so.getSpecchioTg());
+			dc1P.setColObb(so.getColazioneObblTg());
 
 			listaDC1Ordinarie.add(dc1P);
 
@@ -1231,37 +1230,37 @@ public class ReportServiceImpl implements ReportService
 			dc1O.setPeCePrenotati(so.getPesCenTo());
 
 			dc1O.setCbt(so.getCbtTo());
-			dc1O.setSpecchio(0);
-			dc1O.setColObb(0);
+			dc1O.setSpecchio(so.getSpecchioTo());
+			dc1O.setColObb(so.getColazioneObblTo());
 
 			listaDC1Ordinarie.add(dc1O);
 
 			//Parziale
 			DC1MilitariJasper parziale = new DC1MilitariJasper();
 			parziale.setOrCoAventiDiritto(so.getAventiDiritto());
-			parziale.setOrCoPrenotati(so.getOrdColTo() + so.getOrdColMil() + so.getOrdColTg());
+			parziale.setOrCoPrenotati(so.getOrdColTo() + so.getOrdColTg());
 			parziale.setOrPrAventiDiritto(so.getAventiDiritto());
-			parziale.setOrPrPrenotati(so.getOrdPraTo() + so.getOrdPraMil() + so.getOrdPraTg());
+			parziale.setOrPrPrenotati(so.getOrdPraTo() + so.getOrdPraTg());
 			parziale.setOrCeAventiDiritto(so.getAventiDiritto());
-			parziale.setOrCePrenotati(so.getOrdCenTo() + so.getOrdCenMil() + so.getOrdCenTg());
+			parziale.setOrCePrenotati(so.getOrdCenTo() + so.getOrdCenTg());
 
 			parziale.setMeCoAventiDiritto(so.getAventiDiritto());
-			parziale.setMeCoPrenotati(so.getMedColTo() + so.getMedColMil() + so.getMedColTg());
+			parziale.setMeCoPrenotati(so.getMedColTo() +  so.getMedColTg());
 			parziale.setMePrAventiDiritto(so.getAventiDiritto());
-			parziale.setMePrPrenotati(so.getMedPraTo() + so.getMedPraMil() + so.getMedPraTg());
+			parziale.setMePrPrenotati(so.getMedPraTo() + so.getMedPraTg());
 			parziale.setMeCeAventiDiritto(so.getAventiDiritto());
-			parziale.setMeCePrenotati(so.getMedCenTo() + so.getMedCenMil() + so.getMedCenTg());
+			parziale.setMeCePrenotati(so.getMedCenTo() + so.getMedCenTg());
 
 			parziale.setPeCoAventiDiritto(so.getAventiDiritto());
-			parziale.setPeCoPrenotati(so.getPesColTo() + so.getPesColMil() + so.getPesColTg());
+			parziale.setPeCoPrenotati(so.getPesColTo() + so.getPesColTg());
 			parziale.setPePrAventiDiritto(so.getAventiDiritto());
-			parziale.setPePrPrenotati(so.getPesPraTo() + so.getPesPraMil() + so.getPesPraTg());
+			parziale.setPePrPrenotati(so.getPesPraTo() + so.getPesPraTg());
 			parziale.setPeCeAventiDiritto(so.getAventiDiritto());
-			parziale.setPeCePrenotati(so.getPesCenTo() + so.getPesCenMil() + so.getPesCenTg());
+			parziale.setPeCePrenotati(so.getPesCenTo() + so.getPesCenTg());
 
-			parziale.setCbt(so.getCbtMil() + so.getCbtTg() + so.getCbtTo());
-			parziale.setSpecchio(0);
-			parziale.setColObb(0);
+			parziale.setCbt(so.getCbtTg() + so.getCbtTo());
+			parziale.setSpecchio(so.getSpecchioTg() + so.getSpecchioTo());
+			parziale.setColObb(so.getColazioneObblTg() + so.getColazioneObblTo());
 
 			listaDC1Ordinarie.add(parziale);
 
@@ -1297,29 +1296,29 @@ public class ReportServiceImpl implements ReportService
 			//Totale
 			DC1MilitariJasper totale = new DC1MilitariJasper();
 			totale.setOrCoAventiDiritto(so.getAventiDiritto());
-			totale.setOrCoPrenotati(so.getOrdColTo() + so.getOrdColMil() + so.getOrdColTg());
-			totale.setOrPrAventiDiritto(so.getAventiDiritto() + campionatura.getOrPrAventiDiritto());
-			totale.setOrPrPrenotati(so.getOrdPraTo() + so.getOrdPraMil() + so.getOrdPraTg());
+			totale.setOrCoPrenotati(so.getOrdColTo() + so.getOrdColTg());
+			totale.setOrPrAventiDiritto(so.getAventiDiritto());
+			totale.setOrPrPrenotati(so.getOrdPraTo() + so.getOrdPraTg());
 			totale.setOrCeAventiDiritto(so.getAventiDiritto());
-			totale.setOrCePrenotati(so.getOrdCenTo() + so.getOrdCenMil() + so.getOrdCenTg());
+			totale.setOrCePrenotati(so.getOrdCenTo() + so.getOrdCenTg());
 
 			totale.setMeCoAventiDiritto(so.getAventiDiritto());
-			totale.setMeCoPrenotati(so.getMedColTo() + so.getMedColMil() + so.getMedColTg());
+			totale.setMeCoPrenotati(so.getMedColTo() + so.getMedColTg());
 			totale.setMePrAventiDiritto(so.getAventiDiritto());
-			totale.setMePrPrenotati(so.getMedPraTo() + so.getMedPraMil() + so.getMedPraTg());
+			totale.setMePrPrenotati(so.getMedPraTo() + so.getMedPraTg());
 			totale.setMeCeAventiDiritto(so.getAventiDiritto());
-			totale.setMeCePrenotati(so.getMedCenTo() + so.getMedCenMil() + so.getMedCenTg());
+			totale.setMeCePrenotati(so.getMedCenTo() + so.getMedCenTg());
 
 			totale.setPeCoAventiDiritto(so.getAventiDiritto());
-			totale.setPeCoPrenotati(so.getPesColTo() + so.getPesColMil() + so.getPesColTg());
+			totale.setPeCoPrenotati(so.getPesColTo() + so.getPesColTg());
 			totale.setPePrAventiDiritto(so.getAventiDiritto());
-			totale.setPePrPrenotati(so.getPesPraTo() + so.getPesPraMil() + so.getPesPraTg());
+			totale.setPePrPrenotati(so.getPesPraTo() + so.getPesPraTg());
 			totale.setPeCeAventiDiritto(so.getAventiDiritto());
-			totale.setPeCePrenotati(so.getPesCenTo() + so.getPesCenMil() + so.getPesCenTg());
+			totale.setPeCePrenotati(so.getPesCenTo() + so.getPesCenTg());
 
-			totale.setCbt(so.getCbtMil() + so.getCbtTg() + so.getCbtTo());
-			totale.setSpecchio(0);
-			totale.setColObb(0);
+			totale.setCbt(so.getCbtTg() + so.getCbtTo());
+			totale.setSpecchio(so.getSpecchioTg() + so.getSpecchioTo());
+			totale.setColObb(so.getColazioneObblTg() + so.getColazioneObblTo());
 
 			listaDC1Ordinarie.add(totale);
 

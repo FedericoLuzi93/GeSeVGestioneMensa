@@ -111,7 +111,7 @@ public class ReportDAOImpl implements ReportDAO
 
 	@Autowired
 	private TipoRazioneRepository tipoRazioneRepository;
-	
+
 	@Autowired
 	private PrenotazioneRepository prenotazioneRepository;
 
@@ -159,12 +159,12 @@ public class ReportDAOImpl implements ReportDAO
 			if(!optionalTipoPasto.isPresent())
 				throw new GesevException("Impossibile caricare i pasti consumati, tipo pasto non valido", HttpStatus.BAD_REQUEST);
 			pc.setTipoPasto(optionalTipoPasto.get());
-			
+
 			Optional<IdentificativoSistema> optionalIdSistema = identificativoSistemaRepository.findById(pcCSV.getIdentificativoSistema());
 			if(!optionalIdSistema.isPresent())
 				throw new GesevException("Impossibile caricare i pasti consumati, identificativo sistema non valido", HttpStatus.BAD_REQUEST);
 			pc.setIdentificativoSistema(optionalIdSistema.get());
-			
+
 			Optional<TipoRazione> optionalTipoRazione = tipoRazioneRepository.findByIdTipoRazione(pcCSV.getTipoRazione());
 			if(!optionalTipoRazione.isPresent())
 				throw new GesevException("Impossibile caricare i pasti consumati, tipo razione non valido", HttpStatus.BAD_REQUEST);
@@ -778,6 +778,14 @@ public class ReportDAOImpl implements ReportDAO
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
 		List<SendListaDC1Prenotati> listaDC1Prenotati = new ArrayList<>();
 
+		//Ente
+		Optional<Ente> optionalEnte = enteRepository.findById(dc4RichiestaDTO.getIdEnte());
+
+		if(!optionalEnte.isPresent())
+			throw new GesevException("Non è stato possibile creare il report, ente non presente");
+
+		sDc1.setDescrizioneEnte(optionalEnte.get().getDescrizioneEnte());
+
 		String giorno = dc4RichiestaDTO.getGiorno();
 		String dataTotale = giorno.concat("-" + dc4RichiestaDTO.getMese() + "-" + dc4RichiestaDTO.getAnno() + "'");
 
@@ -794,9 +802,7 @@ public class ReportDAOImpl implements ReportDAO
 				+ "where ente_appartenenza  = :idEnte ";
 
 
-		logger.info("Esecuzione query: " + queryAventiDirittoMilitari); 
 		Query aventiDirittoMilitariQuery = entityManager.createNativeQuery(queryAventiDirittoMilitari);
-
 		aventiDirittoMilitariQuery = aventiDirittoMilitariQuery.setParameter("idEnte", dc4RichiestaDTO.getIdEnte());
 
 		List<Object[]> listAventiDirittoMilitari = aventiDirittoMilitariQuery.getResultList();
@@ -812,42 +818,42 @@ public class ReportDAOImpl implements ReportDAO
 			throw new GesevException("Impossibile generare il documento DC4, mese non valido", HttpStatus.BAD_REQUEST);
 
 		String queryDC1Prenotati = "select\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 1 and p.tipo_personale = 'M') then 1 else 0 end ) as ORD_COL_MIL,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 2 and p.tipo_personale = 'M') then 1 else 0 end ) as ORD_PRA_MIL,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 3 and p.tipo_personale = 'M') then 1 else 0 end ) as ORD_CEN_MIL,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 1 and p.tipo_personale = 'M') then 1 else 0 end ) as MED_COL_MIL,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 2 and p.tipo_personale = 'M') then 1 else 0 end ) as MED_PRA_MIL,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 3 and p.tipo_personale = 'M') then 1 else 0 end ) as MED_CEN_MIL,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 1 and p.tipo_personale = 'M') then 1 else 0 end ) as PES_COL_MIL,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 2 and p.tipo_personale = 'M') then 1 else 0 end ) as PES_PRA_MIL,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 3 and p.tipo_personale = 'M') then 1 else 0 end ) as PES_CEN_MIL,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'C' and p.tipo_personale = 'M') then 1 else 0 end ) as CBT_MIL,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 1 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ) as ORD_COL_TG,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 2 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ) as ORD_PRA_TG,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 3 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ) as ORD_CEN_TG,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 1 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ) as MED_COL_TG,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 2 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ) as MED_PRA_TG,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 3 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ) as MED_CEN_TG,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 1 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ) as PES_COL_TG,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 2 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ) as PES_PRA_TG,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 3 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ) as PES_CEN_TG,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'C' and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ) as CBT_TG,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 1 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as ORD_COL_TO,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 2 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as ORD_PRA_TO,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 3 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as ORD_CEN_TO,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 1 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as MED_COL_TO,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 2 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as MED_PRA_TO,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 3 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as MED_CEN_TO,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 1 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as PES_COL_TO,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 2 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as PES_PRA_TO,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 3 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as PES_CEN_TO,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'C' and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as CBT_TO,\r\n"
-				+ "sum(case when p.specchio_flag = 'Y' and p.tipo_personale = 'M' then 1 else 0 end) SPECCHIO_MIL,\r\n"
-				+ "sum(case when p.col_obbligatoria_flag  = 'Y' and p.tipo_personale = 'M' then 1 else 0 end) COL_OBBL_MIL,\r\n"
-				+ "sum(case when p.specchio_flag = 'Y' and p.tipo_pagamento_fk = 'TG' then 1 else 0 end) SPECCHIO_TG,\r\n"
-				+ "sum(case when p.col_obbligatoria_flag  = 'Y' and p.tipo_pagamento_fk = 'TG' then 1 else 0 end) COL_OBBL_TG,\r\n"
-				+ "sum(case when p.specchio_flag = 'Y' and p.tipo_pagamento_fk = 'TO' then 1 else 0 end) SPECCHIO_TO,\r\n"
-				+ "sum(case when p.col_obbligatoria_flag  = 'Y' and p.tipo_pagamento_fk = 'TO' then 1 else 0 end) COL_OBBL_TO "
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 1 and p.tipo_personale = 'M') then 1 else 0 end ), 0) as ORD_COL_MIL,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 2 and p.tipo_personale = 'M') then 1 else 0 end ), 0) as ORD_PRA_MIL,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 3 and p.tipo_personale = 'M') then 1 else 0 end ), 0) as ORD_CEN_MIL,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 1 and p.tipo_personale = 'M') then 1 else 0 end ), 0) as MED_COL_MIL,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 2 and p.tipo_personale = 'M') then 1 else 0 end ), 0) as MED_PRA_MIL,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 3 and p.tipo_personale = 'M') then 1 else 0 end ), 0) as MED_CEN_MIL,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 1 and p.tipo_personale = 'M') then 1 else 0 end ), 0) as PES_COL_MIL,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 2 and p.tipo_personale = 'M') then 1 else 0 end ), 0) as PES_PRA_MIL,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 3 and p.tipo_personale = 'M') then 1 else 0 end ), 0) as PES_CEN_MIL,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'C' and p.tipo_personale = 'M') then 1 else 0 end ), 0) as CBT_MIL,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 1 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ), 0) as ORD_COL_TG,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 2 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ), 0) as ORD_PRA_TG,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 3 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ), 0) as ORD_CEN_TG,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 1 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ), 0) as MED_COL_TG,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 2 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ), 0) as MED_PRA_TG,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 3 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ), 0) as MED_CEN_TG,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 1 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ), 0) as PES_COL_TG,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 2 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ), 0) as PES_PRA_TG,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 3 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ), 0) as PES_CEN_TG,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'C' and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ), 0) as CBT_TG,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 1 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ), 0) as ORD_COL_TO,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 2 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ), 0) as ORD_PRA_TO,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 3 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ), 0) as ORD_CEN_TO,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 1 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ), 0) as MED_COL_TO,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 2 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ), 0) as MED_PRA_TO,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 3 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ), 0) as MED_CEN_TO,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 1 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ), 0) as PES_COL_TO,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 2 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ), 0) as PES_PRA_TO,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 3 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ), 0) as PES_CEN_TO,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'C' and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ), 0) as CBT_TO,\r\n"
+				+ "coalesce(sum(case when p.specchio_flag = 'Y' and p.tipo_personale = 'M' then 1 else 0 end), 0) SPECCHIO_MIL,\r\n"
+				+ "coalesce(sum(case when p.col_obbligatoria_flag = 'Y' and p.tipo_personale = 'M' then 1 else 0 end), 0) COL_OBBL_MIL,\r\n"
+				+ "coalesce(sum(case when p.specchio_flag = 'Y' and p.tipo_pagamento_fk = 'TG' then 1 else 0 end), 0) SPECCHIO_TG,\r\n"
+				+ "coalesce(sum(case when p.col_obbligatoria_flag = 'Y' and p.tipo_pagamento_fk = 'TG' then 1 else 0 end), 0) COL_OBBL_TG,\r\n"
+				+ "coalesce(sum(case when p.specchio_flag = 'Y' and p.tipo_pagamento_fk = 'TO' then 1 else 0 end), 0) SPECCHIO_TO,\r\n"
+				+ "coalesce(sum(case when p.col_obbligatoria_flag = 'Y' and p.tipo_pagamento_fk = 'TO' then 1 else 0 end), 0) COL_OBBL_TO\r\n"
 				+ "from prenotazione p left join mensa m on p.identificativo_mensa_fk = m.codice_mensa\r\n"
 				+ "where m.ente_fk = :idEnte and p.data_prenotazione = :giornoDatato ";
 
@@ -863,16 +869,7 @@ public class ReportDAOImpl implements ReportDAO
 		if(!StringUtils.isBlank(dc4RichiestaDTO.getSistemaPersonale()))
 			dc1PrenotatiQuery = dc1PrenotatiQuery.setParameter("idPersonale", dc4RichiestaDTO.getSistemaPersonale());
 
-		logger.info("Esecuzione query: " + queryDC1Prenotati + " " + dataYYYYmmDD);
 		List<Object[]> listOfResultsDC1Prenotati = dc1PrenotatiQuery.getResultList();
-		logger.info("Esecuzione query: " + queryDC1Prenotati);
-		//Ente
-		Optional<Ente> optionalEnte = enteRepository.findById(dc4RichiestaDTO.getIdEnte());
-
-		if(!optionalEnte.isPresent())
-			throw new GesevException("Non è stato possibile creare il report, ente non presente");
-
-		sDc1.setDescrizioneEnte(optionalEnte.get().getDescrizioneEnte());
 
 		//Assegnazione Campi Query
 		for(Object[] obj : listOfResultsDC1Prenotati)
@@ -939,7 +936,7 @@ public class ReportDAOImpl implements ReportDAO
 			sDc1.setPesCenTo(pesCenTo == null ? 0 : pesCenTo);
 			Integer cbtTo = ((BigInteger) obj[29]).intValue();
 			sDc1.setCbtTo(cbtTo == null ? 0 : cbtTo);
-			
+
 			Integer specchioMil = ((BigInteger) obj[30]).intValue();
 			sDc1.setSpecchioMil(specchioMil == null ? 0 : specchioMil);
 			Integer colazioneObblMil= ((BigInteger) obj[31]).intValue();
@@ -952,7 +949,7 @@ public class ReportDAOImpl implements ReportDAO
 			sDc1.setSpecchioTo(specchioTo == null ? 0 : specchioTo);
 			Integer colazioneObblTo= ((BigInteger) obj[35]).intValue();
 			sDc1.setColazioneObblTo(colazioneObblTo == null ? 0 : colazioneObblTo);
-			
+
 			listaDC1Prenotati.add(sDc1);
 		}
 
@@ -961,6 +958,7 @@ public class ReportDAOImpl implements ReportDAO
 		return sDc1;
 	}
 
+	/* Richiesta firme DC1 */
 	@Override
 	public List<FirmeDC4> richiestaFirmeDC1(DC4RichiestaDTO dc4RichiestaDTO) 
 	{
@@ -1016,60 +1014,61 @@ public class ReportDAOImpl implements ReportDAO
 		String dataCorretta = dc4RichiestaDTO.getAnno().concat("-" + dc4RichiestaDTO.getMese().concat("-" + dc4RichiestaDTO.getGiorno()));
 		Date giornoDatato = simpleDateFormat.parse(dataCorretta);
 
-		//Aventi Diritto Militari
-		String queryAventiDirittoMilitari = "select distinct fe.num_dipendenti \r\n"
-				+ "from forza_effettiva fe \r\n"
-				+ "left join dipendente d \r\n"
-				+ "on fe.ente_fk = :idEnte \r\n"
-				+ "and fe.data_riferimento = :giornoDatato \r\n"
-				+ "where d.tipo_personale = 'M'";
-
+		//Aventi Diritto Militari e Non
+		String queryAventiDirittoMilitari = "select\r\n"
+				+ "sum(case when d.tipo_personale = 'M' then 1 else 0 end) as NUM_MIL,\r\n"
+				+ "count(*) as TOT_DIP\r\n"
+				+ "from dipendente d\r\n"
+				+ "where ente_appartenenza  = :idEnte ";
 
 		logger.info("Esecuzione query: " + queryAventiDirittoMilitari); 
 		Query aventiDirittoMilitariQuery = entityManager.createNativeQuery(queryAventiDirittoMilitari);
 
 		aventiDirittoMilitariQuery = aventiDirittoMilitariQuery.setParameter("idEnte", dc4RichiestaDTO.getIdEnte());
-		aventiDirittoMilitariQuery = aventiDirittoMilitariQuery.setParameter("giornoDatato", giornoDatato);
 
-		Integer aventiDirittoMilitari = (Integer) aventiDirittoMilitariQuery.getSingleResult();
-		sDc1.setAventiDirittoMilitari(aventiDirittoMilitari);
-
-		int aventiDiritto = forzaEffettivaRepository.aventiDiritto(dc4RichiestaDTO.getIdEnte(), giornoDatato);
+		List<Object[]> listAventiDirittoMilitari = aventiDirittoMilitariQuery.getResultList();
+		for(Object[] obj : listAventiDirittoMilitari)
+		{
+			Integer aventiDirittoMilitari = ((BigInteger) obj[0]).intValue();
+			sDc1.setAventiDirittoMilitari(aventiDirittoMilitari == null ? 0 : aventiDirittoMilitari);
+			Integer aventiDiritto = ((BigInteger) obj[1]).intValue();
+			sDc1.setAventiDiritto(aventiDiritto == null ? 0 : aventiDiritto);
+		}
 
 		if(StringUtils.isBlank(dataTotale))
 			throw new GesevException("Impossibile generare il documento DC4, mese non valido", HttpStatus.BAD_REQUEST);
 
 		String queryDC1Prenotati = "select\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 1 and p.tipo_personale = 'M') then 1 else 0 end ) as ORD_COL_MIL,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 2 and p.tipo_personale = 'M') then 1 else 0 end ) as ORD_PRA_MIL,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 3 and p.tipo_personale = 'M') then 1 else 0 end ) as ORD_CEN_MIL,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 1 and p.tipo_personale = 'M') then 1 else 0 end ) as MED_COL_MIL,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 2 and p.tipo_personale = 'M') then 1 else 0 end ) as MED_PRA_MIL,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 3 and p.tipo_personale = 'M') then 1 else 0 end ) as MED_CEN_MIL,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 1 and p.tipo_personale = 'M') then 1 else 0 end ) as PES_COL_MIL,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 2 and p.tipo_personale = 'M') then 1 else 0 end ) as PES_PRA_MIL,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 3 and p.tipo_personale = 'M') then 1 else 0 end ) as PES_CEN_MIL,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'C' and p.tipo_personale = 'M') then 1 else 0 end ) as CBT_MIL,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 1 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ) as ORD_COL_TG,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 2 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ) as ORD_PRA_TG,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 3 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ) as ORD_CEN_TG,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 1 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ) as MED_COL_TG,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 2 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ) as MED_PRA_TG,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 3 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ) as MED_CEN_TG,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 1 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ) as PES_COL_TG,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 2 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ) as PES_PRA_TG,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 3 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ) as PES_CEN_TG,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'C' and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ) as CBT_TG,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 1 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as ORD_COL_TO,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 2 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as ORD_PRA_TO,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 3 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as ORD_CEN_TO,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 1 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as MED_COL_TO,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 2 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as MED_PRA_TO,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 3 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as MED_CEN_TO,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 1 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as PES_COL_TO,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 2 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as PES_PRA_TO,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 3 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as PES_CEN_TO,\r\n"
-				+ "sum(case when (p.tipo_razione_fk = 'C' and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ) as CBT_TO\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 1 and p.tipo_personale = 'M') then 1 else 0 end ), 0) as ORD_COL_MIL,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 2 and p.tipo_personale = 'M') then 1 else 0 end ), 0) as ORD_PRA_MIL,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 3 and p.tipo_personale = 'M') then 1 else 0 end ), 0) as ORD_CEN_MIL,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 1 and p.tipo_personale = 'M') then 1 else 0 end ), 0) as MED_COL_MIL,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 2 and p.tipo_personale = 'M') then 1 else 0 end ), 0) as MED_PRA_MIL,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 3 and p.tipo_personale = 'M') then 1 else 0 end ), 0) as MED_CEN_MIL,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 1 and p.tipo_personale = 'M') then 1 else 0 end ), 0) as PES_COL_MIL,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 2 and p.tipo_personale = 'M') then 1 else 0 end ), 0) as PES_PRA_MIL,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 3 and p.tipo_personale = 'M') then 1 else 0 end ), 0) as PES_CEN_MIL,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'C' and p.tipo_personale = 'M') then 1 else 0 end ), 0) as CBT_MIL,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 1 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ), 0) as ORD_COL_TG,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 2 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ), 0) as ORD_PRA_TG,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 3 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ), 0) as ORD_CEN_TG,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 1 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ), 0) as MED_COL_TG,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 2 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ), 0) as MED_PRA_TG,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 3 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ), 0) as MED_CEN_TG,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 1 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ), 0) as PES_COL_TG,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 2 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ), 0) as PES_PRA_TG,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 3 and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ), 0) as PES_CEN_TG,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'C' and p.tipo_pagamento_fk = 'TG') then 1 else 0 end ), 0) as CBT_TG,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 1 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ), 0) as ORD_COL_TO,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 2 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ), 0) as ORD_PRA_TO,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'O' and p.tipo_pasto_fk = 3 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ), 0) as ORD_CEN_TO,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 1 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ), 0) as MED_COL_TO,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 2 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ), 0) as MED_PRA_TO,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'M' and p.tipo_pasto_fk = 3 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ), 0) as MED_CEN_TO,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 1 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ), 0) as PES_COL_TO,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 2 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ), 0) as PES_PRA_TO,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'P' and p.tipo_pasto_fk = 3 and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ), 0) as PES_CEN_TO,\r\n"
+				+ "coalesce(sum(case when (p.tipo_razione_fk = 'C' and p.tipo_pagamento_fk = 'TO') then 1 else 0 end ), 0) as CBT_TO\r\n"
 				+ "from pasti_consumati p left join mensa m on p.mensa_fk  = m.codice_mensa\r\n"
 				+ "where m.ente_fk = :idEnte and p.data_pasto  = :giornoDatato ";
 
@@ -1087,6 +1086,52 @@ public class ReportDAOImpl implements ReportDAO
 
 		logger.info("Esecuzione query: " + queryDC1Prenotati);
 		List<Object[]> listOfResultsDC1Prenotati = dc1PrenotatiQuery.getResultList();
+
+		//Specchio e Colazione Obb
+		String queryDC1Specchio = "select\r\n"
+				+ "coalesce(sum(case when p.tipo_personale = 'M' and p.id_prenotazione is not null and p.specchio_flag = 'Y' then 1 else 0 end), 0) SPECCHIO_MIL,\r\n"
+				+ "coalesce(sum(case when p.tipo_personale = 'M' and p.id_prenotazione is not null and p.col_obbligatoria_flag  = 'Y' then 1 else 0 end), 0) COL_OBB_MIL,\r\n"
+				+ "coalesce(sum(case when p.tipo_pagamento_fk = 'TG' and p.id_prenotazione is not null and p.specchio_flag = 'Y' then 1 else 0 end), 0) SPECCHIO_TG,\r\n"
+				+ "coalesce(sum(case when p.tipo_pagamento_fk = 'TG' and p.id_prenotazione is not null and p.col_obbligatoria_flag  = 'Y' then 1 else 0 end), 0) COL_OBB_TG,\r\n"
+				+ "coalesce(sum(case when p.tipo_pagamento_fk = 'TO' and p.id_prenotazione is not null and p.specchio_flag = 'Y' then 1 else 0 end), 0) SPECCHIO_TO,\r\n"
+				+ "coalesce(sum(case when p.tipo_pagamento_fk = 'TO' and p.id_prenotazione is not null and p.col_obbligatoria_flag  = 'Y' then 1 else 0 end), 0) COL_OBB_TO\r\n"
+				+ "from pasti_consumati pc left join prenotazione p\r\n"
+				+ "on pc.data_pasto = p.data_prenotazione\r\n"
+				+ "and p.codice_fiscale = pc.codice_fiscale\r\n"
+				+ "left join mensa m on p.identificativo_mensa_fk = m.codice_mensa\r\n"
+				+ "where p.data_prenotazione = :giornoDatato \r\n"
+				+ "and m.ente_fk = :idEnte ";
+
+		if(!StringUtils.isBlank(dc4RichiestaDTO.getSistemaPersonale()))
+			queryDC1Specchio = queryDC1Specchio + " and p.identificativo_sistema_fk = :idPersonale ";
+
+		Query dc1SpecchioQuery = entityManager.createNativeQuery(queryDC1Specchio);
+
+		dc1SpecchioQuery = dc1SpecchioQuery.setParameter("idEnte", dc4RichiestaDTO.getIdEnte());
+		dc1SpecchioQuery = dc1SpecchioQuery.setParameter("giornoDatato", giornoDatato);
+
+		if(!StringUtils.isBlank(dc4RichiestaDTO.getSistemaPersonale()))
+			dc1SpecchioQuery = dc1SpecchioQuery.setParameter("idPersonale", dc4RichiestaDTO.getSistemaPersonale());
+
+		logger.info("Esecuzione query: " + queryDC1Specchio);
+		List<Object[]> listOfResultsDC1Specchio = dc1SpecchioQuery.getResultList();
+
+		for(Object[] obj : listOfResultsDC1Specchio)
+		{
+			Integer specchioMil = ((BigInteger) obj[0]).intValue();
+			sDc1.setSpecchioMil(specchioMil == null ? 0 : specchioMil);
+			Integer colObbMil = ((BigInteger) obj[1]).intValue();
+			sDc1.setColazioneObblMil(colObbMil == null ? 0 : colObbMil);
+			Integer specchioTg = ((BigInteger) obj[2]).intValue();
+			sDc1.setSpecchioTg(specchioTg == null ? 0 : specchioTg);
+			Integer colObbTg = ((BigInteger) obj[3]).intValue();
+			sDc1.setColazioneObblTg(colObbTg == null ? 0 : colObbTg);
+			Integer specchioTo = ((BigInteger) obj[4]).intValue();
+			sDc1.setSpecchioTo(specchioTo == null ? 0 : specchioTo);
+			Integer colObbTo = ((BigInteger) obj[5]).intValue();
+			sDc1.setColazioneObblTo(colObbTo == null ? 0 : colObbTo);
+		}
+
 
 		//Ente
 		Optional<Ente> optionalEnte = enteRepository.findById(dc4RichiestaDTO.getIdEnte());
@@ -1162,8 +1207,6 @@ public class ReportDAOImpl implements ReportDAO
 			Integer cbtTo = ((BigInteger) obj[29]).intValue();
 			sDc1.setCbtTo(cbtTo == null ? 0 : cbtTo);
 
-			sDc1.setAventiDiritto(aventiDiritto);
-			
 
 			listaDC1Prenotati.add(sDc1);
 		}
@@ -1352,12 +1395,12 @@ public class ReportDAOImpl implements ReportDAO
 			throw new GesevException("Impossibile generare il documento DC1 Nominativo, data non valida", HttpStatus.BAD_REQUEST);
 
 		List<PastiConsumati> listaPc = new ArrayList<>();
-		
+
 		if(!StringUtils.isBlank(dc4RichiestaDTO.getSistemaPersonale()))
 			listaPc = pastiConsumatiRepository.getListaFiltrata(dc4RichiestaDTO.getIdEnte(), giornoDatato, dc4RichiestaDTO.getTipoPasto(), dc4RichiestaDTO.getSistemaPersonale());
 		else
 			listaPc = pastiConsumatiRepository.getListaFiltrataNoSistema(dc4RichiestaDTO.getIdEnte(), giornoDatato, dc4RichiestaDTO.getTipoPasto());
-		
+
 		return listaPc;
 	}
 
@@ -1377,7 +1420,7 @@ public class ReportDAOImpl implements ReportDAO
 			listaPrenotati = prenotazioneRepository.getListaFiltrata(dc4RichiestaDTO.getIdEnte(), giornoDatato, dc4RichiestaDTO.getTipoPasto(), dc4RichiestaDTO.getSistemaPersonale());
 		else
 			listaPrenotati = prenotazioneRepository.getListaFiltrataNoSistema(dc4RichiestaDTO.getIdEnte(), giornoDatato, dc4RichiestaDTO.getTipoPasto());
-		
+
 		return listaPrenotati;
 	}
 
